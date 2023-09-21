@@ -6,7 +6,7 @@
 /*   By: ekhaled <ekhaled@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/08 16:15:05 by ekhaled           #+#    #+#             */
-/*   Updated: 2023/09/19 16:17:52 by ekhaled          ###   ########.fr       */
+/*   Updated: 2023/09/21 01:42:20 by ekhaled          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,11 @@
 
 # include <stdbool.h>
 # include <stdint.h>
+# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define SUCCESS 1
 # define FAILURE 0
@@ -39,9 +42,15 @@ enum e_token_type
 	RPAR_TOKEN
 };
 
+typedef struct s_cstr
+{
+	char		*str;
+	uint32_t	cursor;
+}	t_cstr;
+
 typedef struct s_nstr
 {
-	char		*ptr;
+	char		*str;
 	uint32_t	len;
 }	t_nstr;
 
@@ -50,6 +59,14 @@ typedef struct s_token
 	enum e_token_type	type;
 	t_nstr				content;
 }	t_token;
+
+typedef struct s_token_elem
+{
+	t_token				content;
+	t_token_elem		*next;
+}	t_token_elem;
+
+typedef t_token_elem	*t_token_queue;
 
 /*-------- AST --------*/
 
@@ -115,6 +132,8 @@ typedef struct s_and_or_node
 	t_and_or_node		*left;
 	t_pipe_node			*right;
 }	t_and_or_node;
+
+typedef t_and_or_node		t_ast;
 
 /*-------- Session --------*/
 
