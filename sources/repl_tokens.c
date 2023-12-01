@@ -1,29 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   repl_tokens.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 07:35:13 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/01 00:48:38 by vchakhno         ###   ########.fr       */
+/*   Created: 2023/12/01 00:55:05 by vchakhno          #+#    #+#             */
+/*   Updated: 2023/12/01 01:32:17 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
-int	main(int argc, char **argv, char **env)
+bool	alloc_repl_tokens(t_repl_tokens *tokens)
 {
-	t_session	session;
+	if (!ft_vector_alloc(&tokens->tokens, 30))
+		return (false);
+	tokens->pos = 0;
+	return (true);
+}
 
-	(void) argc, (void) argv;
-	if (!init_session(&session, env))
-		return (EXIT_FAILURE);
-	if (!run_repl(&session))
-	{
-		destroy_session(&session);
-		return (EXIT_FAILURE);
-	}
-	destroy_session(&session);
+bool	wait_repl_tokens(t_repl_tokens *tokens)
+{
+	bool	end;
+
+	if (!tokenize_line())
+		return (false);
+	return (true);
+}
+
+void	free_repl_tokens(t_repl_tokens tokens)
+{
+	ft_vector_free(tokens.tokens);
 }

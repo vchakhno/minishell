@@ -1,29 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 07:35:13 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/01 00:48:38 by vchakhno         ###   ########.fr       */
+/*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
+/*   Updated: 2023/12/01 01:26:57 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
-int	main(int argc, char **argv, char **env)
+bool	tokenize(t_str line)
 {
-	t_session	session;
+	t_vector	tokens;
+	t_str		cropped;
+	t_u32		i;
 
-	(void) argc, (void) argv;
-	if (!init_session(&session, env))
-		return (EXIT_FAILURE);
-	if (!run_repl(&session))
+	if (!ft_vector_alloc(&tokens, sizeof(t_token), 32))
+		return (false);
+	i = 0;
+	while (i < line.len)
 	{
-		destroy_session(&session);
-		return (EXIT_FAILURE);
+		cropped = ft_str_get_slice(line, i, line.len - i);
+		i++;
 	}
-	destroy_session(&session);
+	return (true);
 }
