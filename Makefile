@@ -14,6 +14,7 @@ SRCS		:= \
 				session.c \
 				tokenizer.c \
 				program.c \
+				command.c \
 				env.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
