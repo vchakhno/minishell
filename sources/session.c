@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/10 19:55:13 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/11 10:01:52 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,28 +26,28 @@ bool	init_session(t_session *session, char **env)
 bool	run_repl(t_session *session)
 {
 	t_program	program;
-	t_command	command;
+	t_ast		ast;
 
 	if (!alloc_program(&program))
 		return (false);
 	while (!session->should_exit)
 	{
-		if (!parse_command(&command, &program))
+		if (!parse_ast(&ast, &program))
 		{
 			ft_oprintln(ft_stderr(), "Error: Command parsing failed");
 			free_program(program);
 			return (false);
 		}
-		register_command(command);
-		if (!execute_command(&command, session))
+		register_command(program);
+		if (!execute_ast(ast, session))
 		{
 			ft_oprintln(ft_stderr(), "Error: Command execution failed");
-			free_command(command);
+			free_ast(ast);
 			free_program(program);
 			return (false);
 		}
-		free_command(command);
-		cut_program(&program, command);
+		free_ast(ast);
+		cut_program(&program);
 	}
 	free_program(program);
 	return (true);

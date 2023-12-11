@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/10 18:03:56 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/11 11:25:45 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdbool.h>
 # include <libft/libft.h>
 
+# define PROMPT "\033[38;2;255;63;0mminishell\e[0m> "
 /* ************************************************************************** */
 /* ENV																		  */
 /* ************************************************************************** */
@@ -41,6 +42,8 @@ void	free_env(t_env *env);
 /* TOKENS																	  */
 /* ************************************************************************** */
 
+typedef struct s_program t_program;
+
 enum e_token_type
 {
 	TOKEN_PUNCT,
@@ -49,41 +52,47 @@ enum e_token_type
 
 typedef struct s_token
 {
-	enum e_token_type	type;
+	enum e_token_type	type; 
 	t_str				content;
 }	t_token;
+
+bool	parse_token(t_token *token, t_program *program);
+bool	peek_token(t_vector *tokens, t_token *token, t_program *program);
+bool	match_token(
+			t_vector *tokens, char *str, t_program *program, bool *matches);
 
 /* ************************************************************************** */
 /* AST																		  */
 /* ************************************************************************** */
 
+typedef struct s_session	t_session;
+
+enum e_ast_redir_type
+{
+	AST_REDIR_IN,
+	AST_REDIR_OUT,
+};
+
+typedef struct s_ast_redirection
+{
+	enum e_ast_redir_type	type;
+	t_string				filename;
+}	t_ast_redirection;
+
+typedef struct s_ast_command
+{
+	t_vector	argv;
+	t_vector	redirs;
+}	t_ast_command;
+
 typedef struct s_ast
 {
-	
+	t_vector	pipes;
 }	t_ast;
 
-/* ************************************************************************** */
-/* COMMAND																	  */
-/* ************************************************************************** */
-
-typedef struct s_session t_session;
-typedef struct s_program t_program;
-
-typedef struct s_command
-{
-	t_str		text;
-	t_vector	tokens;
-	t_u32		tokens_pos; // or a queue
-	t_ast		tree;
-}	t_command;
-
-// calls the tokenizer to get tokens
-// the tokenizer calls the program to get its contents
-// the program calls readline to read user input
-bool	parse_command(t_command *command, t_program *program);
-void	register_command(t_command command);
-bool	execute_command(t_command *command, t_session *session);
-void	free_command(t_command command);
+bool	parse_ast(t_ast *ast, t_program *program);
+bool	execute_ast(t_ast ast, t_session *session);
+void	free_ast(t_ast ast);
 
 /* ************************************************************************** */
 /* PROGRAM																	  */
@@ -91,12 +100,14 @@ void	free_command(t_command command);
 
 typedef struct s_program
 {
-	t_string	str;
+	t_string	text;
+	t_u32		cmd_cursor;
 }	t_program;
 
 bool	alloc_program(t_program *program);
 bool	get_program(t_program *program, char *prompt);
-void	cut_program(t_program *program, t_command command);
+void	register_command(t_program program);
+void	cut_program(t_program *program);
 void	free_program(t_program program);
 
 /* ************************************************************************** */
