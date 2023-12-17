@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 23:04:17 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/17 23:32:14 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ bool	run_repl(t_session *session)
 			break ;
 		if (!parse_ast(&ast, &lines, &error))
 			break ;
+		register_command(lines);
+		cut_lines(&lines);
 		execute_ast(ast, session);
 		free_ast(ast);
 	}

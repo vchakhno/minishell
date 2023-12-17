@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 22:22:31 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/17 23:32:09 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,8 @@ enum	e_prompt_error
 bool	alloc_lines(t_lines *lines);
 bool	read_lines(t_lines *lines, const char *prompt,
 			enum e_prompt_error *error);
-/*
-void	register_command(t_program program);
-void	cut_program(t_program *program);
-*/
+void	register_command(t_lines lines);
+void	cut_lines(t_lines *lines);
 void	free_lines(t_lines lines);
 
 /* ************************************************************************** */

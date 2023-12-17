@@ -50,6 +50,8 @@ bool	read_lines(
 	signal(SIGINT, &sigint_hook);
 
 	rl_on_new_line();
+	if (lines->cursor == 0)
+		prompt = MAIN_PROMPT;
 	user_input = readline(prompt);
 
 	// post readline
@@ -87,13 +89,13 @@ bool	read_lines(
 
 void	register_command(t_lines lines)
 {
-	lines.text.c_str[lines.cursor] = '\0';
+	lines.text.c_str[lines.cursor - 1] = '\0';
 	add_history(lines.text.c_str);
 }
 
 void	cut_lines(t_lines *lines)
 {
-	ft_string_remove_slice(&lines->text, 0, lines->cursor + 1);
+	ft_string_remove_slice(&lines->text, 0, lines->cursor);
 	lines->cursor = 0;
 }
 
