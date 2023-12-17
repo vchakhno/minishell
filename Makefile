@@ -13,7 +13,7 @@ SRCS		:= \
 				main.c \
 				session.c \
 				tokenizer.c \
-				program.c \
+				lines.c \
 				env.c \
 				# ast.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))

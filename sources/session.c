@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 19:05:10 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/17 20:36:09 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ bool	init_session(t_session *session, char **env)
 
 bool	run_repl(t_session *session)
 {
-	t_program				program;
+	t_lines					lines;
 	t_token					token;
 	bool					status;
-	enum e_program_error	error;
+	enum e_prompt_error		error;
 
 	(void) session;
-	if (!alloc_program(&program))
+	if (!alloc_lines(&lines))
 		return (false);
-	status = parse_token(&program, &token, MAIN_PROMPT, &error);
+	status = parse_token(&lines, &token, MAIN_PROMPT, &error);
 	while (true)
 	{
 		if (status)
@@ -46,9 +46,9 @@ bool	run_repl(t_session *session)
 			ft_println("Syntax error");
 		else if (error == ERROR_MALLOC)
 			break ;
-		status = parse_token(&program, &token, MAIN_PROMPT, &error);
+		status = parse_token(&lines, &token, MAIN_PROMPT, &error);
 	}
-	free_program(program);
+	free_lines(lines);
 	return (true);
 }
 
