@@ -44,7 +44,7 @@ bool	read_lines(
 	new_stdin = dup(STDIN_FILENO);
 	if (new_stdin == -1)
 	{
-		*error = ERROR_MALLOC;
+		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
 	signal(SIGINT, &sigint_hook);
@@ -56,7 +56,7 @@ bool	read_lines(
 	signal(SIGINT, SIG_DFL);
 	if (dup2(new_stdin, STDIN_FILENO) == -1)
 	{
-		*error = ERROR_MALLOC;
+		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
 	close(new_stdin);
@@ -66,17 +66,17 @@ bool	read_lines(
 		if (g_ctrlc)
 		{
 			g_ctrlc = false;
-			*error = ERROR_CTRL_C;
+			*error = PROMPT_ERROR_CTRL_C;
 		}
 		else
-			*error = ERROR_CTRL_D;
+			*error = PROMPT_ERROR_CTRL_D;
 		return (false);
 	}
 	if (!ft_string_reserve(&lines->text, ft_c_str_len(user_input) + 1))
 	{
 		ft_oprintln(ft_stderr(), "Error: Not enough memory to store user lines");
 		free(user_input);
-		*error = ERROR_MALLOC;
+		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
 	ft_string_append_c_str(&lines->text, user_input);

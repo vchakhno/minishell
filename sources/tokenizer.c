@@ -6,162 +6,69 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 20:34:03 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/17 21:25:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	check_ops(t_lines lines, t_str *op)
+bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines)
 {
-	char *const	ops[] = {
-		"<<", "<", ">>", ">", "&&", "||", "|", "(", ")", "\n"
-	};
-	t_str		lines_str;
-	t_u32		i;
-
-	lines_str.c_str = lines.text.c_str + lines.cursor;
-	lines_str.len = lines.text.len - lines.cursor;
-	i = 0;
-	while (i < (int) sizeof ops / sizeof * ops)
-	{
-		if (ft_str_starts_with_c_str(lines_str, ops[i]))
-		{
-			if (op)
-				*op = ft_str(ops[i]);
-			return (true);
-		}
-		i++;
-	}
-	return (false);
+	if (!ft_vector_alloc(&tokenizer->tokens, sizeof(t_token), 30))
+		return (false);
+	tokenizer->lines = lines;
+	return (true);
 }
 
-bool	match_ops(t_lines *lines, t_token *token)
-{
-	if (check_ops(*lines, &token->content))
+bool	match_token(
+	t_tokenizer *tokenizer, char *content, const char *prompt,
+	enum e_syntax_error *error
+) {
+	t_token	token;
+
+	if (!peek_token(tokenizer, &token, prompt, (enum e_prompt_error *)error))
+		return (false);
+	if (ft_str_equal_c_str(token.content, content))
 	{
-		token->type = TOKEN_OP;
-		lines->cursor += token->content.len;
+		ft_vector_remove(&tokenizer->tokens, 0, NULL);
 		return (true);
 	}
+	*error = SYNTAX_ERROR_NO_MATCH;
 	return (false);
 }
 
-void	skip_blanks(t_lines *lines)
-{
-	while (lines->cursor < lines->text.len
-		&& lines->text.c_str[lines->cursor] == ' ')
-		lines->cursor++;
-}
-
-// bool -> any error (CTRL+C, CTRL+D, malloc)
-
-bool	parse_quotes(
-	t_lines *lines, t_token *token, const char *prompt,
+bool	peek_token(
+	t_tokenizer *tokenizer, t_token *token, const char *prompt,
 	enum e_prompt_error *error
 ) {
-	char	quote;
-
-	quote = lines->text.c_str[lines->cursor];
-	token->content.len++;
-	lines->cursor++;
-	while (lines->cursor < lines->text.len)
+	if (tokenizer->tokens.size > 0)
 	{
-		if (lines->text.c_str[lines->cursor] == quote)
-			return (true);
-		token->content.len++;
-		lines->cursor++;
+		*token = ((t_token *)tokenizer->tokens.elems)[0];
+		return (true);
 	}
-	while (read_lines(lines, prompt, error))
+	if (!parse_token(tokenizer->lines, token, prompt, error))
+		return (false);
+	if (!ft_vector_push(&tokenizer->tokens, token))
 	{
-		while (lines->cursor < lines->text.len)
-		{
-			if (lines->text.c_str[lines->cursor] == quote)
-				return (true);
-			token->content.len++;
-			lines->cursor++;
-		}
-	}
-	return (false);
-}
-
-// bool -> unterminated token
-
-bool	parse_word(t_lines *lines, t_token *token)
-{
-	while (lines->cursor < lines->text.len
-		&& !check_ops(*lines, NULL)
-		&& lines->text.c_str[lines->cursor] != ' ')
-	{
-		if (lines->text.c_str[lines->cursor] == '\"'
-			|| lines->text.c_str[lines->cursor] == '\'')
-			return (false);
-		token->content.len++;
-		lines->cursor++;
+		*error = PROMPT_ERROR_MALLOC;
+		return (false);
 	}
 	return (true);
 }
 
-// bool -> any error (CTRL+C, CTRL+D, malloc)
-
-bool	parse_token(
-	t_lines *lines, t_token *token, const char *prompt,
+bool	consume_token(
+	t_tokenizer *tokenizer, const char *prompt,
 	enum e_prompt_error *error
 ) {
-	skip_blanks(lines);
-	while (lines->cursor == lines->text.len)
+	if (tokenizer->tokens.size > 0)
 	{
-		if (!read_lines(lines, prompt, error))
-			return (false);
-		skip_blanks(lines);
-	}
-	if (match_ops(lines, token))
+		ft_vector_remove(&tokenizer->tokens, 0, NULL);
 		return (true);
-	token->type = TOKEN_WORD;
-	token->content.c_str = lines->text.c_str + lines->cursor;
-	token->content.len = 0;
-	while (!parse_word(lines, token))
-	{
-		if (!parse_quotes(lines, token, "quote> ", error))
-			return (false);
-		token->content.len++;
-		lines->cursor++;
 	}
-	return (true);
+	return (parse_token(tokenizer->lines, &(t_token){0}, prompt, error));
 }
 
-void	print_token(t_token token)
+void	free_tokenizer(t_tokenizer tokenizer)
 {
-	ft_println("({c_str}, \"{str}\")",
-		(char *[]){"OP", "WORD"}[token.type], token.content);
+	ft_vector_free(tokenizer.tokens);
 }
-
-
-
-
-// bool	match_token(
-// 	t_vector tokens, char *content, const char *prompt,
-// 	enum e_prompt_error *error
-// ) {
-// 	if (ft_str_equal_c_str(token.content)
-// 	{
-// 		return (true);
-// 	}
-// 	return (false);
-// }
-
-// bool	peek_token(
-// 	t_vector tokens, t_token *token, const char *prompt,
-// 	enum e_prompt_error *error
-// ) {
-// 	if (tokens.size > 0)
-// 	{
-// 		*token = ((t_token *)tokens.elems)[0];
-// 		return (true);
-// 	}
-// 	if (!parse_token())
-// 		return (false);
-// }
-
-// bool	consume_token(t_vector tokens, const char *prompt,
-// 			enum e_prompt_error *error);

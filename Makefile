@@ -12,10 +12,13 @@ SRC_DIR		:= sources
 SRCS		:= \
 				main.c \
 				session.c \
-				tokenizer.c \
+				token.c \
 				lines.c \
 				env.c \
-				# ast.c
+				tokenizer.c \
+				ast/root.c \
+				ast/command.c \
+				ast/pipe.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes
@@ -40,7 +43,7 @@ INCS		+= $(addprefix $(LIB_DIR)/,$(LIB_INCS))
 # **************************************************************************** #
 
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror
+CFLAGS		:= -Wall -Wextra -Werror -g -gdwarf-4
 CPPFLAGS	:= $(addprefix -I,$(INCS)) -MMD -MP
 LDFLAGS		:= $(addprefix -L,$(dir $(LIB_TARGETS)))
 LDLIBS		:= $(addprefix -l,$(LIBS))
