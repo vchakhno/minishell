@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/11 10:01:52 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/17 19:05:10 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,29 +25,28 @@ bool	init_session(t_session *session, char **env)
 
 bool	run_repl(t_session *session)
 {
-	t_program	program;
-	t_ast		ast;
+	t_program				program;
+	t_token					token;
+	bool					status;
+	enum e_program_error	error;
 
+	(void) session;
 	if (!alloc_program(&program))
 		return (false);
-	while (!session->should_exit)
+	status = parse_token(&program, &token, MAIN_PROMPT, &error);
+	while (true)
 	{
-		if (!parse_ast(&ast, &program))
+		if (status)
 		{
-			ft_oprintln(ft_stderr(), "Error: Command parsing failed");
-			free_program(program);
-			return (false);
+			if (ft_str_equal_c_str(token.content, "exit"))
+				break ;
+			print_token(token);
 		}
-		register_command(program);
-		if (!execute_ast(ast, session))
-		{
-			ft_oprintln(ft_stderr(), "Error: Command execution failed");
-			free_ast(ast);
-			free_program(program);
-			return (false);
-		}
-		free_ast(ast);
-		cut_program(&program);
+		else if (error == ERROR_CTRL_D)
+			ft_println("Syntax error");
+		else if (error == ERROR_MALLOC)
+			break ;
+		status = parse_token(&program, &token, MAIN_PROMPT, &error);
 	}
 	free_program(program);
 	return (true);

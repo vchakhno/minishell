@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 #include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -19,24 +21,53 @@ bool	alloc_program(t_program *program)
 {
 	if (!ft_string_alloc(&program->text, 30))
 		return (false);
-	program->cmd_cursor = 0;
+	program->cursor = 0;
 	return (true);
 }
 
-bool	get_program(t_program *program, char *prompt)
+bool	g_ctrlc = false;
+
+void	sigint_hook(int sig)
 {
+	(void) sig;
+	close(STDIN_FILENO);
+	g_ctrlc = true;
+}
+
+bool	get_program_lines(
+	t_program *program, const char *prompt, enum e_program_error *error
+) {
 	char	*user_input;
+	int		new_stdin;
 	
+	// pre readline
+	new_stdin = dup(STDIN_FILENO);
+	signal(SIGINT, &sigint_hook);
+
+	rl_on_new_line();
 	user_input = readline(prompt);
+	
+	// post readline
+	signal(SIGINT, SIG_DFL);
+	dup2(new_stdin, STDIN_FILENO);
+	close(new_stdin);
+
 	if (!user_input)
 	{
-		ft_oprintln(ft_stderr(), "Error: Couldn't get user program");
+		if (g_ctrlc)
+		{
+			g_ctrlc = false;
+			*error = ERROR_CTRL_C;
+		}
+		else
+			*error = ERROR_CTRL_D;
 		return (false);
 	}
 	if (!ft_string_reserve(&program->text, ft_c_str_len(user_input) + 1))
 	{
 		ft_oprintln(ft_stderr(), "Error: Not enough memory to store user program");
 		free(user_input);
+		*error = ERROR_MALLOC;
 		return (false);
 	}
 	ft_string_append_c_str(&program->text, user_input);
@@ -47,14 +78,14 @@ bool	get_program(t_program *program, char *prompt)
 
 void	register_command(t_program program)
 {
-	program.text.c_str[program.cmd_cursor] = '\0';
+	program.text.c_str[program.cursor] = '\0';
 	add_history(program.text.c_str);
 }
 
 void	cut_program(t_program *program)
 {
-	ft_string_remove_slice(&program->text, 0, program->cmd_cursor + 1);
-	program->cmd_cursor = 0;
+	ft_string_remove_slice(&program->text, 0, program->cursor + 1);
+	program->cursor = 0;
 }
 
 void	free_program(t_program program)

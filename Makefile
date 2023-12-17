@@ -15,7 +15,7 @@ SRCS		:= \
 				tokenizer.c \
 				program.c \
 				env.c \
-				ast.c
+				# ast.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes
