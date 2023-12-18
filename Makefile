@@ -16,9 +16,10 @@ SRCS		:= \
 				lines.c \
 				env.c \
 				tokenizer.c \
+				executable.c \
 				path.c \
 				ast/root.c \
-				ast/command.c \
+				ast/cmd.c \
 				ast/pipe.c \
 				ast/redirs.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))

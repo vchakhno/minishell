@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 11:05:11 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 17:34:15 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ bool	match_redir_op(
 	return (false);
 }
 
-bool	parse_command_redir(
-	t_command_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
+bool	parse_cmd_redir(
+	t_cmd_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
 	t_redirection	redir;
 	t_token			token;

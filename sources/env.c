@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 14:50:10 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 20:01:19 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ bool	parse_env(t_env *env, char **env_strs)
 	{
 		if (!parse_env_var(&var, ft_str(env_strs[i])))
 		{
-			free_env(env);
+			free_env(*env);
 			return (false);
 		}
 		ft_vector_push(&env->vars, &var);
@@ -54,16 +54,16 @@ bool	parse_env(t_env *env, char **env_strs)
 	return (true);
 }
 
-bool	get_env_var(t_env *env, t_str name, t_str *value)
+bool	get_env_var(t_env env, t_str name, t_str *value)
 {
 	t_u32	i;
 
 	i = 0;
-	while (i < env->vars.size)
+	while (i < env.vars.size)
 	{
-		if (ft_str_equal_str(((t_env_var *)env->vars.elems)[i].name.str, name))
+		if (ft_str_equal_str(((t_env_var *)env.vars.elems)[i].name.str, name))
 		{
-			*value = ((t_env_var *)env->vars.elems)[i].value.str;
+			*value = ((t_env_var *)env.vars.elems)[i].value.str;
 			return (true);
 		}
 		i++;
@@ -85,21 +85,21 @@ void	display_env(t_env *env)
 	}
 }
 
-void	free_env_var(t_env_var *var)
+void	free_env_var(t_env_var var)
 {
-	ft_string_free(var->name);
-	ft_string_free(var->value);
+	ft_string_free(var.name);
+	ft_string_free(var.value);
 }
 
-void	free_env(t_env *env)
+void	free_env(t_env env)
 {
 	t_u32	i;
 
 	i = 0;
-	while (i < env->vars.size)
+	while (i < env.vars.size)
 	{
-		free_env_var(&((t_env_var *)env->vars.elems)[i]);
+		free_env_var(((t_env_var *)env.vars.elems)[i]);
 		i++;
 	}
-	ft_vector_free(env->vars);
+	ft_vector_free(env.vars);
 }

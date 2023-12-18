@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 15:11:33 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 21:36:56 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ typedef struct s_lines
 
 enum	e_prompt_error
 {
+	PROMPT_ERROR_MALLOC,
 	PROMPT_ERROR_CTRL_C,
 	PROMPT_ERROR_CTRL_D,
-	PROMPT_ERROR_MALLOC,
 };
 
 bool	alloc_lines(t_lines *lines);
@@ -80,9 +80,9 @@ typedef struct s_tokenizer
 
 enum	e_syntax_error
 {
+	SYNTAX_ERROR_MALLOC,
 	SYNTAX_ERROR_CTRL_C,
 	SYNTAX_ERROR_CTRL_D,
-	SYNTAX_ERROR_MALLOC,
 	SYNTAX_ERROR_NO_MATCH,
 };
 
@@ -98,6 +98,12 @@ void	free_tokenizer(t_tokenizer tokenizer);
 /* ************************************************************************** */
 /* AST																		  */
 /* ************************************************************************** */
+
+enum e_exec_error
+{
+	EXEC_ERROR_EXIT,
+	EXEC_ERROR_RECOVER,
+};
 
 typedef struct s_session	t_session;
 
@@ -115,19 +121,20 @@ typedef struct s_redirection
 	t_string			filename;
 }	t_redirection;
 
-typedef struct s_command_ast
+typedef struct s_cmd_ast
 {
 	t_vector	argv;
 	t_vector	redirs;
-}	t_command_ast;
+}	t_cmd_ast;
 
-bool	alloc_command_ast(t_command_ast *ast);
-bool	parse_command_redir(t_command_ast *ast, t_tokenizer *tokenizer,
+bool	alloc_cmd_ast(t_cmd_ast *ast);
+bool	parse_cmd_redir(t_cmd_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	parse_command_ast(t_command_ast *ast, t_tokenizer *tokenizer,
+bool	parse_cmd_ast(t_cmd_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_command_ast(t_command_ast ast, t_session *session);
-void	free_command_ast(t_command_ast ast);
+bool	execute_cmd_ast(t_cmd_ast ast, t_session *session,
+			enum e_exec_error *error);
+void	free_cmd_ast(t_cmd_ast ast);
 
 typedef struct s_pipe_ast
 {
@@ -137,7 +144,8 @@ typedef struct s_pipe_ast
 bool	alloc_pipe_ast(t_pipe_ast *ast);
 bool	parse_pipe_ast(t_pipe_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_pipe_ast(t_pipe_ast ast, t_session *session);
+bool	execute_pipe_ast(t_pipe_ast ast, t_session *session,
+			enum e_exec_error *error);
 void	free_pipe_ast(t_pipe_ast ast);
 
 typedef struct s_ast_root
@@ -147,7 +155,8 @@ typedef struct s_ast_root
 
 bool	alloc_ast(t_ast_root *ast);
 bool	parse_ast(t_ast_root *ast, t_lines *lines, enum e_syntax_error *error);
-bool	execute_ast(t_ast_root ast, t_session *session);
+bool	execute_ast(t_ast_root ast, t_session *session,
+			enum e_exec_error *error);
 void	free_ast(t_ast_root ast);
 
 /* ************************************************************************** */
@@ -167,14 +176,32 @@ typedef struct s_env
 
 bool	parse_env(t_env *env, char **env_strs);
 void	display_env(t_env *env);
-bool	get_env_var(t_env *env, t_str name, t_str *value);
-void	free_env(t_env *env);
+bool	get_env_var(t_env env, t_str name, t_str *value);
+void	free_env(t_env env);
 
-bool	search_path(t_env *env, t_str cmd_name, t_string *full_path);
+/* ************************************************************************** */
+/* EXECUTABLE																  */
+/* ************************************************************************** */
+
+typedef struct s_executable
+{
+	t_string	full_path;
+	t_vector	compact_argv;
+	t_vector	compact_env;
+}	t_executable;
+
+bool	search_path(t_env env, t_str cmd_name, t_string *full_path,
+			enum e_exec_error *error);
+bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
+			enum e_exec_error *error);
+bool	run_executable(t_executable exec, enum e_exec_error *error);
+void	free_executable(t_executable exec);
 
 /* ************************************************************************** */
 /* SESSION																	  */
 /* ************************************************************************** */
+
+// also contains history and terminal settings
 
 typedef struct s_session
 {
@@ -185,6 +212,6 @@ typedef struct s_session
 
 bool	init_session(t_session *session, char **env);
 bool	run_repl(t_session *session);
-void	destroy_session(t_session *session);
+void	destroy_session(t_session session);
 
 #endif
