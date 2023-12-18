@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 23:32:09 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 11:02:34 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,17 +101,19 @@ void	free_tokenizer(t_tokenizer tokenizer);
 
 typedef struct s_session	t_session;
 
-enum e_ast_redir_type
+enum e_redir_type
 {
-	AST_REDIR_IN,
-	AST_REDIR_OUT,
+	REDIR_IN,
+	REDIR_OUT,
+	REDIR_HEREDOC,
+	REDIR_APPEND,
 };
 
-typedef struct s_ast_redirection
+typedef struct s_redirection
 {
-	enum e_ast_redir_type	type;
-	t_string				filename;
-}	t_ast_redirection;
+	enum e_redir_type	type;
+	t_string			filename;
+}	t_redirection;
 
 typedef struct s_command_ast
 {
@@ -120,6 +122,8 @@ typedef struct s_command_ast
 }	t_command_ast;
 
 bool	alloc_command_ast(t_command_ast *ast);
+bool	parse_command_redir(t_command_ast *ast, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
 bool	parse_command_ast(t_command_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 bool	execute_command_ast(t_command_ast ast, t_session *session);

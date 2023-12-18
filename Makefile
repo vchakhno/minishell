@@ -18,7 +18,8 @@ SRCS		:= \
 				tokenizer.c \
 				ast/root.c \
 				ast/command.c \
-				ast/pipe.c
+				ast/pipe.c \
+				ast/redirs.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes
