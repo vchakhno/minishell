@@ -6,11 +6,14 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 11:01:23 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 15:49:37 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <stdlib.h>
+#include <wait.h>
+#include <unistd.h>
 
 bool	alloc_command_ast(t_command_ast *ast)
 {
@@ -52,8 +55,6 @@ bool	parse_command_arg(
 	return (true);
 }
 
-
-
 bool	parse_command_ast(
 	t_command_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
@@ -72,21 +73,55 @@ bool	parse_command_ast(
 	return (ast->argv.size);
 }
 
-bool	execute_command_ast(t_command_ast ast, t_session *session)
+bool	alloc_exec_argv(t_vector *exec_argv, t_vector args)
 {
 	t_u32	i;
 
-	(void) session;
+	if (!ft_vector_alloc(exec_argv, sizeof(char *), args.size + 1))
+		return (false);
 	i = 0;
-	ft_printf("Cmd: ");
-	while (i < ast.argv.size)
+	while (i < args.size)
 	{
-		ft_printf("{str}", ((t_string *)ast.argv.elems)[i].str);
-		if (i != ast.argv.size - 1)
-			ft_printf(" ");
+		ft_vector_push(exec_argv, &((t_string *)args.elems)[i].c_str);
 		i++;
 	}
-	ft_println("");
+	ft_vector_push(exec_argv, &(char *){NULL});
+	return (true);
+}
+
+bool	execute_command_ast(t_command_ast ast, t_session *session)
+{
+	t_string	full_path;
+	t_vector	exec_argv;
+	pid_t		pid;
+	
+	(void) session;
+	if (!search_path(&session->env,
+			((t_string *)ast.argv.elems)[0].str, &full_path))
+		return (false);
+	if (!alloc_exec_argv(&exec_argv, ast.argv))
+	{
+		ft_string_free(full_path);
+		return (false);
+	}
+	pid = fork();
+	if (pid == -1)
+	{
+		ft_string_free(full_path);
+		ft_vector_free(exec_argv);
+		return (false);
+	}
+	if (pid == 0)
+	{
+		execve(
+			full_path.c_str,
+			(char **)exec_argv.elems,
+			(char *[]){NULL});
+		exit(0);
+	}
+	waitpid(pid, NULL, 0);
+	ft_vector_free(exec_argv);
+	ft_string_free(full_path);
 	return (true);
 }
 

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 11:02:34 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 15:11:33 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,20 +154,23 @@ void	free_ast(t_ast_root ast);
 /* ENV																		  */
 /* ************************************************************************** */
 
-typedef struct s_env_item
+typedef struct s_env_var
 {
-	t_string	key;
+	t_string	name;
 	t_string	value;
-}	t_env_item;
+}	t_env_var;
 
 typedef struct s_env
 {
-	t_vector	items;
+	t_vector	vars;
 }	t_env;
 
 bool	parse_env(t_env *env, char **env_strs);
 void	display_env(t_env *env);
+bool	get_env_var(t_env *env, t_str name, t_str *value);
 void	free_env(t_env *env);
+
+bool	search_path(t_env *env, t_str cmd_name, t_string *full_path);
 
 /* ************************************************************************** */
 /* SESSION																	  */

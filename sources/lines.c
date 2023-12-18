@@ -49,7 +49,6 @@ bool	read_lines(
 	}
 	signal(SIGINT, &sigint_hook);
 
-	rl_on_new_line();
 	if (lines->cursor == 0)
 		prompt = MAIN_PROMPT;
 	user_input = readline(prompt);

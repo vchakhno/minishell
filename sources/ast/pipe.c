@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 22:54:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/18 14:43:01 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool	execute_pipe_ast(t_pipe_ast ast, t_session *session)
 {
 	t_u32	i;
 
-	ft_println("Pipe node: ({u32})", ast.pipes.size);
+	// ft_println("Pipe node: ({u32})", ast.pipes.size);
 	(void) session;
 	i = 0;
 	while (i < ast.pipes.size)

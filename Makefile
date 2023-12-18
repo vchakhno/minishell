@@ -16,6 +16,7 @@ SRCS		:= \
 				lines.c \
 				env.c \
 				tokenizer.c \
+				path.c \
 				ast/root.c \
 				ast/command.c \
 				ast/pipe.c \
