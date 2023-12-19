@@ -15,6 +15,7 @@ SRCS		:= \
 				token.c \
 				lines.c \
 				env.c \
+				env_var.c \
 				tokenizer.c \
 				executable.c \
 				path.c \

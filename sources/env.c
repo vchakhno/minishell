@@ -6,28 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 20:01:19 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/19 22:04:18 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-bool	parse_env_var(t_env_var *var, t_str str)
-{
-	t_u32	sep;
-
-	if (!ft_str_find_char(str, '=', &sep))
-		return (false);
-	if (!ft_string_from_str(&var->name, ft_str_get_slice(str, 0, sep)))
-		return (false);
-	if (!ft_string_from_str(&var->value,
-			ft_str_get_slice(str, sep + 1, str.len - sep - 1)))
-	{
-		ft_string_free(var->name);
-		return (false);
-	}
-	return (true);
-}
 
 bool	parse_env(t_env *env, char **env_strs)
 {
@@ -56,14 +39,16 @@ bool	parse_env(t_env *env, char **env_strs)
 
 bool	get_env_var(t_env env, t_str name, t_str *value)
 {
-	t_u32	i;
+	t_env_var	var;
+	t_u32		i;
 
 	i = 0;
 	while (i < env.vars.size)
 	{
-		if (ft_str_equal_str(((t_env_var *)env.vars.elems)[i].name.str, name))
+		var = ((t_env_var *)env.vars.elems)[i];
+		if (ft_str_equal_str(get_env_var_name(var), name))
 		{
-			*value = ((t_env_var *)env.vars.elems)[i].value.str;
+			*value = get_env_var_value(var);
 			return (true);
 		}
 		i++;
@@ -71,24 +56,44 @@ bool	get_env_var(t_env env, t_str name, t_str *value)
 	return (false);
 }
 
-void	display_env(t_env *env)
+bool	set_env_var(t_env *env, t_str name, t_str value)
 {
-	t_u32	i;
+	t_env_var	*var;
+	t_u32		i;
+	t_env_var	new_var;
 
 	i = 0;
 	while (i < env->vars.size)
 	{
-		ft_println("name: \"{str}\", value: \"{str}\"",
-			((t_env_var *)env->vars.elems)[i].name.str,
-			((t_env_var *)env->vars.elems)[i].value.str);
+		var = &((t_env_var *)env->vars.elems)[i];
+		if (ft_str_equal_str(get_env_var_name(*var), name))
+			return (set_env_var_value(var, value));
 		i++;
 	}
+	if (!ft_vector_reserve(&env->vars, 1)
+		|| !ft_string_alloc(&new_var.string, name.len + value.len + 2))
+		return (false);
+	ft_string_append_str(&new_var.string, name);
+	ft_string_append_c_str(&new_var.string, "=");
+	ft_string_append_str(&new_var.string, value);
+	ft_vector_push(&env->vars, &new_var);
+	return (true);
 }
 
-void	free_env_var(t_env_var var)
+void	display_env(t_env *env)
 {
-	ft_string_free(var.name);
-	ft_string_free(var.value);
+	t_env_var	var;
+	t_u32		i;
+
+	i = 0;
+	while (i < env->vars.size)
+	{
+		var = ((t_env_var *)env->vars.elems)[i];
+		ft_println("name: \"{str}\", value: \"{str}\"",
+			get_env_var_name(var),
+			get_env_var_value(var));
+		i++;
+	}
 }
 
 void	free_env(t_env env)

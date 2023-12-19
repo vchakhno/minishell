@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 21:36:56 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/19 21:54:15 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,15 @@ void	free_ast(t_ast_root ast);
 
 typedef struct s_env_var
 {
-	t_string	name;
-	t_string	value;
+	t_string	string;
+	t_u32		eq_pos;
 }	t_env_var;
+
+bool	parse_env_var(t_env_var *var, t_str str);
+t_str	get_env_var_name(t_env_var var);
+t_str	get_env_var_value(t_env_var var);
+bool	set_env_var_value(t_env_var *var, t_str value);
+void	free_env_var(t_env_var var);
 
 typedef struct s_env
 {
@@ -175,8 +181,9 @@ typedef struct s_env
 }	t_env;
 
 bool	parse_env(t_env *env, char **env_strs);
-void	display_env(t_env *env);
 bool	get_env_var(t_env env, t_str name, t_str *value);
+bool	set_env_var(t_env *env, t_str name, t_str value);
+void	display_env(t_env *env);
 void	free_env(t_env env);
 
 /* ************************************************************************** */
