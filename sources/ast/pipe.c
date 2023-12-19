@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 21:38:10 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:17:28 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ bool	execute_pipe_ast(
 	i = 0;
 	while (i < ast.pipes.size)
 	{
-		execute_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[i], session, error);
+		if (!execute_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[i], session, error))
+			return (false);
 		i++;
 	}
 	return (true);

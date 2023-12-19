@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/19 22:09:28 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:10:26 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool	compact_env(t_vector *compact_env, t_env env)
 bool	alloc_executable(
 	t_executable *exec, t_vector argv, t_env env, enum e_exec_error *error
 ) {
-	if (!search_path(env, ((t_string *)argv.elems)[0].str, &exec->full_path,
+	if (!find_executable(env, ((t_string *)argv.elems)[0].str, &exec->full_path,
 		error))
 		return (false);
 	if (!compact_argv(&exec->compact_argv, argv))
@@ -89,6 +89,7 @@ bool	run_executable(t_executable exec, enum e_exec_error *error)
 			(char **)exec.compact_argv.elems,
 			(char **)exec.compact_env.elems);
 		*error = EXEC_ERROR_EXIT;
+		ft_println("Execve failure");
 		return (false);
 	}
 	waitpid(pid, &wstatus, 0);

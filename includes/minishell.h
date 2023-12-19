@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/19 21:54:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:00:29 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ typedef struct s_executable
 	t_vector	compact_env;
 }	t_executable;
 
-bool	search_path(t_env env, t_str cmd_name, t_string *full_path,
+bool	find_executable(t_env env, t_str cmd_name, t_string *full_path,
 			enum e_exec_error *error);
 bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
 			enum e_exec_error *error);

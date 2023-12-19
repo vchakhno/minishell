@@ -18,7 +18,7 @@ SRCS		:= \
 				env_var.c \
 				tokenizer.c \
 				executable.c \
-				path.c \
+				find_executable.c \
 				ast/root.c \
 				ast/cmd.c \
 				ast/pipe.c \
