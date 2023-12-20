@@ -6,11 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 17:34:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/19 23:57:03 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <fcntl.h>
+#include <unistd.h>
 
 bool	match_redir_op(
 	t_tokenizer *tokenizer, enum e_redir_type *type, enum e_syntax_error *error
@@ -33,7 +35,7 @@ bool	match_redir_op(
 }
 
 bool	parse_cmd_redir(
-	t_cmd_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_vector *redirs, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
 	t_redirection	redir;
 	t_token			token;
@@ -53,11 +55,42 @@ bool	parse_cmd_redir(
 		*error = SYNTAX_ERROR_MALLOC;
 		return (false);
 	}
-	if (!ft_vector_push(&ast->redirs, &redir))
+	if (!ft_vector_push(redirs, &redir))
 	{
 		ft_string_free(redir.filename);
 		*error = SYNTAX_ERROR_MALLOC;
 		return (false);
+	}
+	return (true);
+}
+
+bool	execute_cmd_redir(t_redirection redir, enum e_exec_error *error)
+{
+	t_i32	fd;
+
+	if (redir.type == REDIR_IN)
+	{
+		fd = open(redir.filename.c_str, O_RDONLY);
+		if (fd == -1 || dup2(fd, STDIN_FILENO) == -1)
+		{
+			*error = EXEC_ERROR_RECOVER;
+			return (false);
+		}
+		close(fd);
+	}
+	return (true);
+}
+
+bool	execute_cmd_redirs(t_vector redirs, enum e_exec_error *error)
+{
+	t_u32	i;
+
+	i = 0;
+	while (i < redirs.size)
+	{
+		if (!execute_cmd_redir(((t_redirection *)redirs.elems)[i], error))
+			return (false);
+		i++;
 	}
 	return (true);
 }

@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 21:37:44 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/20 01:37:48 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <unistd.h>
 
 bool	alloc_cmd_ast(t_cmd_ast *ast)
 {
@@ -25,7 +26,7 @@ bool	alloc_cmd_ast(t_cmd_ast *ast)
 }
 
 bool	parse_cmd_arg(
-	t_cmd_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_vector *argv, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
 	t_token		token;
 	t_string	arg;
@@ -43,7 +44,7 @@ bool	parse_cmd_arg(
 		*error = SYNTAX_ERROR_MALLOC;
 		return (false);
 	}
-	if (!ft_vector_push(&ast->argv, &arg))
+	if (!ft_vector_push(argv, &arg))
 	{
 		ft_string_free(arg);
 		*error = SYNTAX_ERROR_MALLOC;
@@ -57,11 +58,11 @@ bool	parse_cmd_ast(
 ) {
 	while (true)
 	{
-		if (parse_cmd_arg(ast, tokenizer, error))
+		if (parse_cmd_arg(&ast->argv, tokenizer, error))
 			continue ;
 		if (*error != SYNTAX_ERROR_NO_MATCH)
 			return (false);
-		if (parse_cmd_redir(ast, tokenizer, error))
+		if (parse_cmd_redir(&ast->redirs, tokenizer, error))
 			continue ;
 		if (*error != SYNTAX_ERROR_NO_MATCH)
 			return (false);
@@ -73,16 +74,27 @@ bool	parse_cmd_ast(
 bool	execute_cmd_ast(
 	t_cmd_ast ast, t_session *session, enum e_exec_error *error
 ) {
-	t_executable	exec;
+	t_i32	stdin_save;
 
-	if (!alloc_executable(&exec, ast.argv, session->env, error))
-		return (false);
-	if (!run_executable(exec, error))
+	stdin_save = dup(STDIN_FILENO);
+	if (stdin_save == -1)
 	{
-		free_executable(exec);
+		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	free_executable(exec);
+	if (!execute_cmd_redirs(ast.redirs, error)
+		|| !execute_command(ast.argv, session, error))
+	{
+		close(stdin_save);
+		return (false);
+	}
+	if (dup2(stdin_save, STDIN_FILENO) == -1)
+	{
+		close(stdin_save);
+		*error = EXEC_ERROR_EXIT;
+		return (false);
+	}
+	close(stdin_save);
 	return (true);
 }
 
