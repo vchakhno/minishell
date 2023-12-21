@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 15:15:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 15:48:20 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,6 +246,7 @@ bool	execute_command_async(t_vector argv, t_session *session,
 
 typedef struct s_session
 {
+	t_lines	lines;
 	t_env	env;
 	bool	should_exit;
 	t_u8	last_status;
