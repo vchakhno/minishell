@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 16:17:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 17:56:20 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,7 @@ bool	find_executable(t_env env, t_str cmd_name, t_string *full_path,
 bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
 			enum e_exec_error *error);
 bool	run_executable_sync(t_executable exec, t_backup_fds backup,
-			enum e_exec_error *error);
+			t_u8 *status, enum e_exec_error *error);
 void	run_executable_async(t_executable exec);
 void	free_executable(t_executable exec);
 

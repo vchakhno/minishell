@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 15:10:35 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 18:03:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ bool	alloc_executable(
 }
 
 bool	run_executable_sync(
-	t_executable exec, t_backup_fds backup, enum e_exec_error *error
+	t_executable exec, t_backup_fds backup, t_u8 *status,
+	enum e_exec_error *error
 ) {
 	pid_t		pid;
 	int			wstatus;
@@ -86,19 +87,15 @@ bool	run_executable_sync(
 	if (pid == 0)
 	{
 		discard_backup_fds(backup);
-		execve(
-			exec.full_path.c_str,
-			(char **)exec.compact_argv.elems,
-			(char **)exec.compact_env.elems);
+		run_executable_async(exec);
 		*error = EXEC_ERROR_EXIT;
-		ft_println("Execve failure");
 		return (false);
 	}
 	waitpid(pid, &wstatus, 0);
 	if (WIFEXITED(wstatus))
-		ft_println("Status: {u32}", WEXITSTATUS(wstatus));
+		*status = WEXITSTATUS(wstatus);
 	else if (WIFSIGNALED(wstatus))
-		ft_println("Signaled: {u32}", WTERMSIG(wstatus));
+		*status = 128 + WTERMSIG(wstatus);
 	return (true);
 }
 
@@ -108,7 +105,7 @@ void	run_executable_async(t_executable exec)
 		exec.full_path.c_str,
 		(char **)exec.compact_argv.elems,
 		(char **)exec.compact_env.elems);
-	ft_println("Execve failure");
+	ft_oprintln(ft_stderr(), "Execve failure");
 }
 
 void	free_executable(t_executable exec)

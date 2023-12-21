@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 14:58:32 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 18:41:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ bool	execute_cmd_ast_sync(
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
+	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
 	return (status);
 }
 

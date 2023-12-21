@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 15:13:11 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 17:55:54 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ bool	execute_command_sync(
 
 	if (!alloc_executable(&exec, argv, session->env, error))
 		return (false);
-	if (!run_executable_sync(exec, backup, error))
+	if (!run_executable_sync(exec, backup, &session->last_status, error))
 	{
 		free_executable(exec);
 		return (false);

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 17:13:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 18:41:07 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ bool	init_session(t_session *session, char **env)
 		free_env(session->env);
 		return (false);
 	}
+	session->last_status = 0;
 	rl_outstream = stderr;
 	return (true);
 }
