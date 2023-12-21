@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/19 23:10:26 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 15:10:35 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,9 @@ bool	alloc_executable(
 	return (true);
 }
 
-bool	run_executable(t_executable exec, enum e_exec_error *error)
-{
+bool	run_executable_sync(
+	t_executable exec, t_backup_fds backup, enum e_exec_error *error
+) {
 	pid_t		pid;
 	int			wstatus;
 
@@ -84,6 +85,7 @@ bool	run_executable(t_executable exec, enum e_exec_error *error)
 	}
 	if (pid == 0)
 	{
+		discard_backup_fds(backup);
 		execve(
 			exec.full_path.c_str,
 			(char **)exec.compact_argv.elems,
@@ -98,6 +100,15 @@ bool	run_executable(t_executable exec, enum e_exec_error *error)
 	else if (WIFSIGNALED(wstatus))
 		ft_println("Signaled: {u32}", WTERMSIG(wstatus));
 	return (true);
+}
+
+void	run_executable_async(t_executable exec)
+{
+	execve(
+		exec.full_path.c_str,
+		(char **)exec.compact_argv.elems,
+		(char **)exec.compact_env.elems);
+	ft_println("Execve failure");
 }
 
 void	free_executable(t_executable exec)

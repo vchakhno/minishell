@@ -24,7 +24,8 @@ SRCS		:= \
 				ast/root.c \
 				ast/cmd.c \
 				ast/pipe.c \
-				ast/redirs.c
+				ast/cmd_redir.c \
+				ast/cmd_arg.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes

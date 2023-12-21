@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 13:45:10 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 14:58:32 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,34 +20,6 @@ bool	alloc_cmd_ast(t_cmd_ast *ast)
 	if (!ft_vector_alloc(&ast->redirs, sizeof(t_redirection), 10))
 	{
 		ft_vector_free(ast->argv);
-		return (false);
-	}
-	return (true);
-}
-
-bool	parse_cmd_arg(
-	t_vector *argv, t_tokenizer *tokenizer, enum e_syntax_error *error
-) {
-	t_token		token;
-	t_string	arg;
-
-	if (!peek_token(tokenizer, &token, "cmd> ", (enum e_prompt_error *)error))
-		return (false);
-	if (token.type != TOKEN_WORD)
-	{
-		*error = SYNTAX_ERROR_NO_MATCH;
-		return (false);
-	}
-	consume_token(tokenizer, NULL, NULL);
-	if (!ft_string_from_str(&arg, token.content))
-	{
-		*error = SYNTAX_ERROR_MALLOC;
-		return (false);
-	}
-	if (!ft_vector_push(argv, &arg))
-	{
-		ft_string_free(arg);
-		*error = SYNTAX_ERROR_MALLOC;
 		return (false);
 	}
 	return (true);
@@ -71,29 +43,45 @@ bool	parse_cmd_ast(
 	return (ast->argv.size);
 }
 
-bool	execute_cmd_ast(
+// For when pipe has a single child
+// 
+// In this case, executables fork (and builtins don't)
+// Then both are supposed to return normally
+// /!\ There can also be 2 returns in case execve fails
+
+bool	execute_cmd_ast_sync(
 	t_cmd_ast ast, t_session *session, enum e_exec_error *error
 ) {
 	t_backup_fds	backup;
+	bool			status;
 
 	if (!save_backup_fds(&backup))
 	{
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	if (!execute_cmd_redirs(ast.redirs, error)
-		|| !execute_command(ast.argv, session, error))
-	{
-		if (!restore_backup_fds(backup) && *error == EXEC_ERROR_RECOVER)
-			*error = EXEC_ERROR_EXIT;
-		return (false);
-	}
+	status = (execute_cmd_redirs(ast.redirs, error)
+			&& execute_command_sync(ast.argv, session, backup, error));
 	if (!restore_backup_fds(backup))
 	{
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	return (true);
+	return (status);
+}
+
+// For when pipe has multiple children
+//
+// In this case, executables don't fork (nor do builtins)
+// Executables are not supposed to return, except if execve fails
+
+bool	execute_cmd_ast_async(
+	t_cmd_ast ast, t_session *session, enum e_exec_error *error
+) {
+	return (
+		execute_cmd_redirs(ast.redirs, error)
+		&& execute_command_async(ast.argv, session, error)
+	);
 }
 
 void	free_cmd_ast(t_cmd_ast ast)

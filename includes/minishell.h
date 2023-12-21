@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 13:42:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 15:15:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,10 +137,15 @@ typedef struct s_cmd_ast
 	t_vector	redirs;
 }	t_cmd_ast;
 
+bool	parse_cmd_arg(t_vector *argv, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+
 bool	alloc_cmd_ast(t_cmd_ast *ast);
 bool	parse_cmd_ast(t_cmd_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_cmd_ast(t_cmd_ast ast, t_session *session,
+bool	execute_cmd_ast_sync(t_cmd_ast ast, t_session *session,
+			enum e_exec_error *error);
+bool	execute_cmd_ast_async(t_cmd_ast ast, t_session *session,
 			enum e_exec_error *error);
 void	free_cmd_ast(t_cmd_ast ast);
 
@@ -195,6 +200,20 @@ void	display_env(t_env *env);
 void	free_env(t_env env);
 
 /* ************************************************************************** */
+/* BACKUP_FDS																  */
+/* ************************************************************************** */
+
+typedef struct s_backup_fds
+{
+	t_i32	stdin;
+	t_i32	stdout;
+}	t_backup_fds;
+
+bool	save_backup_fds(t_backup_fds *backup);
+bool	restore_backup_fds(t_backup_fds backup);
+void	discard_backup_fds(t_backup_fds backup);
+
+/* ************************************************************************** */
 /* EXECUTABLE																  */
 /* ************************************************************************** */
 
@@ -209,25 +228,15 @@ bool	find_executable(t_env env, t_str cmd_name, t_string *full_path,
 			enum e_exec_error *error);
 bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
 			enum e_exec_error *error);
-bool	run_executable(t_executable exec, enum e_exec_error *error);
+bool	run_executable_sync(t_executable exec, t_backup_fds backup,
+			enum e_exec_error *error);
+void	run_executable_async(t_executable exec);
 void	free_executable(t_executable exec);
 
-bool	execute_command(t_vector argv, t_session *session,
+bool	execute_command_sync(t_vector argv, t_session *session,
+			t_backup_fds backup, enum e_exec_error *error);
+bool	execute_command_async(t_vector argv, t_session *session,
 			enum e_exec_error *error);
-
-/* ************************************************************************** */
-/* BACKUP_FDS																  */
-/* ************************************************************************** */
-
-typedef struct s_backup_fds
-{
-	t_i32	stdin;
-	t_i32	stdout;
-	t_i32	stderr;
-}	t_backup_fds;
-
-bool	save_backup_fds(t_backup_fds *backup);
-bool	restore_backup_fds(t_backup_fds backup);
 
 /* ************************************************************************** */
 /* SESSION																	  */
