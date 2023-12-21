@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/20 01:37:48 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:45:10 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,9 @@ bool	parse_cmd_ast(
 bool	execute_cmd_ast(
 	t_cmd_ast ast, t_session *session, enum e_exec_error *error
 ) {
-	t_i32	stdin_save;
+	t_backup_fds	backup;
 
-	stdin_save = dup(STDIN_FILENO);
-	if (stdin_save == -1)
+	if (!save_backup_fds(&backup))
 	{
 		*error = EXEC_ERROR_EXIT;
 		return (false);
@@ -85,16 +84,15 @@ bool	execute_cmd_ast(
 	if (!execute_cmd_redirs(ast.redirs, error)
 		|| !execute_command(ast.argv, session, error))
 	{
-		close(stdin_save);
+		if (!restore_backup_fds(backup) && *error == EXEC_ERROR_RECOVER)
+			*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	if (dup2(stdin_save, STDIN_FILENO) == -1)
+	if (!restore_backup_fds(backup))
 	{
-		close(stdin_save);
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	close(stdin_save);
 	return (true);
 }
 

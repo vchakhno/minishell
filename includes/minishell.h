@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/20 01:36:16 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/21 13:42:07 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,20 @@ void	free_executable(t_executable exec);
 
 bool	execute_command(t_vector argv, t_session *session,
 			enum e_exec_error *error);
+
+/* ************************************************************************** */
+/* BACKUP_FDS																  */
+/* ************************************************************************** */
+
+typedef struct s_backup_fds
+{
+	t_i32	stdin;
+	t_i32	stdout;
+	t_i32	stderr;
+}	t_backup_fds;
+
+bool	save_backup_fds(t_backup_fds *backup);
+bool	restore_backup_fds(t_backup_fds backup);
 
 /* ************************************************************************** */
 /* SESSION																	  */

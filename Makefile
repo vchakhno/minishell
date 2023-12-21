@@ -19,6 +19,7 @@ SRCS		:= \
 				tokenizer.c \
 				command.c \
 				executable.c \
+				backup_fds.c \
 				find_executable.c \
 				ast/root.c \
 				ast/cmd.c \
