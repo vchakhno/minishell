@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:25:34 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:37:41 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,15 @@
 #include <unistd.h>
 #include <wait.h>
 
-bool	alloc_pipeline_ast(t_pipeline_ast *ast)
+bool	alloc_pipeline(t_vector *pipeline)
 {
-	if (!ft_vector_alloc(&ast->pipes, sizeof(t_simple_command), 8))
+	if (!ft_vector_alloc(pipeline, sizeof(t_simple_command), 8))
 		return (false);
 	return (true);
 }
 
-bool	parse_pipeline_ast(
-	t_pipeline_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
+bool	parse_pipeline(
+	t_vector *pipeline, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
 	t_simple_command	command;
 
@@ -40,7 +40,7 @@ bool	parse_pipeline_ast(
 			free_simple_command(command);
 			return (false);
 		}
-		if (!ft_vector_push(&ast->pipes, &command))
+		if (!ft_vector_push(pipeline, &command))
 		{
 			free_simple_command(command);
 			*error = SYNTAX_ERROR_MALLOC;
@@ -104,17 +104,17 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 	}
 }
 
-bool	start_pipeline(
-	t_pipeline_ast ast, pid_t *pids, t_session *session, enum e_exec_error *error
+bool	start_vector(
+	t_vector pipeline, pid_t *pids, t_session *session, enum e_exec_error *error
 ) {
 	t_u32	i;
 	int		input;
 	int		pipe_fds[2];
 
 	i = 0;
-	while (i < ast.pipes.size)
+	while (i < pipeline.size)
 	{
-		if (!next_pipe(&input, pipe_fds, i == 0, i == ast.pipes.size - 1)
+		if (!next_pipe(&input, pipe_fds, i == 0, i == pipeline.size - 1)
 			|| !ft_fork(&pids[i]))
 		{
 			cleanup_pipeline(i, pids);
@@ -126,7 +126,7 @@ bool	start_pipeline(
 			if (!apply_pipe(&input, pipe_fds))
 				*error = EXEC_ERROR_EXIT;
 			else
-				start_simple_command(((t_simple_command *)ast.pipes.elems)[i],
+				start_simple_command(((t_simple_command *)pipeline.elems)[i],
 					session, error);
 			cleanup_pipeline(i + 1, pids);
 			return (false);
@@ -137,7 +137,7 @@ bool	start_pipeline(
 	return (true);
 }
 
-void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
+void	wait_vector(t_u32 size, pid_t *pids, t_session *session)
 {
 	t_u32	i;
 	int		wstatus;
@@ -154,39 +154,39 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 		session->last_status = 128 + WTERMSIG(wstatus);
 }
 
-bool	run_pipeline_ast(
-	t_pipeline_ast ast, t_session *session, enum e_exec_error *error
+bool	run_pipeline(
+	t_vector pipeline, t_session *session, enum e_exec_error *error
 ) {
 	pid_t	*pids;
 
-	if (ast.pipes.size == 1)
-		return (!run_simple_command(((t_simple_command *)ast.pipes.elems)[0],
+	if (pipeline.size == 1)
+		return (!run_simple_command(((t_simple_command *)pipeline.elems)[0],
 			session, error));
-	if (!ft_mem_malloc(&pids, ast.pipes.size * sizeof(pid_t)))
+	if (!ft_mem_malloc(&pids, pipeline.size * sizeof(pid_t)))
 	{
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	if (!start_pipeline(ast, pids, session, error))
+	if (!start_vector(pipeline, pids, session, error))
 	{
 		free(pids);
 		return (false);
 	}
-	wait_pipeline(ast.pipes.size, pids, session);
+	wait_vector(pipeline.size, pids, session);
 	free(pids);
 	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
 	return (true);
 }
 
-void	free_pipeline_ast(t_pipeline_ast ast)
+void	free_pipeline(t_vector pipeline)
 {
 	t_u32	i;
 
 	i = 0;
-	while (i < ast.pipes.size)
+	while (i < pipeline.size)
 	{
-		free_simple_command(((t_simple_command *)ast.pipes.elems)[i]);
+		free_simple_command(((t_simple_command *)pipeline.elems)[i]);
 		i++;
 	}
-	ft_vector_free(ast.pipes);
+	ft_vector_free(pipeline);
 }

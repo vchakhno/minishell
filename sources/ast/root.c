@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:21:09 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:29:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool	alloc_ast(t_ast_root *ast)
 {
-	return (alloc_pipeline_ast(&ast->pipes));
+	return (alloc_pipeline(&ast->pipes));
 }
 
 bool	parse_ast(
@@ -24,7 +24,7 @@ bool	parse_ast(
 
 	if (!alloc_tokenizer(&tokenizer, lines))
 		return (false);
-	if (!parse_pipeline_ast(&ast->pipes, &tokenizer, error))
+	if (!parse_pipeline(&ast->pipes, &tokenizer, error))
 	{
 		free_tokenizer(tokenizer);
 		return (false);
@@ -36,10 +36,10 @@ bool	parse_ast(
 bool	run_ast(
 	t_ast_root ast, t_session *session, enum e_exec_error *error
 ) {
-	return (run_pipeline_ast(ast.pipes, session, error));
+	return (run_pipeline(ast.pipes, session, error));
 }
 
 void	free_ast(t_ast_root ast)
 {
-	free_pipeline_ast(ast.pipes);
+	free_pipeline(ast.pipes);
 }
