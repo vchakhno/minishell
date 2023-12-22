@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:35:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 21:57:16 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,9 +229,9 @@ bool	run_executable(t_executable exec, t_backup_fds backup,
 void	start_executable(t_executable exec);
 void	free_executable(t_executable exec);
 
-bool	run_command(t_vector argv, t_session *session,
+bool	run_raw_command(t_vector argv, t_session *session,
 			t_backup_fds backup, enum e_exec_error *error);
-bool	start_command(t_vector argv, t_session *session,
+bool	start_raw_command(t_vector argv, t_session *session,
 			enum e_exec_error *error);
 
 /* ************************************************************************** */

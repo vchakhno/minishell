@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:37:41 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 21:56:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 	}
 }
 
-bool	start_vector(
+bool	start_pipeline(
 	t_vector pipeline, pid_t *pids, t_session *session, enum e_exec_error *error
 ) {
 	t_u32	i;
@@ -137,7 +137,7 @@ bool	start_vector(
 	return (true);
 }
 
-void	wait_vector(t_u32 size, pid_t *pids, t_session *session)
+void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 {
 	t_u32	i;
 	int		wstatus;
@@ -167,12 +167,12 @@ bool	run_pipeline(
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	if (!start_vector(pipeline, pids, session, error))
+	if (!start_pipeline(pipeline, pids, session, error))
 	{
 		free(pids);
 		return (false);
 	}
-	wait_vector(pipeline.size, pids, session);
+	wait_pipeline(pipeline.size, pids, session);
 	free(pids);
 	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
 	return (true);
