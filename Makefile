@@ -19,7 +19,7 @@ SRCS		:= \
 				tokenizer.c \
 				utils/move_fd.c \
 				utils/fork.c \
-				command.c \
+				raw_command.c \
 				executable.c \
 				backup_fds.c \
 				find_executable.c \

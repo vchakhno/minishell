@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:27:57 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:41:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ bool	run_simple_command(
 		return (false);
 	}
 	status = (run_cmd_redirs(cmd.redirs, error)
-			&& run_command(cmd.argv, session, backup, error));
+			&& run_raw_command(cmd.argv, session, backup, error));
 	if (!restore_backup_fds(backup))
 	{
 		*error = EXEC_ERROR_EXIT;
@@ -81,7 +81,7 @@ void	start_simple_command(
 ) {
 	if (!run_cmd_redirs(cmd.redirs, error))
 		return ;
-	start_command(cmd.argv, session, error);
+	start_raw_command(cmd.argv, session, error);
 }
 
 void	free_simple_command(t_simple_command cmd)
