@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 21:56:22 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 22:56:01 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,6 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 {
 	t_u32	i;
 
-	(void) size;
-	(void) pids;
 	i = 0;
 	while (i < size)
 	{
@@ -123,12 +121,11 @@ bool	start_pipeline(
 		}
 		if (pids[i] == 0)
 		{
-			if (!apply_pipe(&input, pipe_fds))
-				*error = EXEC_ERROR_EXIT;
-			else
+			if (apply_pipe(&input, pipe_fds))
 				start_simple_command(((t_simple_command *)pipeline.elems)[i],
 					session, error);
-			cleanup_pipeline(i + 1, pids);
+			cleanup_pipeline(i, pids);
+			*error = EXEC_ERROR_EXIT;
 			return (false);
 		}
 		i++;

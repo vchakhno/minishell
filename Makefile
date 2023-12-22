@@ -27,7 +27,9 @@ SRCS		:= \
 				ast/simple_command.c \
 				ast/pipeline.c \
 				ast/cmd_redir.c \
-				ast/cmd_arg.c
+				ast/cmd_arg.c \
+				builtins/exit.c \
+				builtins/cat.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes

@@ -48,13 +48,13 @@ bool	read_lines(
 		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
-	signal(SIGINT, &sigint_hook);
-
 	if (lines->cursor == 0)
 		prompt = MAIN_PROMPT;
+	signal(SIGINT, &sigint_hook);
+
 	user_input = readline(prompt);
 	// post readline
-	signal(SIGINT, SIG_DFL);
+	signal(SIGINT, SIG_IGN);
 	if (dup2(new_stdin, STDIN_FILENO) == -1)
 	{
 		*error = PROMPT_ERROR_MALLOC;

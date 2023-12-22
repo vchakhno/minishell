@@ -6,12 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:23:46 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 22:40:54 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <stdlib.h>
+#include <signal.h>
 #include <wait.h>
 #include <unistd.h>
 
@@ -101,6 +102,8 @@ bool	run_executable(
 
 void	start_executable(t_executable exec)
 {
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 	execve(
 		exec.full_path.c_str,
 		(char **)exec.compact_argv.elems,

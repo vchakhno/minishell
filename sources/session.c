@@ -6,13 +6,14 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:21:09 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 22:36:30 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <minishell.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
 
 bool	init_session(t_session *session, char **env)
 {
@@ -23,8 +24,11 @@ bool	init_session(t_session *session, char **env)
 		free_env(session->env);
 		return (false);
 	}
+	session->should_exit = false;
 	session->last_status = 0;
 	rl_outstream = stderr;
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
 	return (true);
 }
 
@@ -36,7 +40,7 @@ bool	run_repl(t_session *session)
 	bool					valid_ast;
 
 	(void) session;
-	while (true)
+	while (!session->should_exit)
 	{
 		if (!alloc_ast(&ast))
 			break ;

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 21:57:16 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 22:29:11 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,6 +245,7 @@ typedef struct s_session
 	t_lines		lines;
 	t_env		env;
 	t_u8		last_status;
+	bool		should_exit;
 }	t_session;
 
 bool	init_session(t_session *session, char **env);
@@ -257,5 +258,18 @@ void	destroy_session(t_session session);
 
 bool	move_fd(int from, int to);
 bool	ft_fork(pid_t *pid);
+
+/* ************************************************************************** */
+/* BUILTINS																	  */
+/* ************************************************************************** */
+
+typedef bool				(*t_builtin)(
+	t_vector argv, t_session *session, enum e_exec_error *error
+);
+
+bool	run_builtin_exit(t_vector argv, t_session *session,
+			enum e_exec_error *error);
+bool	run_builtin_cat(t_vector argv, t_session *session,
+			enum e_exec_error *error);
 
 #endif
