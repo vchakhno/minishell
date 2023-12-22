@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe.c                                             :+:      :+:    :+:   */
+/*   pipeline.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:00:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:10:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,15 @@
 #include <unistd.h>
 #include <wait.h>
 
-bool	alloc_pipe_ast(t_pipe_ast *ast)
+bool	alloc_pipeline_ast(t_pipeline_ast *ast)
 {
 	if (!ft_vector_alloc(&ast->pipes, sizeof(t_cmd_ast), 8))
 		return (false);
 	return (true);
 }
 
-bool	parse_pipe_ast(
-	t_pipe_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
+bool	parse_pipeline_ast(
+	t_pipeline_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
 	t_cmd_ast	command;
 
@@ -105,7 +105,7 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 }
 
 bool	start_pipeline(
-	t_pipe_ast ast, pid_t *pids, t_session *session, enum e_exec_error *error
+	t_pipeline_ast ast, pid_t *pids, t_session *session, enum e_exec_error *error
 ) {
 	t_u32	i;
 	int		input;
@@ -154,8 +154,8 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 		session->last_status = 128 + WTERMSIG(wstatus);
 }
 
-bool	execute_pipe_ast(
-	t_pipe_ast ast, t_session *session, enum e_exec_error *error
+bool	execute_pipeline_ast(
+	t_pipeline_ast ast, t_session *session, enum e_exec_error *error
 ) {
 	pid_t	*pids;
 
@@ -178,7 +178,7 @@ bool	execute_pipe_ast(
 	return (true);
 }
 
-void	free_pipe_ast(t_pipe_ast ast)
+void	free_pipeline_ast(t_pipeline_ast ast)
 {
 	t_u32	i;
 

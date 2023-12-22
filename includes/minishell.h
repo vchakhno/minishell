@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 17:25:57 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:10:29 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,21 +150,21 @@ void	execute_cmd_ast_async(t_cmd_ast ast, t_session *session,
 			enum e_exec_error *error);
 void	free_cmd_ast(t_cmd_ast ast);
 
-typedef struct s_pipe_ast
+typedef struct s_pipeline_ast
 {
 	t_vector	pipes;
-}	t_pipe_ast;
+}	t_pipeline_ast;
 
-bool	alloc_pipe_ast(t_pipe_ast *ast);
-bool	parse_pipe_ast(t_pipe_ast *ast, t_tokenizer *tokenizer,
+bool	alloc_pipeline_ast(t_pipeline_ast *ast);
+bool	parse_pipeline_ast(t_pipeline_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_pipe_ast(t_pipe_ast ast, t_session *session,
+bool	execute_pipeline_ast(t_pipeline_ast ast, t_session *session,
 			enum e_exec_error *error);
-void	free_pipe_ast(t_pipe_ast ast);
+void	free_pipeline_ast(t_pipeline_ast ast);
 
 typedef struct s_ast_root
 {
-	t_pipe_ast	pipes;
+	t_pipeline_ast	pipes;
 }	t_ast_root;
 
 bool	alloc_ast(t_ast_root *ast);
