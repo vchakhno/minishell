@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 17:08:43 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:23:46 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ bool	parse_cmd_ast(
 // Then both are supposed to return normally
 // /!\ There can also be 2 returns in case execve fails
 
-bool	execute_cmd_ast_sync(
+bool	run_cmd_ast(
 	t_cmd_ast ast, t_session *session, enum e_exec_error *error
 ) {
 	t_backup_fds	backup;
@@ -60,8 +60,8 @@ bool	execute_cmd_ast_sync(
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	status = (execute_cmd_redirs(ast.redirs, error)
-			&& execute_command_sync(ast.argv, session, backup, error));
+	status = (run_cmd_redirs(ast.redirs, error)
+			&& run_command(ast.argv, session, backup, error));
 	if (!restore_backup_fds(backup))
 	{
 		*error = EXEC_ERROR_EXIT;
@@ -76,12 +76,12 @@ bool	execute_cmd_ast_sync(
 // In this case, executables don't fork (nor do builtins)
 // Executables are not supposed to return, except if execve fails
 
-void	execute_cmd_ast_async(
+void	start_cmd_ast(
 	t_cmd_ast ast, t_session *session, enum e_exec_error *error
 ) {
-	if (!execute_cmd_redirs(ast.redirs, error))
+	if (!run_cmd_redirs(ast.redirs, error))
 		return ;
-	execute_command_async(ast.argv, session, error);
+	start_command(ast.argv, session, error);
 }
 
 void	free_cmd_ast(t_cmd_ast ast)

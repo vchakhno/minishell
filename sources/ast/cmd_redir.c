@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 15:18:18 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:21:09 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ bool	parse_cmd_redir(
 	return (true);
 }
 
-bool	execute_cmd_redir(t_redirection redir, enum e_exec_error *error)
+bool	run_cmd_redir(t_redirection redir, enum e_exec_error *error)
 {
 	t_i32	fd;
 
@@ -98,14 +98,14 @@ bool	execute_cmd_redir(t_redirection redir, enum e_exec_error *error)
 	return (true);
 }
 
-bool	execute_cmd_redirs(t_vector redirs, enum e_exec_error *error)
+bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error)
 {
 	t_u32	i;
 
 	i = 0;
 	while (i < redirs.size)
 	{
-		if (!execute_cmd_redir(((t_redirection *)redirs.elems)[i], error))
+		if (!run_cmd_redir(((t_redirection *)redirs.elems)[i], error))
 			return (false);
 		i++;
 	}

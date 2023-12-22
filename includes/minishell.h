@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:10:29 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:22:07 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ typedef struct s_redirection
 
 bool	parse_cmd_redir(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_cmd_redirs(t_vector redirs, enum e_exec_error *error);
+bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error);
 
 typedef struct s_cmd_ast
 {
@@ -144,9 +144,9 @@ bool	parse_cmd_arg(t_vector *argv, t_tokenizer *tokenizer,
 bool	alloc_cmd_ast(t_cmd_ast *ast);
 bool	parse_cmd_ast(t_cmd_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_cmd_ast_sync(t_cmd_ast ast, t_session *session,
+bool	run_cmd_ast(t_cmd_ast ast, t_session *session,
 			enum e_exec_error *error);
-void	execute_cmd_ast_async(t_cmd_ast ast, t_session *session,
+void	start_cmd_ast(t_cmd_ast ast, t_session *session,
 			enum e_exec_error *error);
 void	free_cmd_ast(t_cmd_ast ast);
 
@@ -158,7 +158,7 @@ typedef struct s_pipeline_ast
 bool	alloc_pipeline_ast(t_pipeline_ast *ast);
 bool	parse_pipeline_ast(t_pipeline_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	execute_pipeline_ast(t_pipeline_ast ast, t_session *session,
+bool	run_pipeline_ast(t_pipeline_ast ast, t_session *session,
 			enum e_exec_error *error);
 void	free_pipeline_ast(t_pipeline_ast ast);
 
@@ -169,7 +169,7 @@ typedef struct s_ast_root
 
 bool	alloc_ast(t_ast_root *ast);
 bool	parse_ast(t_ast_root *ast, t_lines *lines, enum e_syntax_error *error);
-bool	execute_ast(t_ast_root ast, t_session *session,
+bool	run_ast(t_ast_root ast, t_session *session,
 			enum e_exec_error *error);
 void	free_ast(t_ast_root ast);
 
@@ -229,14 +229,14 @@ bool	find_executable(t_env env, t_str cmd_name, t_string *full_path,
 			enum e_exec_error *error);
 bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
 			enum e_exec_error *error);
-bool	run_executable_sync(t_executable exec, t_backup_fds backup,
+bool	run_executable(t_executable exec, t_backup_fds backup,
 			t_u8 *status, enum e_exec_error *error);
-void	run_executable_async(t_executable exec);
+void	start_executable(t_executable exec);
 void	free_executable(t_executable exec);
 
-bool	execute_command_sync(t_vector argv, t_session *session,
+bool	run_command(t_vector argv, t_session *session,
 			t_backup_fds backup, enum e_exec_error *error);
-bool	execute_command_async(t_vector argv, t_session *session,
+bool	start_command(t_vector argv, t_session *session,
 			enum e_exec_error *error);
 
 /* ************************************************************************** */

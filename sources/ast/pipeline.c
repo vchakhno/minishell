@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:10:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:23:46 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ bool	start_pipeline(
 			if (!apply_pipe(&input, pipe_fds))
 				*error = EXEC_ERROR_EXIT;
 			else
-				execute_cmd_ast_async(((t_cmd_ast *)ast.pipes.elems)[i],
+				start_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[i],
 					session, error);
 			cleanup_pipeline(i + 1, pids);
 			return (false);
@@ -154,13 +154,13 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 		session->last_status = 128 + WTERMSIG(wstatus);
 }
 
-bool	execute_pipeline_ast(
+bool	run_pipeline_ast(
 	t_pipeline_ast ast, t_session *session, enum e_exec_error *error
 ) {
 	pid_t	*pids;
 
 	if (ast.pipes.size == 1)
-		return (!execute_cmd_ast_sync(((t_cmd_ast *)ast.pipes.elems)[0],
+		return (!run_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[0],
 			session, error));
 	if (!ft_mem_malloc(&pids, ast.pipes.size * sizeof(pid_t)))
 	{
