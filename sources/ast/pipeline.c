@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:23:46 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:25:34 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 bool	alloc_pipeline_ast(t_pipeline_ast *ast)
 {
-	if (!ft_vector_alloc(&ast->pipes, sizeof(t_cmd_ast), 8))
+	if (!ft_vector_alloc(&ast->pipes, sizeof(t_simple_command), 8))
 		return (false);
 	return (true);
 }
@@ -26,23 +26,23 @@ bool	alloc_pipeline_ast(t_pipeline_ast *ast)
 bool	parse_pipeline_ast(
 	t_pipeline_ast *ast, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
-	t_cmd_ast	command;
+	t_simple_command	command;
 
 	while (true)
 	{
-		if (!alloc_cmd_ast(&command))
+		if (!alloc_simple_command(&command))
 		{
 			*error = SYNTAX_ERROR_MALLOC;
 			return (false);
 		}
-		if (!parse_cmd_ast(&command, tokenizer, error))
+		if (!parse_simple_command(&command, tokenizer, error))
 		{
-			free_cmd_ast(command);
+			free_simple_command(command);
 			return (false);
 		}
 		if (!ft_vector_push(&ast->pipes, &command))
 		{
-			free_cmd_ast(command);
+			free_simple_command(command);
 			*error = SYNTAX_ERROR_MALLOC;
 			return (false);
 		}
@@ -126,7 +126,7 @@ bool	start_pipeline(
 			if (!apply_pipe(&input, pipe_fds))
 				*error = EXEC_ERROR_EXIT;
 			else
-				start_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[i],
+				start_simple_command(((t_simple_command *)ast.pipes.elems)[i],
 					session, error);
 			cleanup_pipeline(i + 1, pids);
 			return (false);
@@ -160,7 +160,7 @@ bool	run_pipeline_ast(
 	pid_t	*pids;
 
 	if (ast.pipes.size == 1)
-		return (!run_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[0],
+		return (!run_simple_command(((t_simple_command *)ast.pipes.elems)[0],
 			session, error));
 	if (!ft_mem_malloc(&pids, ast.pipes.size * sizeof(pid_t)))
 	{
@@ -185,7 +185,7 @@ void	free_pipeline_ast(t_pipeline_ast ast)
 	i = 0;
 	while (i < ast.pipes.size)
 	{
-		free_cmd_ast(((t_cmd_ast *)ast.pipes.elems)[i]);
+		free_simple_command(((t_simple_command *)ast.pipes.elems)[i]);
 		i++;
 	}
 	ft_vector_free(ast.pipes);

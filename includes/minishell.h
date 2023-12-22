@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:22:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:26:55 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,23 +132,23 @@ bool	parse_cmd_redir(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error);
 
-typedef struct s_cmd_ast
+typedef struct s_simple_command
 {
 	t_vector	argv;
 	t_vector	redirs;
-}	t_cmd_ast;
+}	t_simple_command;
 
 bool	parse_cmd_arg(t_vector *argv, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 
-bool	alloc_cmd_ast(t_cmd_ast *ast);
-bool	parse_cmd_ast(t_cmd_ast *ast, t_tokenizer *tokenizer,
+bool	alloc_simple_command(t_simple_command *cmd);
+bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	run_cmd_ast(t_cmd_ast ast, t_session *session,
+bool	run_simple_command(t_simple_command cmd, t_session *session,
 			enum e_exec_error *error);
-void	start_cmd_ast(t_cmd_ast ast, t_session *session,
+void	start_simple_command(t_simple_command cmd, t_session *session,
 			enum e_exec_error *error);
-void	free_cmd_ast(t_cmd_ast ast);
+void	free_simple_command(t_simple_command cmd);
 
 typedef struct s_pipeline_ast
 {
