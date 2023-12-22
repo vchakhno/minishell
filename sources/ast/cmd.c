@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 18:41:22 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 17:08:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,12 @@ bool	execute_cmd_ast_sync(
 // In this case, executables don't fork (nor do builtins)
 // Executables are not supposed to return, except if execve fails
 
-bool	execute_cmd_ast_async(
+void	execute_cmd_ast_async(
 	t_cmd_ast ast, t_session *session, enum e_exec_error *error
 ) {
-	return (
-		execute_cmd_redirs(ast.redirs, error)
-		&& execute_command_async(ast.argv, session, error)
-	);
+	if (!execute_cmd_redirs(ast.redirs, error))
+		return ;
+	execute_command_async(ast.argv, session, error);
 }
 
 void	free_cmd_ast(t_cmd_ast ast)

@@ -6,12 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 16:59:19 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:00:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <stdlib.h>
+#include <signal.h>
 #include <unistd.h>
 #include <wait.h>
 
@@ -83,24 +84,52 @@ bool	apply_pipe(int *input, int pipe_fds[2])
 	);
 }
 
+void	cleanup_pipeline(t_u32 size, pid_t *pids)
+{
+	t_u32	i;
+
+	(void) size;
+	(void) pids;
+	i = 0;
+	while (i < size)
+	{
+		kill(pids[i], SIGKILL);
+		i++;
+	}
+	i = 0;
+	while (i < size)
+	{
+		waitpid(pids[i], NULL, 0);
+		i++;
+	}
+}
+
 bool	start_pipeline(
 	t_pipe_ast ast, pid_t *pids, t_session *session, enum e_exec_error *error
 ) {
-	t_u32		i;
-	int			input;
-	int			pipe_fds[2];
+	t_u32	i;
+	int		input;
+	int		pipe_fds[2];
 
 	i = 0;
 	while (i < ast.pipes.size)
 	{
-		next_pipe(&input, pipe_fds, i == 0, i == ast.pipes.size - 1);
-		pids[i] = fork();
+		if (!next_pipe(&input, pipe_fds, i == 0, i == ast.pipes.size - 1)
+			|| !ft_fork(&pids[i]))
+		{
+			cleanup_pipeline(i, pids);
+			*error = EXEC_ERROR_EXIT;
+			return (false);
+		}
 		if (pids[i] == 0)
 		{
-			apply_pipe(&input, pipe_fds);
-			if (!execute_cmd_ast_async(((t_cmd_ast *)ast.pipes.elems)[i],
-				session, error))
-				return (false);
+			if (!apply_pipe(&input, pipe_fds))
+				*error = EXEC_ERROR_EXIT;
+			else
+				execute_cmd_ast_async(((t_cmd_ast *)ast.pipes.elems)[i],
+					session, error);
+			cleanup_pipeline(i + 1, pids);
+			return (false);
 		}
 		i++;
 	}
@@ -108,13 +137,13 @@ bool	start_pipeline(
 	return (true);
 }
 
-void	wait_pipeline(t_pipe_ast ast, pid_t *pids, t_session *session)
+void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 {
 	t_u32	i;
 	int		wstatus;
 
 	i = 0;
-	while (i < ast.pipes.size)
+	while (i < size)
 	{
 		waitpid(pids[i], &wstatus, 0);
 		i++;
@@ -138,8 +167,12 @@ bool	execute_pipe_ast(
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	start_pipeline(ast, pids, session, error);
-	wait_pipeline(ast, pids, session);
+	if (!start_pipeline(ast, pids, session, error))
+	{
+		free(pids);
+		return (false);
+	}
+	wait_pipeline(ast.pipes.size, pids, session);
 	free(pids);
 	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
 	return (true);

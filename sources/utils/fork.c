@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   move_fd.c                                          :+:      :+:    :+:   */
+/*   fork.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/22 15:02:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 15:54:11 by vchakhno         ###   ########.fr       */
+/*   Created: 2023/12/22 17:12:44 by vchakhno          #+#    #+#             */
+/*   Updated: 2023/12/22 17:14:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <unistd.h>
 
-bool	move_fd(int from, int to)
+bool	ft_fork(pid_t *pid)
 {
-	bool	status;
-
-	if (from == to)
-		return (true);
-	status = (dup2(from, to) == -1);
-	close(from);
-	return (status);
+	*pid = fork();
+	return (*pid != -1);
 }

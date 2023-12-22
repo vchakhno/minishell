@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 15:04:44 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 17:25:57 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stddef.h>
 # include <stdbool.h>
 # include <libft/libft.h>
+# include <sys/types.h>
 
 /* ************************************************************************** */
 /* PROMPTS																	  */
@@ -145,7 +146,7 @@ bool	parse_cmd_ast(t_cmd_ast *ast, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 bool	execute_cmd_ast_sync(t_cmd_ast ast, t_session *session,
 			enum e_exec_error *error);
-bool	execute_cmd_ast_async(t_cmd_ast ast, t_session *session,
+void	execute_cmd_ast_async(t_cmd_ast ast, t_session *session,
 			enum e_exec_error *error);
 void	free_cmd_ast(t_cmd_ast ast);
 
@@ -256,9 +257,10 @@ bool	run_repl(t_session *session);
 void	destroy_session(t_session session);
 
 /* ************************************************************************** */
-/* FDS																		  */
+/* UTILS																	  */
 /* ************************************************************************** */
 
 bool	move_fd(int from, int to);
+bool	ft_fork(pid_t *pid);
 
 #endif
