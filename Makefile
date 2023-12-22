@@ -17,6 +17,7 @@ SRCS		:= \
 				env.c \
 				env_var.c \
 				tokenizer.c \
+				move_fd.c \
 				command.c \
 				executable.c \
 				backup_fds.c \

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 17:56:20 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 15:04:44 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,5 +254,11 @@ typedef struct s_session
 bool	init_session(t_session *session, char **env);
 bool	run_repl(t_session *session);
 void	destroy_session(t_session session);
+
+/* ************************************************************************** */
+/* FDS																		  */
+/* ************************************************************************** */
+
+bool	move_fd(int from, int to);
 
 #endif

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirs.c                                           :+:      :+:    :+:   */
+/*   cmd_redir.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 13:57:53 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/22 15:18:18 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,32 +71,29 @@ bool	execute_cmd_redir(t_redirection redir, enum e_exec_error *error)
 	if (redir.type == REDIR_IN)
 	{
 		fd = open(redir.filename.c_str, O_RDONLY);
-		if (fd == -1 || dup2(fd, STDIN_FILENO) == -1)
+		if (fd == -1 || move_fd(fd, STDIN_FILENO))
 		{
 			*error = EXEC_ERROR_RECOVER;
 			return (false);
 		}
-		close(fd);
 	}
 	else if (redir.type == REDIR_OUT)
 	{
 		fd = open(redir.filename.c_str, O_WRONLY | O_CREAT | O_TRUNC);
-		if (fd == -1 || dup2(fd, STDOUT_FILENO) == -1)
+		if (fd == -1 || move_fd(fd, STDOUT_FILENO))
 		{
 			*error = EXEC_ERROR_RECOVER;
 			return (false);
 		}
-		close(fd);
 	}
 	else if (redir.type == REDIR_APPEND)
 	{
 		fd = open(redir.filename.c_str, O_WRONLY | O_CREAT | O_APPEND);
-		if (fd == -1 || dup2(fd, STDOUT_FILENO) == -1)
+		if (fd == -1 || move_fd(fd, STDOUT_FILENO))
 		{
 			*error = EXEC_ERROR_RECOVER;
 			return (false);
 		}
-		close(fd);
 	}
 	return (true);
 }
