@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 22:30:17 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/23 01:33:40 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 
 bool	get_builtin(t_str name, t_builtin *builtin_func)
 {
-	char *const		builtin_names[] = {"exit", "_cat"};
+	char *const		builtin_names[] = {
+		"exit", "cd", "_cat"
+	};
 	const t_builtin	builtin_funcs[] = {
-		run_builtin_exit, run_builtin_cat
+		run_builtin_exit, run_builtin_cd, run_builtin_cat
 	};
 	t_u32			i;
 
