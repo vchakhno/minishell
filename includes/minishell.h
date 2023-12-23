@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 22:29:11 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/23 00:29:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 /* ************************************************************************** */
 
 # define MAIN_PROMPT "\1\e[38;2;255;63;0m\2minishell\1\e[0m\2> "
+# define ERROR_PROMPT "minishell: "
 
 /* ************************************************************************** */
 /* LINES																	  */
@@ -258,6 +259,7 @@ void	destroy_session(t_session session);
 
 bool	move_fd(int from, int to);
 bool	ft_fork(pid_t *pid);
+void	print_error(char *error, ...);
 
 /* ************************************************************************** */
 /* BUILTINS																	  */

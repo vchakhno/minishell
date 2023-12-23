@@ -19,6 +19,7 @@ SRCS		:= \
 				tokenizer.c \
 				utils/move_fd.c \
 				utils/fork.c \
+				utils/print_error.c \
 				raw_command.c \
 				executable.c \
 				backup_fds.c \
