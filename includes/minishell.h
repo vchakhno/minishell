@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/23 01:33:21 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/23 17:30:32 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,6 +272,10 @@ typedef bool				(*t_builtin)(
 bool	run_builtin_exit(t_vector argv, t_session *session,
 			enum e_exec_error *error);
 bool	run_builtin_cd(t_vector argv, t_session *session,
+			enum e_exec_error *error);
+bool	run_builtin_pwd(t_vector argv, t_session *session,
+			enum e_exec_error *error);
+bool	run_builtin_export(t_vector argv, t_session *session,
 			enum e_exec_error *error);
 bool	run_builtin_cat(t_vector argv, t_session *session,
 			enum e_exec_error *error);

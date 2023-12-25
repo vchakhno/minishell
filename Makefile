@@ -30,7 +30,9 @@ SRCS		:= \
 				ast/cmd_redir.c \
 				ast/cmd_arg.c \
 				builtins/exit.c \
+				builtins/export.c \
 				builtins/cd.c \
+				builtins/pwd.c \
 				builtins/cat.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
