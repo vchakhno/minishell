@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 01:42:26 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 15:54:31 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/25 13:30:54 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ bool	restore_backup_fds(t_backup_fds backup)
 
 void	discard_backup_fds(t_backup_fds backup)
 {
-	close(backup.stdin);
-	close(backup.stdout);
+	if (backup.stdin != STDIN_FILENO)
+		close(backup.stdin);
+	if (backup.stdout != STDOUT_FILENO)
+		close(backup.stdout);
 }

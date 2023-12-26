@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 22:56:01 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/25 12:45:42 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ bool	start_pipeline(
 		if (pids[i] == 0)
 		{
 			if (apply_pipe(&input, pipe_fds))
-				start_simple_command(((t_simple_command *)pipeline.elems)[i],
+				start_simple_command(&((t_simple_command *)pipeline.elems)[i],
 					session, error);
 			cleanup_pipeline(i, pids);
 			*error = EXEC_ERROR_EXIT;
@@ -157,7 +157,7 @@ bool	run_pipeline(
 	pid_t	*pids;
 
 	if (pipeline.size == 1)
-		return (!run_simple_command(((t_simple_command *)pipeline.elems)[0],
+		return (run_simple_command(&((t_simple_command *)pipeline.elems)[0],
 			session, error));
 	if (!ft_mem_malloc(&pids, pipeline.size * sizeof(pid_t)))
 	{

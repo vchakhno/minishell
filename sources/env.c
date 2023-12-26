@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/19 22:04:18 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/25 12:50:27 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ bool	set_env_var(t_env *env, t_str name, t_str value)
 	ft_string_append_str(&new_var.string, name);
 	ft_string_append_c_str(&new_var.string, "=");
 	ft_string_append_str(&new_var.string, value);
+	new_var.eq_pos = name.len;
 	ft_vector_push(&env->vars, &new_var);
 	return (true);
 }

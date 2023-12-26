@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/23 17:30:32 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/26 03:43:23 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,9 +145,9 @@ bool	parse_cmd_arg(t_vector *argv, t_tokenizer *tokenizer,
 bool	alloc_simple_command(t_simple_command *cmd);
 bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	run_simple_command(t_simple_command cmd, t_session *session,
+bool	run_simple_command(t_simple_command *cmd, t_session *session,
 			enum e_exec_error *error);
-void	start_simple_command(t_simple_command cmd, t_session *session,
+void	start_simple_command(t_simple_command *cmd, t_session *session,
 			enum e_exec_error *error);
 void	free_simple_command(t_simple_command cmd);
 
@@ -279,5 +279,13 @@ bool	run_builtin_export(t_vector argv, t_session *session,
 			enum e_exec_error *error);
 bool	run_builtin_cat(t_vector argv, t_session *session,
 			enum e_exec_error *error);
+
+/* ************************************************************************** */
+/* EXPAND																	  */
+/* ************************************************************************** */
+
+bool	expand(t_str str, t_env env, t_vector *tokens);
+bool	expand_all(t_vector strings, t_env env, t_vector *tokens);
+void	free_tokens(t_vector tokens);
 
 #endif

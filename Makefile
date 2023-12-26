@@ -29,6 +29,7 @@ SRCS		:= \
 				ast/pipeline.c \
 				ast/cmd_redir.c \
 				ast/cmd_arg.c \
+				expand/expand.c \
 				builtins/exit.c \
 				builtins/export.c \
 				builtins/cd.c \
