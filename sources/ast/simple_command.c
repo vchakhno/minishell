@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/26 03:45:26 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/27 10:04:24 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,27 +52,27 @@ bool	parse_simple_command(
 bool	run_simple_command(
 	t_simple_command *cmd, t_session *session, enum e_exec_error *error
 ) {
-	t_vector		tokens;
+	t_vector		fields;
 	t_backup_fds	backup;
 	bool			status;
 
-	if (!expand_all(cmd->argv, session->env, &tokens))
+	if (!expand_all(cmd->argv, session->env, &fields))
 		return (false);
 	if (!save_backup_fds(&backup))
 	{
-		free_tokens(tokens);
+		free_fields(fields);
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
 	status = (run_cmd_redirs(cmd->redirs, error)
-			&& run_raw_command(cmd->argv, session, backup, error));
+			&& run_raw_command(fields, session, backup, error));
 	if (!restore_backup_fds(backup))
 	{
-		free_tokens(tokens);
+		free_fields(fields);
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	free_tokens(tokens);
+	free_fields(fields);
 	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
 	return (status);
 }
@@ -85,17 +85,17 @@ bool	run_simple_command(
 void	start_simple_command(
 	t_simple_command *cmd, t_session *session, enum e_exec_error *error
 ) {
-	t_vector	tokens;
+	t_vector	fields;
 
-	if (!expand_all(cmd->argv, session->env, &tokens))
+	if (!expand_all(cmd->argv, session->env, &fields))
 		return ;
 	if (!run_cmd_redirs(cmd->redirs, error))
 	{
-		free_tokens(tokens);
+		free_fields(fields);
 		return ;
 	}
-	start_raw_command(cmd->argv, session, error);
-	free_tokens(tokens);
+	start_raw_command(fields, session, error);
+	free_fields(fields);
 }
 
 void	free_simple_command(t_simple_command cmd)

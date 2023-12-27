@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/26 03:43:23 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/27 10:56:31 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,8 +284,10 @@ bool	run_builtin_cat(t_vector argv, t_session *session,
 /* EXPAND																	  */
 /* ************************************************************************** */
 
-bool	expand(t_str str, t_env env, t_vector *tokens);
-bool	expand_all(t_vector strings, t_env env, t_vector *tokens);
-void	free_tokens(t_vector tokens);
+bool	expand_vars(char **cursor, t_env env, t_string *open_field,
+			char *delim);
+bool	expand(t_str str, t_env env, t_vector *closed_fields);
+bool	expand_all(t_vector strings, t_env env, t_vector *fields);
+void	free_fields(t_vector fields);
 
 #endif
