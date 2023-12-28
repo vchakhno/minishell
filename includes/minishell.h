@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 10:01:30 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 10:10:50 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines);
 bool	match_token(t_tokenizer *tokenizer, char *content, const char *prompt,
 			enum e_syntax_error *error);
 bool	peek_token(t_tokenizer *tokenizer, t_token *token, const char *prompt,
+			enum e_prompt_error *error);
+bool	tokenize_line(t_tokenizer *tokenizer, const char *prompt,
 			enum e_prompt_error *error);
 bool	consume_token(t_tokenizer *tokenizer, const char *prompt,
 			enum e_prompt_error *error);

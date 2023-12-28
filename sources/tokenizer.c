@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 21:25:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 10:21:03 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,9 @@ bool	peek_token(
 	t_tokenizer *tokenizer, t_token *token, const char *prompt,
 	enum e_prompt_error *error
 ) {
-	if (tokenizer->tokens.size > 0)
-	{
-		*token = ((t_token *)tokenizer->tokens.elems)[0];
-		return (true);
-	}
-	if (!parse_token(tokenizer->lines, token, prompt, error))
+	if (tokenizer->tokens.size == 0 && !tokenize_line(tokenizer, prompt, error))
 		return (false);
-	if (!ft_vector_push(&tokenizer->tokens, token))
-	{
-		*error = PROMPT_ERROR_MALLOC;
-		return (false);
-	}
+	*token = ((t_token *)tokenizer->tokens.elems)[0];
 	return (true);
 }
 
@@ -60,12 +51,28 @@ bool	consume_token(
 	t_tokenizer *tokenizer, const char *prompt,
 	enum e_prompt_error *error
 ) {
-	if (tokenizer->tokens.size > 0)
+	if (tokenizer->tokens.size == 0 && !tokenize_line(tokenizer, prompt, error))
+		return (false);
+	ft_vector_remove(&tokenizer->tokens, 0, NULL);
+	return (true);
+}
+
+bool	tokenize_line(
+	t_tokenizer *tokenizer, const char *prompt, enum e_prompt_error *error
+) {
+	t_token	token;
+
+	while (parse_token(tokenizer->lines, &token, prompt, error))
 	{
-		ft_vector_remove(&tokenizer->tokens, 0, NULL);
-		return (true);
+		if (!ft_vector_push(&tokenizer->tokens, &token))
+		{
+			*error = PROMPT_ERROR_MALLOC;
+			return (false);
+		}
+		if (ft_str_equal_c_str(token.content, "\n"))
+			return (true);
 	}
-	return (parse_token(tokenizer->lines, &(t_token){0}, prompt, error));
+	return (false);
 }
 
 void	free_tokenizer(t_tokenizer tokenizer)
