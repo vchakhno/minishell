@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 17:05:27 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 18:49:57 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	skip_blanks(t_lines *lines)
 
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
-bool	parse_quotes(t_lines *lines, enum e_prompt_error *error)
+bool	skip_quotes(t_lines *lines, enum e_prompt_error *error)
 {
 	char		quote;
 	const char	*prompt;
@@ -80,7 +80,7 @@ bool	parse_quotes(t_lines *lines, enum e_prompt_error *error)
 
 // false -> unterminated token
 
-bool	parse_word(t_lines *lines)
+bool	skip_word(t_lines *lines)
 {
 	while (lines->cursor < lines->text.len
 		&& !check_ops(*lines, NULL)
@@ -108,9 +108,9 @@ bool	parse_token(
 	if (match_ops(lines, token))
 		return (true);
 	token->type = TOKEN_WORD;
-	while (!parse_word(lines))
+	while (!skip_word(lines))
 	{
-		if (!parse_quotes(lines, error))
+		if (!skip_quotes(lines, error))
 			return (false);
 		lines->cursor++;
 	}

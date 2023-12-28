@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/27 11:52:41 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 19:06:34 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,6 @@ void	display_fields(t_vector fields)
 	}
 }
 
-// Will be changed to strs later when adapting simple_command's AST
 bool	expand_all(t_vector strings, t_env env, t_vector *fields)
 {
 	t_u32	i;
@@ -218,6 +217,5 @@ bool	expand_all(t_vector strings, t_env env, t_vector *fields)
 		}
 		i++;
 	}
-	display_fields(*fields);
 	return (true);
 }

@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 17:20:26 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 19:03:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <wait.h>
 
 bool	store_heredoc(
 	t_redirection *heredoc, t_lines *lines, enum e_prompt_error *error

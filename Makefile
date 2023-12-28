@@ -10,33 +10,33 @@ NAME		:= minishell
 
 SRC_DIR		:= sources
 SRCS		:= \
-				main.c \
-				session.c \
-				token.c \
-				lines.c \
-				env.c \
-				env_var.c \
-				tokenizer.c \
-				utils/move_fd.c \
+				environment/env.c \
+				environment/env_var.c \
+				grammar/command/builtins/cat.c \
+				grammar/command/builtins/cd.c \
+				grammar/command/builtins/exit.c \
+				grammar/command/builtins/export.c \
+				grammar/command/builtins/pwd.c \
+				grammar/command/executables/executable.c \
+				grammar/command/executables/find_executable.c \
+				grammar/command/expand/expand.c \
+				grammar/command/redirections/backup_fds.c \
+				grammar/command/redirections/cmd_redir.c \
+				grammar/command/redirections/heredoc.c \
+				grammar/command/cmd_arg.c \
+				grammar/command/raw_command.c \
+				grammar/command/simple_command.c \
+				grammar/pipes/pipeline.c \
+				grammar/root.c \
+				text/input.c \
+				text/lines.c \
+				tokens/token.c \
+				tokens/tokenizer.c \
 				utils/fork.c \
+				utils/move_fd.c \
 				utils/print_error.c \
-				raw_command.c \
-				input.c \
-				executable.c \
-				backup_fds.c \
-				find_executable.c \
-				ast/heredoc.c \
-				ast/root.c \
-				ast/simple_command.c \
-				ast/pipeline.c \
-				ast/cmd_redir.c \
-				ast/cmd_arg.c \
-				expand/expand.c \
-				builtins/exit.c \
-				builtins/export.c \
-				builtins/cd.c \
-				builtins/pwd.c \
-				builtins/cat.c
+				main.c \
+				session.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes
