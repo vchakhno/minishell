@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/27 10:04:24 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 17:22:38 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,7 @@ void	free_simple_command(t_simple_command cmd)
 	i = 0;
 	while (i < cmd.redirs.size)
 	{
-		ft_string_free(
-			((t_redirection *)cmd.redirs.elems)[i].filename);
+		free_cmd_redir(((t_redirection *)cmd.redirs.elems)[i]);
 		i++;
 	}
 	ft_vector_free(cmd.redirs);

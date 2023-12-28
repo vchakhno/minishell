@@ -6,13 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 10:02:13 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 17:05:27 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-bool	check_ops(t_lines lines, t_str *op)
+bool	check_ops(t_lines lines, t_u32 *len)
 {
 	char *const	ops[] = {
 		"<<", "<", ">>", ">", "&&", "||", "|", "(", ")", "\n"
@@ -27,8 +27,8 @@ bool	check_ops(t_lines lines, t_str *op)
 	{
 		if (ft_str_starts_with_c_str(lines_str, ops[i]))
 		{
-			if (op)
-				*op = ft_str(ops[i]);
+			if (len)
+				*len = ft_c_str_len(ops[i]);
 			return (true);
 		}
 		i++;
@@ -38,10 +38,10 @@ bool	check_ops(t_lines lines, t_str *op)
 
 bool	match_ops(t_lines *lines, t_token *token)
 {
-	if (check_ops(*lines, &token->content))
+	if (check_ops(*lines, &token->len))
 	{
 		token->type = TOKEN_OP;
-		lines->cursor += token->content.len;
+		lines->cursor += token->len;
 		return (true);
 	}
 	return (false);
@@ -54,40 +54,33 @@ void	skip_blanks(t_lines *lines)
 		lines->cursor++;
 }
 
-// bool -> any error (CTRL+C, CTRL+D, malloc)
+// false -> any error (CTRL+C, CTRL+D, malloc)
 
-bool	parse_quotes(
-	t_lines *lines, t_token *token, const char *prompt,
-	enum e_prompt_error *error
-) {
-	char	quote;
+bool	parse_quotes(t_lines *lines, enum e_prompt_error *error)
+{
+	char		quote;
+	const char	*prompt;
 
 	quote = lines->text.c_str[lines->cursor];
-	token->content.len++;
+	if (quote == '\'')
+		prompt = "quote> ";
+	else
+		prompt = "dquote> ";
 	lines->cursor++;
-	while (lines->cursor < lines->text.len)
+	while (lines->text.c_str[lines->cursor] != quote)
 	{
-		if (lines->text.c_str[lines->cursor] == quote)
-			return (true);
-		token->content.len++;
-		lines->cursor++;
-	}
-	while (append_lines(lines, prompt, error))
-	{
-		while (lines->cursor < lines->text.len)
-		{
-			if (lines->text.c_str[lines->cursor] == quote)
-				return (true);
-			token->content.len++;
+		if (lines->cursor == lines->text.len
+			&& !append_lines(lines, prompt, error))
+			return (false);
+		else
 			lines->cursor++;
-		}
 	}
-	return (false);
+	return (true);
 }
 
-// bool -> unterminated token
+// false -> unterminated token
 
-bool	parse_word(t_lines *lines, t_token *token)
+bool	parse_word(t_lines *lines)
 {
 	while (lines->cursor < lines->text.len
 		&& !check_ops(*lines, NULL)
@@ -96,42 +89,42 @@ bool	parse_word(t_lines *lines, t_token *token)
 		if (lines->text.c_str[lines->cursor] == '\"'
 			|| lines->text.c_str[lines->cursor] == '\'')
 			return (false);
-		token->content.len++;
 		lines->cursor++;
 	}
 	return (true);
 }
 
-// bool -> any error (CTRL+C, CTRL+D, malloc)
+// false -> any error (CTRL+C, CTRL+D, malloc)
 
 bool	parse_token(
 	t_lines *lines, t_token *token, const char *prompt,
 	enum e_prompt_error *error
 ) {
+
+	if (lines->cursor == lines->text.len && !append_lines(lines, prompt, error))
+		return (false);
 	skip_blanks(lines);
-	while (lines->cursor == lines->text.len)
-	{
-		if (!append_lines(lines, prompt, error))
-			return (false);
-		skip_blanks(lines);
-	}
+	token->start = lines->cursor;
 	if (match_ops(lines, token))
 		return (true);
 	token->type = TOKEN_WORD;
-	token->content.c_str = lines->text.c_str + lines->cursor;
-	token->content.len = 0;
-	while (!parse_word(lines, token))
+	while (!parse_word(lines))
 	{
-		if (!parse_quotes(lines, token, "quote> ", error))
+		if (!parse_quotes(lines, error))
 			return (false);
-		token->content.len++;
 		lines->cursor++;
 	}
+	token->len = lines->cursor - token->start;
 	return (true);
 }
 
-void	print_token(t_token token)
+t_str	get_token_content(t_lines lines, t_token token)
+{
+	return (ft_str_get_slice(lines.text.str, token.start, token.len));
+}
+
+void	print_token(t_lines lines, t_token token)
 {
 	ft_println("({c_str}, \"{str}\")",
-		(char *[]){"OP", "WORD"}[token.type], token.content);
+		(char *[]){"OP", "WORD"}[token.type], get_token_content(lines, token));
 }

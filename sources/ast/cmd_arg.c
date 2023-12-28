@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/21 14:24:34 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 17:18:30 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	parse_cmd_arg(
 		return (false);
 	}
 	consume_token(tokenizer, NULL, NULL);
-	if (!ft_string_from_str(&arg, token.content))
+	if (!ft_string_from_str(&arg, get_token_content(*tokenizer->lines, token)))
 	{
 		*error = SYNTAX_ERROR_MALLOC;
 		return (false);

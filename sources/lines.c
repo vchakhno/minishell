@@ -47,6 +47,23 @@ bool	append_lines(
 	return (true);
 }
 
+bool	read_line(
+	t_lines *lines, t_str *line, const char *prompt, enum e_prompt_error *error
+) {
+	t_u32	i;
+
+	if (lines->cursor == lines->text.len && !append_lines(lines, prompt, error))
+		return (false);
+	i = 0;
+	while (lines->cursor + i < lines->text.len
+		&& lines->text.c_str[lines->cursor + i] != '\n')
+		i++;
+	line->c_str = &lines->text.c_str[lines->cursor];
+	line->len = i + 1;
+	lines->cursor += i + 1;
+	return (true);
+}
+
 void	register_command(t_lines lines)
 {
 	lines.text.c_str[lines.cursor - 1] = '\0';

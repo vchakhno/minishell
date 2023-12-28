@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/25 13:35:47 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 17:25:08 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,26 +38,22 @@ bool	parse_cmd_redir(
 	t_vector *redirs, t_tokenizer *tokenizer, enum e_syntax_error *error
 ) {
 	t_redirection	redir;
-	t_token			token;
+	t_str			filename;
 
 	if (!match_redir_op(tokenizer, &redir.type, error)
-		|| !peek_token(tokenizer, &token, "redir> ",
-			(enum e_prompt_error *)error))
+		|| !match_word_token(tokenizer, &filename, "redir> ", error))
 		return (false);
-	if (token.type != TOKEN_WORD)
-	{
-		*error = SYNTAX_ERROR_NO_MATCH;
-		return (false);
-	}
-	consume_token(tokenizer, NULL, NULL);
-	if (!ft_string_from_str(&redir.filename, token.content))
+	if (!ft_string_from_str(&redir.filename, filename))
 	{
 		*error = SYNTAX_ERROR_MALLOC;
 		return (false);
 	}
+	if (redir.type == REDIR_HEREDOC && !store_heredoc(
+			&redir, tokenizer->lines, (enum e_prompt_error *)error))
+		return (false);
 	if (!ft_vector_push(redirs, &redir))
 	{
-		ft_string_free(redir.filename);
+		free_cmd_redir(redir);
 		*error = SYNTAX_ERROR_MALLOC;
 		return (false);
 	}
@@ -68,6 +64,11 @@ bool	run_cmd_redir(t_redirection redir, enum e_exec_error *error)
 {
 	t_i32	fd;
 
+	if (redir.type == REDIR_HEREDOC)
+	{
+		run_heredoc(redir);
+		return (true);
+	}
 	if (redir.type == REDIR_IN)
 	{
 		fd = open(redir.filename.c_str, O_RDONLY);
@@ -77,7 +78,7 @@ bool	run_cmd_redir(t_redirection redir, enum e_exec_error *error)
 			return (false);
 		}
 	}
-	else if (redir.type == REDIR_OUT)
+	else if (redir.type == REDIR_OUT || redir.type == REDIR_APPEND)
 	{
 		fd = open(redir.filename.c_str, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 		if (fd == -1 || !move_fd(fd, STDOUT_FILENO))
@@ -105,9 +106,17 @@ bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error)
 	i = 0;
 	while (i < redirs.size)
 	{
+		ft_println("HERRE");
 		if (!run_cmd_redir(((t_redirection *)redirs.elems)[i], error))
 			return (false);
 		i++;
 	}
 	return (true);
+}
+
+void	free_cmd_redir(t_redirection redir)
+{
+	if (redir.type == REDIR_HEREDOC)
+		free_heredoc(redir);
+	ft_string_free(redir.filename);
 }

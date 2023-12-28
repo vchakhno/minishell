@@ -25,6 +25,7 @@ SRCS		:= \
 				executable.c \
 				backup_fds.c \
 				find_executable.c \
+				ast/heredoc.c \
 				ast/root.c \
 				ast/simple_command.c \
 				ast/pipeline.c \

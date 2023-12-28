@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 10:21:03 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 17:17:48 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,32 @@ bool	match_token(
 
 	if (!peek_token(tokenizer, &token, prompt, (enum e_prompt_error *)error))
 		return (false);
-	if (ft_str_equal_c_str(token.content, content))
+	if (!ft_str_equal_c_str(
+			get_token_content(*tokenizer->lines, token), content))
 	{
-		ft_vector_remove(&tokenizer->tokens, 0, NULL);
-		return (true);
+		*error = SYNTAX_ERROR_NO_MATCH;
+		return (false);
 	}
-	*error = SYNTAX_ERROR_NO_MATCH;
-	return (false);
+	ft_vector_remove(&tokenizer->tokens, 0, NULL);
+	return (true);
+}
+
+bool	match_word_token(
+	t_tokenizer *tokenizer, t_str *content, const char *prompt,
+	enum e_syntax_error *error
+) {
+	t_token	token;
+
+	if (!peek_token(tokenizer, &token, prompt, (enum e_prompt_error *)error))
+		return (false);
+	if (token.type != TOKEN_WORD)
+	{
+		*error = SYNTAX_ERROR_NO_MATCH;
+		return (false);
+	}
+	ft_vector_remove(&tokenizer->tokens, 0, NULL);
+	*content = get_token_content(*tokenizer->lines, token);
+	return (true);
 }
 
 bool	peek_token(
@@ -69,7 +88,8 @@ bool	tokenize_line(
 			*error = PROMPT_ERROR_MALLOC;
 			return (false);
 		}
-		if (ft_str_equal_c_str(token.content, "\n"))
+		if (ft_str_equal_c_str(
+				get_token_content(*tokenizer->lines, token), "\n"))
 			return (true);
 	}
 	return (false);

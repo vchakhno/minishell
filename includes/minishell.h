@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 10:38:39 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 17:23:14 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ bool	read_input(t_string *new_lines, const char *prompt,
 bool	alloc_lines(t_lines *lines);
 bool	append_lines(t_lines *lines, const char *prompt,
 			enum e_prompt_error *error);
+bool	read_line(t_lines *lines, t_str *line, const char *prompt,
+			enum e_prompt_error *error);
 void	register_command(t_lines lines);
 void	cut_lines(t_lines *lines);
 void	free_lines(t_lines lines);
@@ -67,12 +69,14 @@ enum	e_token_type
 typedef struct s_token
 {
 	enum e_token_type	type;
-	t_str				content;
+	t_u32				start;
+	t_u32				len;
 }	t_token;
 
 bool	parse_token(t_lines *lines, t_token *token, const char *prompt,
 			enum e_prompt_error *error);
-void	print_token(t_token token);
+t_str	get_token_content(t_lines lines, t_token token);
+void	print_token(t_lines lines, t_token token);
 
 /* ************************************************************************** */
 /* TOKENIZER																  */
@@ -95,6 +99,8 @@ enum	e_syntax_error
 bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines);
 bool	match_token(t_tokenizer *tokenizer, char *content, const char *prompt,
 			enum e_syntax_error *error);
+bool	match_word_token(t_tokenizer *tokenizer, t_str *content,
+			const char *prompt, enum e_syntax_error *error);
 bool	peek_token(t_tokenizer *tokenizer, t_token *token, const char *prompt,
 			enum e_prompt_error *error);
 bool	tokenize_line(t_tokenizer *tokenizer, const char *prompt,
@@ -135,9 +141,16 @@ typedef struct s_redirection
 	};
 }	t_redirection;
 
+
+bool	store_heredoc(t_redirection *heredoc, t_lines *lines,
+			enum e_prompt_error *error);
+void	run_heredoc(t_redirection heredoc);
+void	free_heredoc(t_redirection heredoc);
+
 bool	parse_cmd_redir(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error);
+void	free_cmd_redir(t_redirection redir);
 
 typedef struct s_simple_command
 {
