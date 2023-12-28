@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 17:25:08 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 20:09:24 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ bool	parse_cmd_redir(
 	t_str			filename;
 
 	if (!match_redir_op(tokenizer, &redir.type, error)
-		|| !match_word_token(tokenizer, &filename, "redir> ", error))
+		|| !match_word_token(tokenizer, &filename, NULL, error))
 		return (false);
 	if (!ft_string_from_str(&redir.filename, filename))
 	{
@@ -49,7 +49,7 @@ bool	parse_cmd_redir(
 		return (false);
 	}
 	if (redir.type == REDIR_HEREDOC && !store_heredoc(
-			&redir, tokenizer->lines, (enum e_prompt_error *)error))
+			&redir.heredoc, tokenizer->lines, (enum e_prompt_error *)error))
 		return (false);
 	if (!ft_vector_push(redirs, &redir))
 	{
@@ -66,7 +66,8 @@ bool	run_cmd_redir(t_redirection redir, enum e_exec_error *error)
 
 	if (redir.type == REDIR_HEREDOC)
 	{
-		run_heredoc(redir);
+		if (!start_heredoc(redir.heredoc, error))
+			return (false);
 		return (true);
 	}
 	if (redir.type == REDIR_IN)
@@ -106,7 +107,6 @@ bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error)
 	i = 0;
 	while (i < redirs.size)
 	{
-		ft_println("HERRE");
 		if (!run_cmd_redir(((t_redirection *)redirs.elems)[i], error))
 			return (false);
 		i++;
@@ -117,6 +117,6 @@ bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error)
 void	free_cmd_redir(t_redirection redir)
 {
 	if (redir.type == REDIR_HEREDOC)
-		free_heredoc(redir);
+		free_heredoc(redir.heredoc);
 	ft_string_free(redir.filename);
 }

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 17:23:14 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 20:09:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,23 +129,28 @@ enum e_redir_type
 	REDIR_APPEND,
 };
 
+typedef struct s_heredoc
+{
+	t_string	delimiter;
+	t_string	content;
+	pid_t		pid;
+}	t_heredoc;
+
 typedef struct s_redirection
 {
 	enum e_redir_type	type;
 	union {
 		t_string		filename;
-		struct {
-			t_string	delimiter;
-			t_string	content;
-		};
+		t_heredoc		heredoc;
 	};
 }	t_redirection;
 
 
-bool	store_heredoc(t_redirection *heredoc, t_lines *lines,
+bool	store_heredoc(t_heredoc *heredoc, t_lines *lines,
 			enum e_prompt_error *error);
-void	run_heredoc(t_redirection heredoc);
-void	free_heredoc(t_redirection heredoc);
+bool	start_heredoc(t_heredoc heredoc, enum e_exec_error *error);
+void	cleanup_heredoc(t_heredoc heredoc);
+void	free_heredoc(t_heredoc heredoc);
 
 bool	parse_cmd_redir(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);

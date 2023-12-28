@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 19:06:34 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 20:22:00 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,13 +164,15 @@ bool	expand(t_str str, t_env env, t_vector *closed_fields)
 		}
 	}
 	ft_string_free(pre_split);
-	if (open_field.len != 0)
+	if (open_field.len == 0)
 	{
-		if (!ft_vector_push(closed_fields, &open_field))
-		{
-			ft_string_free(open_field);
-			return (false);
-		}
+		ft_string_free(open_field);
+		return (true);
+	}
+	if (!ft_vector_push(closed_fields, &open_field))
+	{
+		ft_string_free(open_field);
+		return (false);
 	}
 	return (true);
 }
