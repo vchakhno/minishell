@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/17 21:02:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 10:02:13 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ bool	parse_quotes(
 		token->content.len++;
 		lines->cursor++;
 	}
-	while (read_lines(lines, prompt, error))
+	while (append_lines(lines, prompt, error))
 	{
 		while (lines->cursor < lines->text.len)
 		{
@@ -111,7 +111,7 @@ bool	parse_token(
 	skip_blanks(lines);
 	while (lines->cursor == lines->text.len)
 	{
-		if (!read_lines(lines, prompt, error))
+		if (!append_lines(lines, prompt, error))
 			return (false);
 		skip_blanks(lines);
 	}

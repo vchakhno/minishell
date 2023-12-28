@@ -25,71 +25,25 @@ bool	alloc_lines(t_lines *lines)
 	return (true);
 }
 
-bool	g_ctrlc = false;
-
-void	sigint_hook(int sig)
-{
-	(void) sig;
-	close(STDIN_FILENO);
-	g_ctrlc = true;
-}
-
-bool	read_lines(
+bool	append_lines(
 	t_lines *lines, const char *prompt, enum e_prompt_error *error
 ) {
-	static bool	first_ctrl_c = true;
-	char		*user_input;
-	int			new_stdin;
+	t_string	user_input;
 
-	// pre readline
-	new_stdin = dup(STDIN_FILENO);
-	if (new_stdin == -1)
-	{
-		*error = PROMPT_ERROR_MALLOC;
-		return (false);
-	}
 	if (lines->cursor == 0)
 		prompt = MAIN_PROMPT;
-	signal(SIGINT, &sigint_hook);
-
-	user_input = readline(prompt);
-	// post readline
-	signal(SIGINT, SIG_IGN);
-	if (dup2(new_stdin, STDIN_FILENO) == -1)
+	if (!read_lines(&user_input, prompt, error))
+		return (false);
+	if (!ft_string_reserve(&lines->text, user_input.len + 1))
 	{
+		ft_eprintln("Error: Not enough memory to store user lines");
+		ft_string_free(user_input);
 		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
-	close(new_stdin);
-
-	if (!user_input)
-	{
-		if (g_ctrlc)
-		{
-			g_ctrlc = false;
-			*error = PROMPT_ERROR_CTRL_C;
-			if (first_ctrl_c)
-				ft_oprintln(ft_stderr(), "");
-			first_ctrl_c = false;
-		}
-		else
-		{
-			*error = PROMPT_ERROR_CTRL_D;
-			first_ctrl_c = true;
-		}
-		return (false);
-	}
-	first_ctrl_c = true;
-	if (!ft_string_reserve(&lines->text, ft_c_str_len(user_input) + 1))
-	{
-		ft_oprintln(ft_stderr(), "Error: Not enough memory to store user lines");
-		free(user_input);
-		*error = PROMPT_ERROR_MALLOC;
-		return (false);
-	}
-	ft_string_append_c_str(&lines->text, user_input);
+	ft_string_append_str(&lines->text, user_input.str);
 	ft_string_append_c_str(&lines->text, "\n");
-	free(user_input);
+	ft_string_free(user_input);
 	return (true);
 }
 
