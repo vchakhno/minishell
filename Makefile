@@ -21,7 +21,7 @@ SRCS		:= \
 				utils/fork.c \
 				utils/print_error.c \
 				raw_command.c \
-				read_lines.c \
+				input.c \
 				executable.c \
 				backup_fds.c \
 				find_executable.c \

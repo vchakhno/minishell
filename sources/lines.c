@@ -32,7 +32,7 @@ bool	append_lines(
 
 	if (lines->cursor == 0)
 		prompt = MAIN_PROMPT;
-	if (!read_lines(&user_input, prompt, error))
+	if (!read_input(&user_input, prompt, error))
 		return (false);
 	if (!ft_string_reserve(&lines->text, user_input.len + 1))
 	{

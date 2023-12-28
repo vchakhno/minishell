@@ -26,7 +26,7 @@ void	sigint_hook(int sig)
 	g_ctrlc = true;
 }
 
-bool	setup_read_lines(int *stdin_backup)
+bool	setup_input(int *stdin_backup)
 {
 	*stdin_backup = dup(STDIN_FILENO);
 	if (*stdin_backup == -1)
@@ -35,13 +35,13 @@ bool	setup_read_lines(int *stdin_backup)
 	return (true);
 }
 
-bool	restore_read_lines(int stdin_backup)
+bool	restore_input(int stdin_backup)
 {
 	signal(SIGINT, SIG_IGN);
 	return (move_fd(stdin_backup, STDIN_FILENO));
 }
 
-void	handle_read_lines_empty(bool *prev_ctrl_c, enum e_prompt_error *error)
+void	handle_input_empty(bool *prev_ctrl_c, enum e_prompt_error *error)
 {
 	if (g_ctrlc)
 	{
@@ -56,7 +56,7 @@ void	handle_read_lines_empty(bool *prev_ctrl_c, enum e_prompt_error *error)
 	*error = PROMPT_ERROR_CTRL_D;
 }
 
-bool	read_lines(
+bool	read_input(
 	t_string *new_lines, const char *prompt, enum e_prompt_error *error
 ) {
 	static bool	prev_ctrl_c = false;
@@ -64,20 +64,20 @@ bool	read_lines(
 	t_u32		input_len;
 	int			stdin_backup;
 
-	if (!setup_read_lines(&stdin_backup))
+	if (!setup_input(&stdin_backup))
 	{
 		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
 	user_input = readline(prompt);
-	if (!restore_read_lines(stdin_backup))
+	if (!restore_input(stdin_backup))
 	{
 		*error = PROMPT_ERROR_MALLOC;
 		return (false);
 	}
 	if (!user_input)
 	{
-		handle_read_lines_empty(&prev_ctrl_c, error);
+		handle_input_empty(&prev_ctrl_c, error);
 		return (false);
 	}
 	prev_ctrl_c = false;
