@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 01:55:21 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 07:50:11 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ bool	parse_simple_command(
 			continue ;
 		if (*error != SYNTAX_ERROR_NO_MATCH)
 			return (false);
-		if (parse_cmd_redir(&cmd->redirs, tokenizer, error))
+		if (parse_redirections(&cmd->redirs, tokenizer, error))
 			continue ;
 		if (*error != SYNTAX_ERROR_NO_MATCH)
 			return (false);
@@ -53,28 +53,25 @@ bool	run_simple_command(
 ) {
 	t_vector		fields;
 	t_backup_fds	backup;
-	bool			status;
 
 	if (!expand_all(cmd->argv, session->env, &fields))
 		return (false);
-	if (!save_backup_fds(&backup))
+	if (!run_redirections(cmd->redirs, &backup, error))
 	{
-		free_fields(fields);
-		*error = EXEC_ERROR_EXIT;
+		free_fields(fields);	
 		return (false);
 	}
-	status = (run_cmd_redirs(cmd->redirs, error)
-			&& run_raw_command(fields, session, backup, error));
-	if (!restore_backup_fds(backup))
+	if (!run_raw_command(fields, session, backup, error))
 	{
+		if (*error == EXEC_ERROR_RECOVER)
+			cleanup_redirections(cmd->redirs, backup, cmd->redirs.size);
 		free_fields(fields);
-		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	cleanup_redirections(cmd->redirs);
+	cleanup_redirections(cmd->redirs, backup, cmd->redirs.size);
 	free_fields(fields);
 	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
-	return (status);
+	return (true);
 }
 
 void	free_simple_command(t_simple_command cmd)
@@ -91,7 +88,7 @@ void	free_simple_command(t_simple_command cmd)
 	i = 0;
 	while (i < cmd.redirs.size)
 	{
-		free_cmd_redir(((t_redirection *)cmd.redirs.elems)[i]);
+		free_redirection(((t_redirection *)cmd.redirs.elems)[i]);
 		i++;
 	}
 	ft_vector_free(cmd.redirs);

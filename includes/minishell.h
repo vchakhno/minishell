@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 01:56:36 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 07:37:25 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ bool	consume_token(t_tokenizer *tokenizer, const char *prompt,
 void	free_tokenizer(t_tokenizer tokenizer);
 
 /* ************************************************************************** */
-/* AST																		  */
+/* REDIRECTIONS																  */
 /* ************************************************************************** */
 
 enum e_exec_error
@@ -118,44 +118,95 @@ enum e_exec_error
 	EXEC_ERROR_RECOVER,
 };
 
-typedef struct s_session	t_session;
-
-enum e_redir_type
+typedef struct s_output_redir
 {
-	REDIR_IN,
-	REDIR_OUT,
-	REDIR_HEREDOC,
-	REDIR_APPEND,
-};
+	t_string	filename;
+}	t_output_redir;
+
+bool	parse_output_redir(t_output_redir *redir, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+bool	run_output_redir(t_output_redir *redir);
+void	free_output_redir(t_output_redir redir);
+
+typedef struct s_append_redir
+{
+	t_string	filename;
+}	t_append_redir;
+
+bool	parse_append_redir(t_append_redir *redir, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+bool	run_append_redir(t_append_redir *redir);
+void	free_append_redir(t_append_redir redir);
+
+typedef struct s_input_redir
+{
+	t_string	filename;
+}	t_input_redir;
+
+bool	parse_input_redir(t_input_redir *redir, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+bool	run_input_redir(t_input_redir *redir);
+void	free_input_redir(t_input_redir redir);
 
 typedef struct s_heredoc
 {
 	t_string	delimiter;
-	t_string	content;
+	t_string	body;
 	pid_t		pid;
 }	t_heredoc;
+
+bool	parse_heredoc(t_heredoc *heredoc, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+bool	run_heredoc(t_heredoc *heredoc, enum e_exec_error *error);
+void	cleanup_heredoc(t_heredoc heredoc);
+void	free_heredoc(t_heredoc heredoc);
+
+enum e_redir_type
+{
+	REDIR_INPUT,
+	REDIR_OUTPUT,
+	REDIR_HEREDOC,
+	REDIR_APPEND,
+};
 
 typedef struct s_redirection
 {
 	enum e_redir_type	type;
 	union {
-		t_string		filename;
+		t_output_redir	output;
+		t_input_redir	input;
+		t_append_redir	append;
 		t_heredoc		heredoc;
 	};
 }	t_redirection;
 
-
-bool	store_heredoc(t_heredoc *heredoc, t_lines *lines,
-			enum e_prompt_error *error);
-bool	start_heredoc(t_heredoc *heredoc, enum e_exec_error *error);
-void	cleanup_heredoc(t_heredoc heredoc);
-void	free_heredoc(t_heredoc heredoc);
-
-bool	parse_cmd_redir(t_vector *redirs, t_tokenizer *tokenizer,
+bool	run_redirection(t_redirection *redir, enum e_exec_error *error);
+bool	parse_redirection(t_redirection *redir, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error);
-void	cleanup_redirections(t_vector redirs);
-void	free_cmd_redir(t_redirection redir);
+void	cleanup_redirection(t_redirection redir);
+void	free_redirection(t_redirection redir);
+
+typedef struct s_backup_fds
+{
+	t_i32	stdin;
+	t_i32	stdout;
+}	t_backup_fds;
+
+bool	save_backup_fds(t_backup_fds *backup);
+bool	restore_backup_fds(t_backup_fds backup);
+void	discard_backup_fds(t_backup_fds backup);
+
+bool	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer,
+		enum e_syntax_error *error);
+bool	run_redirections(t_vector redirs, t_backup_fds *backup,
+			enum e_exec_error *error);
+void	cleanup_redirections(t_vector redirs, t_backup_fds backup, t_u32 size);
+
+/* ************************************************************************** */
+/* GRAMMAR																	  */
+/* ************************************************************************** */
+
+typedef struct s_session	t_session;
 
 typedef struct s_simple_command
 {
@@ -217,20 +268,6 @@ bool	get_env_var(t_env env, t_str name, t_str *value);
 bool	set_env_var(t_env *env, t_str name, t_str value);
 void	display_env(t_env *env);
 void	free_env(t_env env);
-
-/* ************************************************************************** */
-/* BACKUP_FDS																  */
-/* ************************************************************************** */
-
-typedef struct s_backup_fds
-{
-	t_i32	stdin;
-	t_i32	stdout;
-}	t_backup_fds;
-
-bool	save_backup_fds(t_backup_fds *backup);
-bool	restore_backup_fds(t_backup_fds backup);
-void	discard_backup_fds(t_backup_fds backup);
 
 /* ************************************************************************** */
 /* EXECUTABLE																  */

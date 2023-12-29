@@ -20,9 +20,13 @@ SRCS		:= \
 				grammar/command/executables/executable.c \
 				grammar/command/executables/find_executable.c \
 				grammar/command/expand/expand.c \
+				grammar/command/redirections/append.c \
 				grammar/command/redirections/backup_fds.c \
-				grammar/command/redirections/cmd_redir.c \
 				grammar/command/redirections/heredoc.c \
+				grammar/command/redirections/input.c \
+				grammar/command/redirections/output.c \
+				grammar/command/redirections/redirection.c \
+				grammar/command/redirections/redirections.c \
 				grammar/command/argument.c \
 				grammar/command/raw_command.c \
 				grammar/command/simple_command.c \
