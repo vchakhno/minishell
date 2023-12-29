@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 07:37:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 08:18:11 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,9 +263,11 @@ typedef struct s_env
 	t_vector	vars;
 }	t_env;
 
-bool	parse_env(t_env *env, char **env_strs);
 bool	get_env_var(t_env env, t_str name, t_str *value);
 bool	set_env_var(t_env *env, t_str name, t_str value);
+void	remove_env_var(t_env *env, t_str name);
+
+bool	parse_env(t_env *env, char **env_strs);
 void	display_env(t_env *env);
 void	free_env(t_env env);
 
@@ -322,19 +324,17 @@ void	print_error(char *error, ...);
 /* ************************************************************************** */
 
 typedef bool				(*t_builtin)(
-	t_vector argv, t_session *session, enum e_exec_error *error
+	t_vector argv, t_session *session
 );
 
-bool	run_builtin_exit(t_vector argv, t_session *session,
-			enum e_exec_error *error);
-bool	run_builtin_cd(t_vector argv, t_session *session,
-			enum e_exec_error *error);
-bool	run_builtin_pwd(t_vector argv, t_session *session,
-			enum e_exec_error *error);
-bool	run_builtin_export(t_vector argv, t_session *session,
-			enum e_exec_error *error);
-bool	run_builtin_cat(t_vector argv, t_session *session,
-			enum e_exec_error *error);
+bool	run_builtin_echo(t_vector argv, t_session *session);
+bool	run_builtin_cd(t_vector argv, t_session *session);
+bool	run_builtin_pwd(t_vector argv, t_session *session);
+bool	run_builtin_export(t_vector argv, t_session *session);
+bool	run_builtin_unset(t_vector argv, t_session *session);
+bool	run_builtin_env(t_vector argv, t_session *session);
+bool	run_builtin_exit(t_vector argv, t_session *session);
+bool	run_builtin_cat(t_vector argv, t_session *session);
 
 /* ************************************************************************** */
 /* EXPAND																	  */

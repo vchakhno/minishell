@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/23 01:25:38 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 08:11:27 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,8 @@ static bool	validate_exit_arg(t_str arg, t_u8 *exit_status)
 	return (true);
 }
 
-bool	run_builtin_exit(
-	t_vector argv, t_session *session, enum e_exec_error *error
-) {
-	(void) error;
+bool	run_builtin_exit(t_vector argv, t_session *session)
+{
 	if (argv.size > 2)
 	{
 		print_error("exit: too many arguments");

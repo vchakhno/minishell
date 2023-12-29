@@ -11,12 +11,16 @@ NAME		:= minishell
 SRC_DIR		:= sources
 SRCS		:= \
 				environment/env.c \
+				environment/env_vars.c \
 				environment/env_var.c \
 				grammar/command/builtins/cat.c \
 				grammar/command/builtins/cd.c \
+				grammar/command/builtins/echo.c \
+				grammar/command/builtins/env.c \
 				grammar/command/builtins/exit.c \
 				grammar/command/builtins/export.c \
 				grammar/command/builtins/pwd.c \
+				grammar/command/builtins/unset.c \
 				grammar/command/executables/executable.c \
 				grammar/command/executables/find_executable.c \
 				grammar/command/expand/expand.c \

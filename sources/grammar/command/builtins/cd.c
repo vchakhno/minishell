@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/23 04:02:54 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 08:16:30 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,20 +69,14 @@ static bool	update_pwd(t_env *env)
 	return (true);
 }
 
-bool	run_builtin_cd(
-	t_vector argv, t_session *session, enum e_exec_error *error
-) {
-	(void) error;
+bool	run_builtin_cd(t_vector argv, t_session *session)
+{
 	if (!check_args(argv.size))
 		return (true);
 	if (!change_dir(((t_string *)argv.elems)[1].c_str))
 		return (true);
 	if (!update_oldpwd(&session->env)
 		|| !update_pwd(&session->env))
-	{
-		*error = EXEC_ERROR_EXIT;
 		return (false);
-	}
-	ft_eprintln("cd successful!");
 	return (true);
 }

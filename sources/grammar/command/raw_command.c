@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 00:19:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 08:18:59 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 bool	get_builtin(t_str name, t_builtin *builtin_func)
 {
 	char *const		builtin_names[] = {
-		"exit", "cd", "pwd", "export", "_cat"
+		"echo", "cd", "pwd", "export", "unset", "env", "exit", "_cat"
 	};
 	const t_builtin	builtin_funcs[] = {
-		run_builtin_exit, run_builtin_cd, run_builtin_pwd, run_builtin_export,
-		run_builtin_cat
+		run_builtin_echo, run_builtin_cd, run_builtin_pwd, run_builtin_export,
+		run_builtin_unset, run_builtin_env, run_builtin_exit, run_builtin_cat
 	};
 	t_u32			i;
 
@@ -45,7 +45,14 @@ bool	run_raw_command(
 	t_builtin		builtin_func;
 
 	if (get_builtin(((t_string *)argv.elems)[0].str, &builtin_func))
-		return (builtin_func(argv, session, error));
+	{
+		if (!builtin_func(argv, session))
+		{
+			*error = EXEC_ERROR_RECOVER;
+			return (false);
+		}
+		return (true);
+	}
 	if (!alloc_executable(&exec, argv, session->env, error))
 		return (false);
 	if (!run_executable(exec, backup, &session->last_status, error))
