@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 01:36:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 01:55:21 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ bool	parse_simple_command(
 ) {
 	while (true)
 	{
-		if (parse_cmd_arg(&cmd->argv, tokenizer, error))
+		if (parse_argument(&cmd->argv, tokenizer, error))
 			continue ;
 		if (*error != SYNTAX_ERROR_NO_MATCH)
 			return (false);

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 00:32:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 01:56:36 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ enum	e_prompt_error
 	PROMPT_ERROR_CTRL_D,
 };
 
-
 bool	read_input(t_string *new_lines, const char *prompt,
 			enum e_prompt_error *error);
 
@@ -57,7 +56,7 @@ void	cut_lines(t_lines *lines);
 void	free_lines(t_lines lines);
 
 /* ************************************************************************** */
-/* TOKEN																	  */
+/* TOKENS																	  */
 /* ************************************************************************** */
 
 enum	e_token_type
@@ -164,7 +163,7 @@ typedef struct s_simple_command
 	t_vector	redirs;
 }	t_simple_command;
 
-bool	parse_cmd_arg(t_vector *argv, t_tokenizer *tokenizer,
+bool	parse_argument(t_vector *argv, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 
 bool	alloc_simple_command(t_simple_command *cmd);

@@ -23,7 +23,7 @@ SRCS		:= \
 				grammar/command/redirections/backup_fds.c \
 				grammar/command/redirections/cmd_redir.c \
 				grammar/command/redirections/heredoc.c \
-				grammar/command/cmd_arg.c \
+				grammar/command/argument.c \
 				grammar/command/raw_command.c \
 				grammar/command/simple_command.c \
 				grammar/pipes/pipeline.c \
