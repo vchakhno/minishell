@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 07:52:58 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 07:55:19 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ bool	run_heredoc(t_heredoc *heredoc, enum e_exec_error *error)
 
 void	cleanup_heredoc(t_heredoc heredoc)
 {
-	ft_eprintln("Killing pid {u32}", heredoc.pid);
 	kill(heredoc.pid, SIGKILL);
 	waitpid(heredoc.pid, NULL, 0);
 }
