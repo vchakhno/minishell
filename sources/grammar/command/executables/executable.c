@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/25 13:32:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 00:20:47 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,17 @@ bool	alloc_executable(
 	return (true);
 }
 
+void	start_executable(t_executable exec)
+{
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
+	execve(
+		exec.full_path.c_str,
+		(char **)exec.compact_argv.elems,
+		(char **)exec.compact_env.elems);
+	ft_oprintln(ft_stderr(), "Execve failure");
+}
+
 bool	run_executable(
 	t_executable exec, t_backup_fds backup, t_u8 *status,
 	enum e_exec_error *error
@@ -98,17 +109,6 @@ bool	run_executable(
 	else if (WIFSIGNALED(wstatus))
 		*status = 128 + WTERMSIG(wstatus);
 	return (true);
-}
-
-void	start_executable(t_executable exec)
-{
-	signal(SIGQUIT, SIG_DFL);
-	signal(SIGINT, SIG_DFL);
-	execve(
-		exec.full_path.c_str,
-		(char **)exec.compact_argv.elems,
-		(char **)exec.compact_env.elems);
-	ft_oprintln(ft_stderr(), "Execve failure");
 }
 
 void	free_executable(t_executable exec)

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/25 12:45:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/28 23:10:27 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,10 +121,10 @@ bool	start_pipeline(
 		}
 		if (pids[i] == 0)
 		{
-			if (apply_pipe(&input, pipe_fds))
-				start_simple_command(&((t_simple_command *)pipeline.elems)[i],
-					session, error);
-			cleanup_pipeline(i, pids);
+			if (!apply_pipe(&input, pipe_fds)
+				|| !run_simple_command(
+					&((t_simple_command *)pipeline.elems)[i], session, error))
+				cleanup_pipeline(i, pids);
 			*error = EXEC_ERROR_EXIT;
 			return (false);
 		}

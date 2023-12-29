@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 17:22:38 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 01:36:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,10 @@ bool	parse_simple_command(
 	return (cmd->argv.size);
 }
 
-// For when pipe has a single child
-// 
 // In this case, executables fork (and builtins don't)
 // Then both are supposed to return normally
-// /!\ There can also be 2 returns in case execve fails
+// /!\ There will be multiple returns if the command contains heredocs,
+// or execve fails
 
 bool	run_simple_command(
 	t_simple_command *cmd, t_session *session, enum e_exec_error *error
@@ -72,30 +71,10 @@ bool	run_simple_command(
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
+	cleanup_redirections(cmd->redirs);
 	free_fields(fields);
 	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
 	return (status);
-}
-
-// For when pipe has multiple children
-//
-// In this case, executables don't fork (nor do builtins)
-// Executables are not supposed to return, except if execve fails
-
-void	start_simple_command(
-	t_simple_command *cmd, t_session *session, enum e_exec_error *error
-) {
-	t_vector	fields;
-
-	if (!expand_all(cmd->argv, session->env, &fields))
-		return ;
-	if (!run_cmd_redirs(cmd->redirs, error))
-	{
-		free_fields(fields);
-		return ;
-	}
-	start_raw_command(fields, session, error);
-	free_fields(fields);
 }
 
 void	free_simple_command(t_simple_command cmd)

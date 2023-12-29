@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 18:42:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 00:19:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,20 +55,4 @@ bool	run_raw_command(
 	}
 	free_executable(exec);
 	return (true);
-}
-
-bool	start_raw_command(
-	t_vector argv, t_session *session, enum e_exec_error *error
-) {
-	t_executable	exec;
-	t_builtin		builtin_func;
-
-	if (get_builtin(((t_string *)argv.elems)[0].str, &builtin_func))
-		return (builtin_func(argv, session, error));
-	if (!alloc_executable(&exec, argv, session->env, error))
-		return (false);
-	start_executable(exec);
-	free_executable(exec);
-	*error = EXEC_ERROR_EXIT;
-	return (false);
 }

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 20:09:24 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 01:15:48 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,37 +60,37 @@ bool	parse_cmd_redir(
 	return (true);
 }
 
-bool	run_cmd_redir(t_redirection redir, enum e_exec_error *error)
+bool	run_cmd_redir(t_redirection *redir, enum e_exec_error *error)
 {
 	t_i32	fd;
 
-	if (redir.type == REDIR_HEREDOC)
+	if (redir->type == REDIR_HEREDOC)
 	{
-		if (!start_heredoc(redir.heredoc, error))
+		if (!start_heredoc(&redir->heredoc, error))
 			return (false);
 		return (true);
 	}
-	if (redir.type == REDIR_IN)
+	if (redir->type == REDIR_IN)
 	{
-		fd = open(redir.filename.c_str, O_RDONLY);
+		fd = open(redir->filename.c_str, O_RDONLY);
 		if (fd == -1 || !move_fd(fd, STDIN_FILENO))
 		{
 			*error = EXEC_ERROR_RECOVER;
 			return (false);
 		}
 	}
-	else if (redir.type == REDIR_OUT || redir.type == REDIR_APPEND)
+	else if (redir->type == REDIR_OUT || redir->type == REDIR_APPEND)
 	{
-		fd = open(redir.filename.c_str, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+		fd = open(redir->filename.c_str, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 		if (fd == -1 || !move_fd(fd, STDOUT_FILENO))
 		{
 			*error = EXEC_ERROR_RECOVER;
 			return (false);
 		}
 	}
-	else if (redir.type == REDIR_APPEND)
+	else if (redir->type == REDIR_APPEND)
 	{
-		fd = open(redir.filename.c_str, O_WRONLY | O_CREAT | O_APPEND, 0666);
+		fd = open(redir->filename.c_str, O_WRONLY | O_CREAT | O_APPEND, 0666);
 		if (fd == -1 || !move_fd(fd, STDOUT_FILENO))
 		{
 			*error = EXEC_ERROR_RECOVER;
@@ -102,16 +102,42 @@ bool	run_cmd_redir(t_redirection redir, enum e_exec_error *error)
 
 bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error)
 {
-	t_u32	i;
+	t_redirection	*redir;
+	t_u32			i;
 
 	i = 0;
 	while (i < redirs.size)
 	{
-		if (!run_cmd_redir(((t_redirection *)redirs.elems)[i], error))
+		redir = &((t_redirection *)redirs.elems)[i];
+		if (!run_cmd_redir(redir, error))
+		{
+			while (i)
+			{
+				i--;
+				redir = &((t_redirection *)redirs.elems)[i];
+				if (redir->type == REDIR_HEREDOC)
+					cleanup_heredoc(redir->heredoc);
+			}
 			return (false);
+		}
 		i++;
 	}
 	return (true);
+}
+
+void	cleanup_redirections(t_vector redirs)
+{
+	t_redirection	redir;
+	t_u32			i;
+
+	i = 0;
+	while (i < redirs.size)
+	{
+		redir = ((t_redirection *)redirs.elems)[i];
+		if (redir.type == REDIR_HEREDOC)
+			cleanup_heredoc(redir.heredoc);
+		i++;
+	}
 }
 
 void	free_cmd_redir(t_redirection redir)

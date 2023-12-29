@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 20:09:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 00:32:42 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,13 +148,14 @@ typedef struct s_redirection
 
 bool	store_heredoc(t_heredoc *heredoc, t_lines *lines,
 			enum e_prompt_error *error);
-bool	start_heredoc(t_heredoc heredoc, enum e_exec_error *error);
+bool	start_heredoc(t_heredoc *heredoc, enum e_exec_error *error);
 void	cleanup_heredoc(t_heredoc heredoc);
 void	free_heredoc(t_heredoc heredoc);
 
 bool	parse_cmd_redir(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 bool	run_cmd_redirs(t_vector redirs, enum e_exec_error *error);
+void	cleanup_redirections(t_vector redirs);
 void	free_cmd_redir(t_redirection redir);
 
 typedef struct s_simple_command
@@ -170,8 +171,6 @@ bool	alloc_simple_command(t_simple_command *cmd);
 bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 bool	run_simple_command(t_simple_command *cmd, t_session *session,
-			enum e_exec_error *error);
-void	start_simple_command(t_simple_command *cmd, t_session *session,
 			enum e_exec_error *error);
 void	free_simple_command(t_simple_command cmd);
 
@@ -251,13 +250,10 @@ bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
 			enum e_exec_error *error);
 bool	run_executable(t_executable exec, t_backup_fds backup,
 			t_u8 *status, enum e_exec_error *error);
-void	start_executable(t_executable exec);
 void	free_executable(t_executable exec);
 
 bool	run_raw_command(t_vector argv, t_session *session,
 			t_backup_fds backup, enum e_exec_error *error);
-bool	start_raw_command(t_vector argv, t_session *session,
-			enum e_exec_error *error);
 
 /* ************************************************************************** */
 /* SESSION																	  */

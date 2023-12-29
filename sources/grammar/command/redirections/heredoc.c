@@ -6,13 +6,14 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 20:09:46 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 01:19:46 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <unistd.h>
 #include <wait.h>
+#include <signal.h>
 
 bool	store_heredoc(
 	t_heredoc *heredoc, t_lines *lines, enum e_prompt_error *error
@@ -39,27 +40,34 @@ bool	store_heredoc(
 	return (true);
 }
 
-bool	start_heredoc(t_heredoc heredoc, enum e_exec_error *error)
+bool	start_heredoc(t_heredoc *heredoc, enum e_exec_error *error)
 {
 	int	pipe_fds[2];
 
 	pipe(pipe_fds);
-	if (!ft_fork(&heredoc.pid))
+	if (!ft_fork(&heredoc->pid))
 	{
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	if (heredoc.pid == 0)
+	if (heredoc->pid == 0)
 	{
 		close(pipe_fds[0]);
 		move_fd(pipe_fds[1], STDOUT_FILENO);
-		ft_printf("{str}", heredoc.content.str);
+		ft_printf("{str}", heredoc->content.str);
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
-	move_fd(pipe_fds[0], STDIN_FILENO);
 	close(pipe_fds[1]);
+	move_fd(pipe_fds[0], STDIN_FILENO);
 	return (true);
+}
+
+void	cleanup_heredoc(t_heredoc heredoc)
+{
+	// ft_eprintln("Killing pid {u32}", heredoc.pid);
+	// kill(heredoc.pid, SIGKILL);
+	waitpid(heredoc.pid, NULL, 0);
 }
 
 void	free_heredoc(t_heredoc heredoc)
