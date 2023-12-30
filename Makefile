@@ -21,6 +21,7 @@ SRCS		:= \
 				grammar/command/builtins/export.c \
 				grammar/command/builtins/pwd.c \
 				grammar/command/builtins/unset.c \
+				grammar/command/builtins/utils.c \
 				grammar/command/executables/executable.c \
 				grammar/command/executables/find_executable.c \
 				grammar/command/expand/expand.c \

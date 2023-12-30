@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 07:50:11 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 03:52:10 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ bool	run_simple_command(
 		return (false);
 	if (!run_redirections(cmd->redirs, &backup, error))
 	{
-		free_fields(fields);	
+		free_fields(fields);
 		return (false);
 	}
 	if (!run_raw_command(fields, session, backup, error))
@@ -70,7 +70,7 @@ bool	run_simple_command(
 	}
 	cleanup_redirections(cmd->redirs, backup, cmd->redirs.size);
 	free_fields(fields);
-	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
+	ft_oprintln(ft_stderr(), "Status: {u8}", session->exit_status);
 	return (true);
 }
 

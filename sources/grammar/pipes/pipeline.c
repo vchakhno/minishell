@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 23:10:27 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 02:03:25 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,9 +146,9 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 		i++;
 	}
 	if (WIFEXITED(wstatus))
-		session->last_status = WEXITSTATUS(wstatus);
+		session->exit_status = WEXITSTATUS(wstatus);
 	else if (WIFSIGNALED(wstatus))
-		session->last_status = 128 + WTERMSIG(wstatus);
+		session->exit_status = 128 + WTERMSIG(wstatus);
 }
 
 bool	run_pipeline(
@@ -171,7 +171,7 @@ bool	run_pipeline(
 	}
 	wait_pipeline(pipeline.size, pids, session);
 	free(pids);
-	ft_oprintln(ft_stderr(), "Status: {u8}", session->last_status);
+	ft_oprintln(ft_stderr(), "Status: {u8}", session->exit_status);
 	return (true);
 }
 

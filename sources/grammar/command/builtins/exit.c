@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 08:11:27 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 03:40:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ static bool	parse_exit_status(char *str, t_u8 *exit_status)
 	return (true);
 }
 
-static bool	validate_exit_arg(t_str arg, t_u8 *exit_status)
+static bool	parse_exit_arg(t_str arg, t_u8 *exit_status)
 {
 	if (arg.len == 0)
 	{
@@ -55,22 +55,21 @@ static bool	validate_exit_arg(t_str arg, t_u8 *exit_status)
 	return (true);
 }
 
-bool	run_builtin_exit(t_vector argv, t_session *session)
+bool	run_builtin_exit(t_vector argv, t_env *env, t_u8 *exit_status)
 {
+	(void) env;
 	if (argv.size > 2)
 	{
 		print_error("exit: too many arguments");
-		return (true);
+		return (builtin_error(exit_status));
 	}
 	if (argv.size == 1)
-		session->last_status = 0;
+		*exit_status = 0;
 	else
 	{
-		if (!validate_exit_arg(((t_string *)argv.elems)[1].str,
-			&session->last_status))
-			return (true);
+		if (!parse_exit_arg(((t_string *)argv.elems)[1].str, exit_status))
+			return (builtin_error(exit_status));
 	}
 	ft_eprintln("exit");
-	session->should_exit = true;
-	return (true);
+	return (false);
 }

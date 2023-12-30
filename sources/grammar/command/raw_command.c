@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 08:18:59 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 03:52:37 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,16 @@ bool	run_raw_command(
 
 	if (get_builtin(((t_string *)argv.elems)[0].str, &builtin_func))
 	{
-		if (!builtin_func(argv, session))
+		if (!builtin_func(argv, &session->env, &session->exit_status))
 		{
-			*error = EXEC_ERROR_RECOVER;
+			*error = EXEC_ERROR_EXIT;
 			return (false);
 		}
 		return (true);
 	}
 	if (!alloc_executable(&exec, argv, session->env, error))
 		return (false);
-	if (!run_executable(exec, backup, &session->last_status, error))
+	if (!run_executable(exec, backup, &session->exit_status, error))
 	{
 		free_executable(exec);
 		return (false);

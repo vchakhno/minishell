@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/25 12:46:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 02:08:58 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	init_session(t_session *session, char **env)
 		return (false);
 	}
 	session->should_exit = false;
-	session->last_status = 0;
+	session->exit_status = 0;
 	rl_outstream = stderr;
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
@@ -39,7 +39,6 @@ bool	run_repl(t_session *session)
 	enum e_exec_error		exec_error;
 	bool					valid_ast;
 
-	(void) session;
 	while (!session->should_exit)
 	{
 		if (!alloc_ast(&ast))

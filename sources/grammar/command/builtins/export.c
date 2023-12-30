@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 08:11:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 03:42:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,21 @@ bool	export_var(t_env *env, t_str arg)
 	}
 }
 
-bool	run_builtin_export(t_vector argv, t_session *session)
+bool	run_builtin_export(t_vector argv, t_env *env, t_u8 *exit_status)
 {
 	t_u32	i;
 
 	if (argv.size == 0)
 	{
-		display_exports(session->env);
-		return (true);
+		display_exports(*env);
+		return (builtin_ok(exit_status));
 	}
 	i = 1;
 	while (i < argv.size)
 	{
-		if (!export_var(&session->env, ((t_string *)argv.elems)[i].str))
-			return (false);
+		if (!export_var(env, ((t_string *)argv.elems)[i].str))
+			return (builtin_error(exit_status));
 		i++;
 	}
-	return (true);
+	return (builtin_ok(exit_status));
 }

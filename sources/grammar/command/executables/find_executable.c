@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 14:04:56 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/19 23:26:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/29 08:38:40 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,11 @@ bool	find_executable_in_cwd(
 		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
+	if (access(full_path->c_str, F_OK) == -1)
+	{
+		*error = EXEC_ERROR_RECOVER;
+		return (false);
+	}
 	if (access(full_path->c_str, X_OK) == -1)
 	{
 		*error = EXEC_ERROR_RECOVER;
@@ -80,6 +85,7 @@ bool	find_executable(
 		return (find_executable_in_cwd(cmd_name, full_path, error));
 	if (!get_env_var(env, ft_str("PATH"), &path_var))
 	{
+		print_error("{str}: command not found (PATH is unset)", cmd_name);
 		*error = EXEC_ERROR_RECOVER;
 		return (false);
 	}
