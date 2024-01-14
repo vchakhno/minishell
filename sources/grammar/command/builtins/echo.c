@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 17:30:53 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 17:45:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static bool	echo_check_n_option(t_str arg)
 {
 	t_u32	i;
 
-	if (arg.len == 0 || arg.c_str[0] != '-')
+	if (arg.len <= 1 || arg.c_str[0] != '-')
 		return (false);
 	i = 1;
 	while (i < arg.len)
