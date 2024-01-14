@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/30 02:03:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:01:54 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,17 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 	}
 }
 
+// if a next_pipe fails at some point, kill the previous processes
+// inside the fork:
+// if a redirection (apply_pipe) fails, don't execute the command
+// and set exit_status to 1
+// if the command fails with exit (exit builtin, or execve failure), ignore it
+// (DO NOT CLEANUP PREVIOUS COMMANDS, exit should be ignored)
+
+// returns recovers
+
 bool	start_pipeline(
-	t_vector pipeline, pid_t *pids, t_session *session, enum e_exec_error *error
+	t_vector pipeline, pid_t *pids, t_session *session
 ) {
 	t_u32	i;
 	int		input;
@@ -116,16 +125,17 @@ bool	start_pipeline(
 			|| !ft_fork(&pids[i]))
 		{
 			cleanup_pipeline(i, pids);
-			*error = EXEC_ERROR_EXIT;
-			return (false);
+			session->exit_status = 1;
+			return (true);
 		}
 		if (pids[i] == 0)
 		{
-			if (!apply_pipe(&input, pipe_fds)
-				|| !run_simple_command(
-					&((t_simple_command *)pipeline.elems)[i], session, error))
-				cleanup_pipeline(i, pids);
-			*error = EXEC_ERROR_EXIT;
+			if (!apply_pipe(&input, pipe_fds))
+				session->exit_status = 1;
+			else
+				run_simple_command(
+					&((t_simple_command *)pipeline.elems)[i],
+					&session->env, &session->exit_status);
 			return (false);
 		}
 		i++;
@@ -151,27 +161,28 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 		session->exit_status = 128 + WTERMSIG(wstatus);
 }
 
-bool	run_pipeline(
-	t_vector pipeline, t_session *session, enum e_exec_error *error
-) {
+// returns recovers
+
+bool	run_pipeline(t_vector pipeline, t_session *session)
+{
 	pid_t	*pids;
 
 	if (pipeline.size == 1)
 		return (run_simple_command(&((t_simple_command *)pipeline.elems)[0],
-			session, error));
+			&session->env, &session->exit_status));
 	if (!ft_mem_malloc(&pids, pipeline.size * sizeof(pid_t)))
 	{
-		*error = EXEC_ERROR_EXIT;
-		return (false);
+		session->exit_status = 1;
+		return (true);
 	}
-	if (!start_pipeline(pipeline, pids, session, error))
+	if (!start_pipeline(pipeline, pids, session))
 	{
 		free(pids);
 		return (false);
 	}
 	wait_pipeline(pipeline.size, pids, session);
 	free(pids);
-	ft_oprintln(ft_stderr(), "Status: {u8}", session->exit_status);
+	ft_eprintln("[DEBUG] Pipeline status: {u8}", session->exit_status);
 	return (true);
 }
 

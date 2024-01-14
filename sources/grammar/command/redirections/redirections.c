@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 07:48:38 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 15:01:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,23 @@ bool	parse_redirections(
 }
 
 bool	run_redirections(
-	t_vector redirs, t_backup_fds *backup, enum e_exec_error *error
+	t_vector redirs, t_backup_fds *backup, bool *recovers
 ) {
 	t_redirection	*redir;
 	t_u32			i;
 
 	if (!save_backup_fds(backup))
 	{
-		*error = EXEC_ERROR_RECOVER;
+		*recovers = true;
 		return (false);
 	}
 	i = 0;
 	while (i < redirs.size)
 	{
 		redir = &((t_redirection *)redirs.elems)[i];
-		if (!run_redirection(redir, error))
+		if (!run_redirection(redir, recovers))
 		{
-			if (*error == EXEC_ERROR_RECOVER)
+			if (*recovers)
 				cleanup_redirections(redirs, *backup, i);
 			return (false);
 		}

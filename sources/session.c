@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/30 02:08:58 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:03:39 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ bool	run_repl(t_session *session)
 {
 	t_ast_root				ast;
 	enum e_syntax_error		syntax_error;
-	enum e_exec_error		exec_error;
 	bool					valid_ast;
 
 	while (!session->should_exit)
@@ -55,8 +54,7 @@ bool	run_repl(t_session *session)
 			register_command(session->lines);
 			cut_lines(&session->lines);
 		}
-		if (valid_ast && !run_ast(ast, session, &exec_error)
-			&& exec_error == EXEC_ERROR_EXIT)
+		if (valid_ast && !run_ast(ast, session))
 		{
 			free_ast(ast);
 			break ;

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 07:55:19 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 15:13:13 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,40 +79,37 @@ bool	parse_heredoc(
 	return (true);
 }
 
-bool	run_heredoc(t_heredoc *heredoc, enum e_exec_error *error)
+bool	run_heredoc(t_heredoc *heredoc, bool *recovers)
 {
 	int	pipe_fds[2];
 
 	if (pipe(pipe_fds) == -1)
 	{
 		print_error("heredoc: out of file descriptors");
-		*error = EXEC_ERROR_RECOVER;
+		*recovers = true;
 		return (false);
 	}
 	if (!ft_fork(&heredoc->pid))
 	{
 		print_error("heredoc: cannot fork");
-		*error = EXEC_ERROR_RECOVER;
+		*recovers = true;
 		return (false);
 	}
 	if (heredoc->pid == 0)
 	{
 		close(pipe_fds[0]);
 		if (!move_fd(pipe_fds[1], STDOUT_FILENO))
-		{
 			print_error("heredoc: out of file descriptors");
-			*error = EXEC_ERROR_EXIT;
-			return (false);
-		}
-		ft_printf("{str}", heredoc->body.str);
-		*error = EXEC_ERROR_EXIT;
+		else
+			ft_printf("{str}", heredoc->body.str);
+		*recovers = false;
 		return (false);
 	}
 	close(pipe_fds[1]);
 	if (!move_fd(pipe_fds[0], STDIN_FILENO))
 	{
 		print_error("heredoc: out of file descriptors");
-		*error = EXEC_ERROR_RECOVER;
+		*recovers = true;
 		return (false);
 	}
 	return (true);

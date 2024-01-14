@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/30 03:40:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:32:33 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static bool	parse_exit_status(char *str, t_u8 *exit_status)
 		val = val * 10 + str[1] - '0';
 	if (str[1] && str[2])
 	{
-		if (val >= (256 - str[2] + '0') / 10)
+		if (val > (255 - str[2] + '0') / 10)
 			return (false);
-		val = val * 10 + str[1] - '0';
+		val = val * 10 + str[2] - '0';
 	}
 	*exit_status = val;
 	return (true);

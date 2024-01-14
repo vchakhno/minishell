@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 05:22:29 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 15:07:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,18 @@ bool	parse_redirection(
 	);
 }
 
-bool	run_redirection(t_redirection *redir, enum e_exec_error *error)
+bool	run_redirection(t_redirection *redir, bool *recovers)
 {
-	*error = EXEC_ERROR_RECOVER;
-	return (
-		(redir->type == REDIR_INPUT && run_input_redir(&redir->input))
-		|| (redir->type == REDIR_OUTPUT && run_output_redir(&redir->output))
-		|| (redir->type == REDIR_APPEND && run_append_redir(&redir->append))
-		|| (redir->type == REDIR_HEREDOC && run_heredoc(&redir->heredoc, error))
-	);
+	*recovers = true;
+	if (redir->type == REDIR_INPUT)
+		return (run_input_redir(&redir->input));
+	if (redir->type == REDIR_OUTPUT)
+		return (run_output_redir(&redir->output));
+	if (redir->type == REDIR_APPEND)
+		return (run_append_redir(&redir->append));
+	if (redir->type == REDIR_HEREDOC)
+		return (run_heredoc(&redir->heredoc, recovers));
+	return (false);
 }
 
 void	cleanup_redirection(t_redirection redir)

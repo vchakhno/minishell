@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 14:04:56 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 08:38:40 by vchakhno         ###   ########.fr       */
+/*   Updated: 2023/12/30 04:50:42 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,68 +26,73 @@ bool	join_path(t_str path_prefix, t_str cmd_name, t_string *full_path)
 
 bool	find_executable_in_path(
 	t_str path_var, t_str cmd_name, t_string *full_path,
-	enum e_exec_error *error
+	t_u8 *exit_status
 ) {
 	t_str		path_prefix;
 	t_str_iter	path_iter;
+	bool		found;
 
 	if (!ft_string_alloc(full_path, 64))
 	{
-		*error = EXEC_ERROR_EXIT;
+		*exit_status = 1;
 		return (false);
 	}
+	found = false;
 	path_iter = ft_str_split_by_c_str(path_var, ":");
 	while (path_iter.next(&path_iter, &path_prefix))
 	{
 		if (!join_path(path_prefix, cmd_name, full_path))
 		{
-			*error = EXEC_ERROR_EXIT;
+			ft_string_free(*full_path);
+			*exit_status = 1;
 			return (false);
 		}
+		if (access(full_path->c_str, F_OK) == -1)
+			continue ;
+		found = true;
 		if (access(full_path->c_str, X_OK) == 0)
-		{
-			*error = EXEC_ERROR_RECOVER;
 			return (true);
-		}
 	}
 	ft_string_free(*full_path);
-	*error = EXEC_ERROR_RECOVER;
+	*exit_status = 127 - found;
 	return (false);
 }
 
 bool	find_executable_in_cwd(
-	t_str cmd_name, t_string *full_path, enum e_exec_error *error
+	t_str cmd_name, t_string *full_path, t_u8 *exit_status
 ) {
 	if (!ft_string_from_str(full_path, cmd_name))
 	{
-		*error = EXEC_ERROR_EXIT;
+		*exit_status = 1;
 		return (false);
 	}
 	if (access(full_path->c_str, F_OK) == -1)
 	{
-		*error = EXEC_ERROR_RECOVER;
+		*exit_status = 127;
 		return (false);
 	}
 	if (access(full_path->c_str, X_OK) == -1)
 	{
-		*error = EXEC_ERROR_RECOVER;
+		*exit_status = 126;
 		return (false);
 	}
 	return (true);
 }
 
 bool	find_executable(
-	t_env env, t_str cmd_name, t_string *full_path, enum e_exec_error *error
+	t_env env, t_str cmd_name, t_string *full_path, t_u8 *exit_status
 ) {
 	t_str	path_var;
 
 	if (ft_str_contains_c_str(cmd_name, "/"))
-		return (find_executable_in_cwd(cmd_name, full_path, error));
+		return (find_executable_in_cwd(cmd_name, full_path, exit_status));
 	if (!get_env_var(env, ft_str("PATH"), &path_var))
 	{
 		print_error("{str}: command not found (PATH is unset)", cmd_name);
-		*error = EXEC_ERROR_RECOVER;
+		*exit_status = 127;
 		return (false);
 	}
-	return (find_executable_in_path(path_var, cmd_name, full_path, error));
+	return (
+		find_executable_in_path(path_var, cmd_name, full_path, exit_status)
+	);
 }

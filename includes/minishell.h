@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/30 02:18:24 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:04:34 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,12 +112,6 @@ void	free_tokenizer(t_tokenizer tokenizer);
 /* REDIRECTIONS																  */
 /* ************************************************************************** */
 
-enum e_exec_error
-{
-	EXEC_ERROR_EXIT,
-	EXEC_ERROR_RECOVER,
-};
-
 typedef struct s_output_redir
 {
 	t_string	filename;
@@ -157,7 +151,7 @@ typedef struct s_heredoc
 
 bool	parse_heredoc(t_heredoc *heredoc, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
-bool	run_heredoc(t_heredoc *heredoc, enum e_exec_error *error);
+bool	run_heredoc(t_heredoc *heredoc, bool *recovers);
 void	cleanup_heredoc(t_heredoc heredoc);
 void	free_heredoc(t_heredoc heredoc);
 
@@ -180,7 +174,7 @@ typedef struct s_redirection
 	};
 }	t_redirection;
 
-bool	run_redirection(t_redirection *redir, enum e_exec_error *error);
+bool	run_redirection(t_redirection *redir, bool *recovers);
 bool	parse_redirection(t_redirection *redir, t_tokenizer *tokenizer,
 			enum e_syntax_error *error);
 void	cleanup_redirection(t_redirection redir);
@@ -197,50 +191,10 @@ bool	restore_backup_fds(t_backup_fds backup);
 void	discard_backup_fds(t_backup_fds backup);
 
 bool	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer,
-		enum e_syntax_error *error);
+			enum e_syntax_error *error);
 bool	run_redirections(t_vector redirs, t_backup_fds *backup,
-			enum e_exec_error *error);
+			bool *recovers);
 void	cleanup_redirections(t_vector redirs, t_backup_fds backup, t_u32 size);
-
-/* ************************************************************************** */
-/* GRAMMAR																	  */
-/* ************************************************************************** */
-
-typedef struct s_session	t_session;
-
-typedef struct s_simple_command
-{
-	t_vector	argv;
-	t_vector	redirs;
-}	t_simple_command;
-
-bool	parse_argument(t_vector *argv, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
-
-bool	alloc_simple_command(t_simple_command *cmd);
-bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
-bool	run_simple_command(t_simple_command *cmd, t_session *session,
-			enum e_exec_error *error);
-void	free_simple_command(t_simple_command cmd);
-
-bool	alloc_pipeline(t_vector *pipeline);
-bool	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
-bool	run_pipeline(t_vector pipeline, t_session *session,
-			enum e_exec_error *error);
-void	free_pipeline(t_vector pipeline);
-
-typedef struct s_ast_root
-{
-	t_vector	pipes;
-}	t_ast_root;
-
-bool	alloc_ast(t_ast_root *ast);
-bool	parse_ast(t_ast_root *ast, t_lines *lines, enum e_syntax_error *error);
-bool	run_ast(t_ast_root ast, t_session *session,
-			enum e_exec_error *error);
-void	free_ast(t_ast_root ast);
 
 /* ************************************************************************** */
 /* ENV																		  */
@@ -272,6 +226,44 @@ void	display_env(t_env *env);
 void	free_env(t_env env);
 
 /* ************************************************************************** */
+/* GRAMMAR																	  */
+/* ************************************************************************** */
+
+typedef struct s_session	t_session;
+
+typedef struct s_simple_command
+{
+	t_vector	argv;
+	t_vector	redirs;
+}	t_simple_command;
+
+bool	parse_argument(t_vector *argv, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+
+bool	alloc_simple_command(t_simple_command *cmd);
+bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+bool	run_simple_command(t_simple_command *cmd, t_env *env,
+			t_u8 *exit_status);
+void	free_simple_command(t_simple_command cmd);
+
+bool	alloc_pipeline(t_vector *pipeline);
+bool	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer,
+			enum e_syntax_error *error);
+bool	run_pipeline(t_vector pipeline, t_session *session);
+void	free_pipeline(t_vector pipeline);
+
+typedef struct s_ast_root
+{
+	t_vector	pipes;
+}	t_ast_root;
+
+bool	alloc_ast(t_ast_root *ast);
+bool	parse_ast(t_ast_root *ast, t_lines *lines, enum e_syntax_error *error);
+bool	run_ast(t_ast_root ast, t_session *session);
+void	free_ast(t_ast_root ast);
+
+/* ************************************************************************** */
 /* EXECUTABLE																  */
 /* ************************************************************************** */
 
@@ -283,15 +275,15 @@ typedef struct s_executable
 }	t_executable;
 
 bool	find_executable(t_env env, t_str cmd_name, t_string *full_path,
-			enum e_exec_error *error);
+			t_u8 *exit_status);
 bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
-			enum e_exec_error *error);
+			t_u8 *exit_status);
 bool	run_executable(t_executable exec, t_backup_fds backup,
-			t_u8 *status, enum e_exec_error *error);
+			t_u8 *exit_status);
 void	free_executable(t_executable exec);
 
-bool	run_raw_command(t_vector argv, t_session *session,
-			t_backup_fds backup, enum e_exec_error *error);
+bool	run_raw_command(t_vector argv, t_env *env, t_backup_fds backup,
+			t_u8 *exit_status);
 
 /* ************************************************************************** */
 /* SESSION																	  */

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 18:29:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:02:34 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,9 @@ bool	parse_ast(
 	return (true);
 }
 
-bool	run_ast(
-	t_ast_root ast, t_session *session, enum e_exec_error *error
-) {
-	return (run_pipeline(ast.pipes, session, error));
+bool	run_ast(t_ast_root ast, t_session *session)
+{
+	return (run_pipeline(ast.pipes, session));
 }
 
 void	free_ast(t_ast_root ast)

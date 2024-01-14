@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 00:20:47 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 15:59:45 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,22 +51,22 @@ bool	compact_env(t_vector *compact_env, t_env env)
 }
 
 bool	alloc_executable(
-	t_executable *exec, t_vector argv, t_env env, enum e_exec_error *error
+	t_executable *exec, t_vector argv, t_env env, t_u8 *exit_status
 ) {
-	if (!find_executable(env, ((t_string *)argv.elems)[0].str, &exec->full_path,
-		error))
+	if (!find_executable(env, ((t_string *)argv.elems)[0].str,
+		&exec->full_path, exit_status))
 		return (false);
 	if (!compact_argv(&exec->compact_argv, argv))
 	{
-		*error = EXEC_ERROR_EXIT;
 		ft_string_free(exec->full_path);
+		*exit_status = 1;
 		return (false);
 	}
 	if (!compact_env(&exec->compact_env, env))
 	{
-		*error = EXEC_ERROR_EXIT;
 		ft_vector_free(exec->compact_argv);
 		ft_string_free(exec->full_path);
+		*exit_status = 1;
 		return (false);
 	}
 	return (true);
@@ -80,27 +80,22 @@ void	start_executable(t_executable exec)
 		exec.full_path.c_str,
 		(char **)exec.compact_argv.elems,
 		(char **)exec.compact_env.elems);
-	ft_oprintln(ft_stderr(), "Execve failure");
+	ft_eprintln("Execve failure");
 }
 
 bool	run_executable(
-	t_executable exec, t_backup_fds backup, t_u8 *status,
-	enum e_exec_error *error
+	t_executable exec, t_backup_fds backup, t_u8 *status
 ) {
 	pid_t		pid;
 	int			wstatus;
 
 	pid = fork();
 	if (pid == -1)
-	{
-		*error = EXEC_ERROR_EXIT;
-		return (false);
-	}
+		return (true);
 	if (pid == 0)
 	{
 		discard_backup_fds(backup);
 		start_executable(exec);
-		*error = EXEC_ERROR_EXIT;
 		return (false);
 	}
 	waitpid(pid, &wstatus, 0);

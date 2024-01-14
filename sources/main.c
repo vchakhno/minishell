@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:35:13 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/18 20:59:46 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:23:38 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,4 +26,5 @@ int	main(int argc, char **argv, char **env)
 		return (EXIT_FAILURE);
 	}
 	destroy_session(session);
+	return (session.exit_status);
 }
