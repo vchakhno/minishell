@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 16:03:39 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:44:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ bool	init_session(t_session *session, char **env)
 		free_env(session->env);
 		return (false);
 	}
-	session->should_exit = false;
 	session->exit_status = 0;
 	rl_outstream = stderr;
 	signal(SIGQUIT, SIG_IGN);
@@ -32,13 +31,13 @@ bool	init_session(t_session *session, char **env)
 	return (true);
 }
 
-bool	run_repl(t_session *session)
+void	run_repl(t_session *session)
 {
 	t_ast_root				ast;
 	enum e_syntax_error		syntax_error;
 	bool					valid_ast;
 
-	while (!session->should_exit)
+	while (true)
 	{
 		if (!alloc_ast(&ast))
 			break ;
@@ -61,7 +60,6 @@ bool	run_repl(t_session *session)
 		}
 		free_ast(ast);
 	}
-	return (true);
 }
 
 void	destroy_session(t_session session)

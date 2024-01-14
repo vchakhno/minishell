@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 16:04:34 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 16:48:35 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -296,11 +296,10 @@ typedef struct s_session
 	t_lines		lines;
 	t_env		env;
 	t_u8		exit_status;
-	bool		should_exit;
 }	t_session;
 
 bool	init_session(t_session *session, char **env);
-bool	run_repl(t_session *session);
+void	run_repl(t_session *session);
 void	destroy_session(t_session session);
 
 /* ************************************************************************** */
