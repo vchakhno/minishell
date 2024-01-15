@@ -24,7 +24,10 @@ SRCS		:= \
 				grammar/command/builtins/utils.c \
 				grammar/command/executables/executable.c \
 				grammar/command/executables/find_executable.c \
+				grammar/command/expand/expand_var.c \
 				grammar/command/expand/expand.c \
+				grammar/command/expand/fields.c \
+				grammar/command/expand/utils.c \
 				grammar/command/redirections/append.c \
 				grammar/command/redirections/backup_fds.c \
 				grammar/command/redirections/heredoc.c \

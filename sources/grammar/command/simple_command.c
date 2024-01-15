@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 16:09:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/14 18:58:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ bool	run_simple_command(t_simple_command *cmd, t_env *env, t_u8 *exit_status)
 	t_backup_fds	backup;
 	bool			redir_recovers;
 
-	if (!expand_all(cmd->argv, *env, &fields))
+	if (!expand_all(cmd->argv, *env, *exit_status, &fields))
 	{
 		*exit_status = 1;
 		return (true);
