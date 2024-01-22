@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/15 23:11:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/22 01:09:20 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,48 +33,18 @@ t_str	consume_var_name(t_str *src)
 	return ((t_str){src->c_str - i, i});
 }
 
-bool	expand_exit_status(t_string *value, t_u8 exit_status)
-{
-	if (!ft_string_alloc(value, 4))
-		return (false);
-	if (exit_status / 100)
-		string_append_char(value, exit_status / 100 + '0');
-	if (exit_status / 10)
-		string_append_char(value, exit_status / 10 % 10 + '0');
-	string_append_char(value, exit_status % 10 + '0');
-	return (true);
-}
-
-bool	resolve_var_name(
-	t_str var_name, t_env env, t_u8 exit_status, t_string *var_value
+bool	expand_var(
+	t_str *src, t_env env, t_u8 exit_status, t_fields *fields
 ) {
+	t_str	name;
 	t_str	value;
 
-	if (var_name.len == 0)
-		return (ft_string_from_c_str(var_value, "$"));
-	if (ft_str_equal_c_str(var_name, "?"))
-		return (expand_exit_status(var_value, exit_status));
-	if (!get_env_var(env, var_name, &value))
-		return (ft_string_from_c_str(var_value, ""));
-	return (ft_string_from_str(var_value, value));
-}
-
-// TODO: remove the double str->string thing with add_field
-
-bool	expand_var(
-	t_str *src, t_env env, t_u8 exit_status, t_vector *fields
-) {
-	t_str		var_name;
-	t_string	var_value;
-
-	var_name = consume_var_name(src);
-	if (!resolve_var_name(var_name, env, exit_status, &var_value))
-		return (false);
-	if (!add_field(fields, var_value.str))
-	{
-		ft_string_free(var_value);
-		return (false);
-	}
-	ft_string_free(var_value);
+	name = consume_var_name(src);
+	if (name.len == 0)
+		return (add_field(fields, ft_str("$")));
+	if (ft_str_equal_c_str(name, "?"))
+		return (add_u8_field(fields, exit_status));
+	if (get_env_var(env, name, &value))
+		return (add_field(fields, value));
 	return (true);
 }

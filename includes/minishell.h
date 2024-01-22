@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/15 23:14:41 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/22 00:55:33 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,8 +334,14 @@ bool	run_builtin_cat(t_vector argv, t_env *env, t_u8 *exit_status);
 /* EXPAND																	  */
 /* ************************************************************************** */
 
+typedef struct s_fields
+{
+	t_vector	*fields;
+	bool		open;
+}	t_fields;
+
 bool	expand_var(t_str *src, t_env env, t_u8 exit_status,
-			t_vector *fields);
+			t_fields *fields);
 // bool	expand(t_str str, t_env env, t_vector *closed_fields);
 bool	expand_all(t_vector strings, t_env env, t_u8 exit_status,
 			t_vector *fields);
@@ -343,7 +349,10 @@ bool	expand_all(t_vector strings, t_env env, t_u8 exit_status,
 void	advance_str(t_str *str, t_u32 n);
 bool	string_append_char(t_string *string, char c);
 
-bool	add_field(t_vector *fields, t_str field);
-void	free_fields(t_vector fields);
+void	init_fields(t_fields *fields, t_vector *fields_vec);
+bool	add_field(t_fields *fields, t_str field);
+bool	add_u8_field(t_fields *fields, t_u8 field);
+void	close_field(t_fields *fields);
+void	free_fields_vec(t_vector fields);
 
 #endif

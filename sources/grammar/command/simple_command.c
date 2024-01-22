@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 18:58:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/18 19:41:03 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,16 @@ bool	run_simple_command(t_simple_command *cmd, t_env *env, t_u8 *exit_status)
 	if (!run_redirections(cmd->redirs, &backup, &redir_recovers))
 	{
 		*exit_status = 1;
-		free_fields(fields);
+		free_fields_vec(fields);
 		return (redir_recovers);
 	}
 	if (!run_raw_command(fields, env, backup, exit_status))
 	{
-		free_fields(fields);
+		free_fields_vec(fields);
 		return (false);
 	}
 	cleanup_redirections(cmd->redirs, backup, cmd->redirs.size);
-	free_fields(fields);
+	free_fields_vec(fields);
 	ft_eprintln("[DEBUG] `{str}` status: {u8}",
 		((t_string *)cmd->argv.elems)[0].str, *exit_status);
 	return (true);
