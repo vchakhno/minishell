@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/22 00:55:33 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:15:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,11 +340,14 @@ typedef struct s_fields
 	bool		open;
 }	t_fields;
 
-bool	expand_var(t_str *src, t_env env, t_u8 exit_status,
+bool	expand_text_var(t_str *src, t_env env, t_u8 exit_status,
+			t_fields *fields);
+bool	expand_dquote_var(t_str *src, t_env env, t_u8 exit_status,
 			t_fields *fields);
 // bool	expand(t_str str, t_env env, t_vector *closed_fields);
 bool	expand_all(t_vector strings, t_env env, t_u8 exit_status,
 			t_vector *fields);
+bool	expand_until(t_str *str, char *delim, t_fields *fields);
 
 void	advance_str(t_str *str, t_u32 n);
 bool	string_append_char(t_string *string, char c);

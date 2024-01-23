@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/22 04:17:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/22 23:15:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ bool	expand_dquotes(
 			return (false);
 		if (*str->c_str == '"')
 			break ;
-		if (!expand_var(str, env, exit_status, fields))
+		if (!expand_dquote_var(str, env, exit_status, fields))
 			return (false);
 	}
 	advance_str(str, 1);
@@ -68,7 +68,8 @@ bool	expand(
 			return (false);
 		if (!src.len)
 			break ;
-		if (*src.c_str == '$' && !expand_var(&src, env, exit_status, &fields))
+		if (*src.c_str == '$'
+			&& !expand_text_var(&src, env, exit_status, &fields))
 			return (false);
 		else if (*src.c_str == '"'
 			&& !expand_dquotes(&src, env, exit_status, &fields))
