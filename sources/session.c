@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 16:44:43 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/23 01:51:41 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,4 +66,5 @@ void	destroy_session(t_session session)
 {
 	free_lines(session.lines);
 	free_env(session.env);
+	clear_history();
 }
