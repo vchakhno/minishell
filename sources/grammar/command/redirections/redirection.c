@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 15:07:22 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 bool	match_redir_op(
-	t_tokenizer *tokenizer, enum e_redir_type *type, enum e_syntax_error *error
+	t_tokenizer *tokenizer, enum e_redir_type *type, enum e_parsing_error *error
 ) {
 	char *const		redir_ops[] = {"<", ">", "<<", ">>"};
 	t_u32			i;
@@ -30,12 +30,12 @@ bool	match_redir_op(
 		}
 		i++;
 	}
-	*error = SYNTAX_ERROR_NO_MATCH;
+	*error = PARSING_ERROR_SYNTAX;
 	return (false);
 }
 
 bool	parse_redirection(
-	t_redirection *redir, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_redirection *redir, t_tokenizer *tokenizer, enum e_parsing_error *error
 ) {
 
 	if (!match_redir_op(tokenizer, &redir->type, error))

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/18 19:41:03 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 03:17:14 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,17 @@ bool	alloc_simple_command(t_simple_command *cmd)
 }
 
 bool	parse_simple_command(
-	t_simple_command *cmd, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_simple_command *cmd, t_tokenizer *tokenizer, enum e_parsing_error *error
 ) {
 	while (true)
 	{
 		if (parse_argument(&cmd->argv, tokenizer, error))
 			continue ;
-		if (*error != SYNTAX_ERROR_NO_MATCH)
+		if (*error != PARSING_ERROR_SYNTAX)
 			return (false);
 		if (parse_redirections(&cmd->redirs, tokenizer, error))
 			continue ;
-		if (*error != SYNTAX_ERROR_NO_MATCH)
+		if (*error != PARSING_ERROR_SYNTAX)
 			return (false);
 		break ;
 	}

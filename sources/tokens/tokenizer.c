@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/28 17:17:48 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 02:59:47 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines)
 
 bool	match_token(
 	t_tokenizer *tokenizer, char *content, const char *prompt,
-	enum e_syntax_error *error
+	enum e_parsing_error *error
 ) {
 	t_token	token;
 
@@ -31,7 +31,7 @@ bool	match_token(
 	if (!ft_str_equal_c_str(
 			get_token_content(*tokenizer->lines, token), content))
 	{
-		*error = SYNTAX_ERROR_NO_MATCH;
+		*error = PARSING_ERROR_SYNTAX;
 		return (false);
 	}
 	ft_vector_remove(&tokenizer->tokens, 0, NULL);
@@ -40,7 +40,7 @@ bool	match_token(
 
 bool	match_word_token(
 	t_tokenizer *tokenizer, t_str *content, const char *prompt,
-	enum e_syntax_error *error
+	enum e_parsing_error *error
 ) {
 	t_token	token;
 
@@ -48,7 +48,7 @@ bool	match_word_token(
 		return (false);
 	if (token.type != TOKEN_WORD)
 	{
-		*error = SYNTAX_ERROR_NO_MATCH;
+		*error = PARSING_ERROR_SYNTAX;
 		return (false);
 	}
 	ft_vector_remove(&tokenizer->tokens, 0, NULL);
@@ -85,7 +85,7 @@ bool	tokenize_line(
 	{
 		if (!ft_vector_push(&tokenizer->tokens, &token))
 		{
-			*error = PROMPT_ERROR_MALLOC;
+			*error = PROMPT_ERROR_CANCEL;
 			return (false);
 		}
 		if (ft_str_equal_c_str(

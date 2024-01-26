@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 16:02:34 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 03:07:47 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ bool	alloc_ast(t_ast_root *ast)
 }
 
 bool	parse_ast(
-	t_ast_root *ast, t_lines *lines, enum e_syntax_error *error)
+	t_ast_root *ast, t_lines *lines, enum e_parsing_error *error)
 {
 	t_tokenizer	tokenizer;
 

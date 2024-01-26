@@ -6,14 +6,14 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 05:30:20 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 bool	parse_argument(
-	t_vector *argv, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_vector *argv, t_tokenizer *tokenizer, enum e_parsing_error *error
 ) {
 	t_token		token;
 	t_string	arg;
@@ -22,19 +22,19 @@ bool	parse_argument(
 		return (false);
 	if (token.type != TOKEN_WORD)
 	{
-		*error = SYNTAX_ERROR_NO_MATCH;
+		*error = PARSING_ERROR_SYNTAX;
 		return (false);
 	}
 	consume_token(tokenizer, NULL, NULL);
 	if (!ft_string_from_str(&arg, get_token_content(*tokenizer->lines, token)))
 	{
-		*error = SYNTAX_ERROR_MALLOC;
+		*error = PARSING_ERROR_CANCEL;
 		return (false);
 	}
 	if (!ft_vector_push(argv, &arg))
 	{
 		ft_string_free(arg);
-		*error = SYNTAX_ERROR_MALLOC;
+		*error = PARSING_ERROR_CANCEL;
 		return (false);
 	}
 	return (true);

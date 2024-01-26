@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/22 23:15:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,8 @@ typedef struct s_lines
 
 enum	e_prompt_error
 {
-	PROMPT_ERROR_MALLOC,
-	PROMPT_ERROR_CTRL_C,
-	PROMPT_ERROR_CTRL_D,
+	PROMPT_ERROR_CANCEL,
+	PROMPT_ERROR_EXIT,
 };
 
 bool	read_input(t_string *new_lines, const char *prompt,
@@ -87,19 +86,18 @@ typedef struct s_tokenizer
 	t_lines		*lines;
 }	t_tokenizer;
 
-enum	e_syntax_error
+enum	e_parsing_error
 {
-	SYNTAX_ERROR_MALLOC,
-	SYNTAX_ERROR_CTRL_C,
-	SYNTAX_ERROR_CTRL_D,
-	SYNTAX_ERROR_NO_MATCH,
+	PARSING_ERROR_CANCEL,
+	PARSING_ERROR_EXIT,
+	PARSING_ERROR_SYNTAX,
 };
 
 bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines);
 bool	match_token(t_tokenizer *tokenizer, char *content, const char *prompt,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	match_word_token(t_tokenizer *tokenizer, t_str *content,
-			const char *prompt, enum e_syntax_error *error);
+			const char *prompt, enum e_parsing_error *error);
 bool	peek_token(t_tokenizer *tokenizer, t_token *token, const char *prompt,
 			enum e_prompt_error *error);
 bool	tokenize_line(t_tokenizer *tokenizer, const char *prompt,
@@ -118,7 +116,7 @@ typedef struct s_output_redir
 }	t_output_redir;
 
 bool	parse_output_redir(t_output_redir *redir, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_output_redir(t_output_redir *redir);
 void	free_output_redir(t_output_redir redir);
 
@@ -128,7 +126,7 @@ typedef struct s_append_redir
 }	t_append_redir;
 
 bool	parse_append_redir(t_append_redir *redir, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_append_redir(t_append_redir *redir);
 void	free_append_redir(t_append_redir redir);
 
@@ -138,7 +136,7 @@ typedef struct s_input_redir
 }	t_input_redir;
 
 bool	parse_input_redir(t_input_redir *redir, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_input_redir(t_input_redir *redir);
 void	free_input_redir(t_input_redir redir);
 
@@ -150,7 +148,7 @@ typedef struct s_heredoc
 }	t_heredoc;
 
 bool	parse_heredoc(t_heredoc *heredoc, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_heredoc(t_heredoc *heredoc, bool *recovers);
 void	cleanup_heredoc(t_heredoc heredoc);
 void	free_heredoc(t_heredoc heredoc);
@@ -176,7 +174,7 @@ typedef struct s_redirection
 
 bool	run_redirection(t_redirection *redir, bool *recovers);
 bool	parse_redirection(t_redirection *redir, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 void	cleanup_redirection(t_redirection redir);
 void	free_redirection(t_redirection redir);
 
@@ -191,7 +189,7 @@ bool	restore_backup_fds(t_backup_fds backup);
 void	discard_backup_fds(t_backup_fds backup);
 
 bool	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_redirections(t_vector redirs, t_backup_fds *backup,
 			bool *recovers);
 void	cleanup_redirections(t_vector redirs, t_backup_fds backup, t_u32 size);
@@ -238,18 +236,18 @@ typedef struct s_simple_command
 }	t_simple_command;
 
 bool	parse_argument(t_vector *argv, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 
 bool	alloc_simple_command(t_simple_command *cmd);
 bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_simple_command(t_simple_command *cmd, t_env *env,
 			t_u8 *exit_status);
 void	free_simple_command(t_simple_command cmd);
 
 bool	alloc_pipeline(t_vector *pipeline);
 bool	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer,
-			enum e_syntax_error *error);
+			enum e_parsing_error *error);
 bool	run_pipeline(t_vector pipeline, t_session *session);
 void	free_pipeline(t_vector pipeline);
 
@@ -258,8 +256,13 @@ typedef struct s_ast_root
 	t_vector	pipes;
 }	t_ast_root;
 
+bool	parse_linebreak(t_tokenizer *tokenizer, const char *prompt,
+			enum e_parsing_error *error);
+bool	parse_newline_list(t_tokenizer *tokenizer, const char *prompt,
+			enum e_parsing_error *error);
+
 bool	alloc_ast(t_ast_root *ast);
-bool	parse_ast(t_ast_root *ast, t_lines *lines, enum e_syntax_error *error);
+bool	parse_ast(t_ast_root *ast, t_lines *lines, enum e_parsing_error *error);
 bool	run_ast(t_ast_root ast, t_session *session);
 void	free_ast(t_ast_root ast);
 

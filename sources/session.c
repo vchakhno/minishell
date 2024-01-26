@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/23 01:51:41 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 03:22:07 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,29 +31,67 @@ bool	init_session(t_session *session, char **env)
 	return (true);
 }
 
+// true -> continue
+// false -> exit
+// bool	parse_cancellable_ast(t_ast_root *ast, t_lines *lines, bool *valid)
+// {
+// 	bool	cancelled;
+
+// 	if (!parse_ast(ast, lines, valid, &cancelled))
+// 		return (false);
+// 	while (cancelled)
+// 	{
+// 		if (!parse_ast(ast, lines, valid, &cancelled))
+// 			return (false);
+// 	}
+// 	return (true);
+// }
+
+bool	parse_cancellable_ast(t_ast_root *ast, t_lines *lines, bool *valid)
+{
+	enum e_parsing_error	error;
+	bool					ok;
+	bool					cancelled;
+
+	ok = parse_ast(ast, lines, &error);
+	cancelled = (!ok && error == PARSING_ERROR_CANCEL);
+	while (cancelled)
+	{
+		cut_lines(lines);
+		ok = parse_ast(ast, lines, &error);
+		cancelled = (!ok && error == PARSING_ERROR_CANCEL);
+	}
+	*valid = (ok || error != PARSING_ERROR_SYNTAX);
+	return (ok || error == PARSING_ERROR_SYNTAX);
+}
+
+// true -> continue
+// false -> exit
+bool	parse_validated_ast(t_ast_root *ast, t_lines *lines)
+{
+	bool	valid;
+
+	valid = false;
+	while (!valid)
+	{
+		if (!parse_cancellable_ast(ast, lines, &valid))
+			return (false);
+		register_command(*lines);
+		cut_lines(lines);
+	}
+	return (true);
+}
+
 void	run_repl(t_session *session)
 {
-	t_ast_root				ast;
-	enum e_syntax_error		syntax_error;
-	bool					valid_ast;
+	t_ast_root	ast;
 
 	while (true)
 	{
 		if (!alloc_ast(&ast))
 			break ;
-		valid_ast = parse_ast(&ast, &session->lines, &syntax_error);
-		if (!valid_ast && (syntax_error == SYNTAX_ERROR_MALLOC
-				|| syntax_error == SYNTAX_ERROR_CTRL_D))
-		{
-			free_ast(ast);
-			break ;
-		}
-		if (valid_ast || syntax_error == SYNTAX_ERROR_NO_MATCH)
-		{
-			register_command(session->lines);
-			cut_lines(&session->lines);
-		}
-		if (valid_ast && !run_ast(ast, session))
+		if (!parse_validated_ast(&ast, &session->lines)
+			|| !run_ast(ast, session))
 		{
 			free_ast(ast);
 			break ;

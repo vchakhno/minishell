@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 15:01:43 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 bool	parse_redirections(
-	t_vector *redirs, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_vector *redirs, t_tokenizer *tokenizer, enum e_parsing_error *error
 ) {
 	t_redirection	redir;
 
@@ -24,7 +24,7 @@ bool	parse_redirections(
 	if (!ft_vector_push(redirs, &redir))
 	{
 		print_error("redirection: out of memory");
-		*error = SYNTAX_ERROR_MALLOC;
+		*error = PARSING_ERROR_CANCEL;
 		return (false);
 	}
 	return (true);

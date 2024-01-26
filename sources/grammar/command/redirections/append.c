@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 05:33:45 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,20 @@
 #include <unistd.h>
 
 bool	parse_append_redir(
-	t_append_redir *redir, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_append_redir *redir, t_tokenizer *tokenizer, enum e_parsing_error *error
 ) {
 	t_str	filename;
 
 	if (!match_word_token(tokenizer, &filename, NULL, error))
 	{
-		if (*error == SYNTAX_ERROR_NO_MATCH)
+		if (*error == PARSING_ERROR_SYNTAX)
 			print_error("append redir: missing filename");
 		return (false);
 	}
 	if (!ft_string_from_str(&redir->filename, filename))
 	{
 		print_error("append redir: out of memory");
-		*error = SYNTAX_ERROR_MALLOC;
+		*error = PARSING_ERROR_CANCEL;
 		return (false);
 	}
 	return (true);

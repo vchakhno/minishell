@@ -46,14 +46,14 @@ void	handle_input_empty(bool *prev_ctrl_c, enum e_prompt_error *error)
 	if (g_ctrlc)
 	{
 		g_ctrlc = false;
-		*error = PROMPT_ERROR_CTRL_C;
+		*error = PROMPT_ERROR_CANCEL;
 		if (!*prev_ctrl_c)
 			ft_eprintln("");
 		*prev_ctrl_c = true;
 		return ;
 	}
 	*prev_ctrl_c = false;
-	*error = PROMPT_ERROR_CTRL_D;
+	*error = PROMPT_ERROR_EXIT;
 }
 
 bool	read_input(
@@ -66,13 +66,13 @@ bool	read_input(
 
 	if (!setup_input(&stdin_backup))
 	{
-		*error = PROMPT_ERROR_MALLOC;
+		*error = PROMPT_ERROR_CANCEL;
 		return (false);
 	}
 	user_input = readline(prompt);
 	if (!restore_input(stdin_backup))
 	{
-		*error = PROMPT_ERROR_MALLOC;
+		*error = PROMPT_ERROR_CANCEL;
 		return (false);
 	}
 	if (!user_input)

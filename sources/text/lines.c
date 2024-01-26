@@ -38,7 +38,7 @@ bool	append_lines(
 	{
 		ft_eprintln("Error: Not enough memory to store user lines");
 		ft_string_free(user_input);
-		*error = PROMPT_ERROR_MALLOC;
+		*error = PROMPT_ERROR_CANCEL;
 		return (false);
 	}
 	ft_string_append_str(&lines->text, user_input.str);

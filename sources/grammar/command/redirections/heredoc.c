@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 15:13:13 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 03:00:11 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ bool	parse_heredoc_body(
 	if (!ft_string_alloc(&heredoc->body, 128))
 	{
 		print_error("heredoc body: out of memory");
-		*error = PROMPT_ERROR_MALLOC;
+		*error = PROMPT_ERROR_CANCEL;
 		return (false);
 	}
 	line = ft_str("");
@@ -36,12 +36,12 @@ bool	parse_heredoc_body(
 		{
 			ft_string_free(heredoc->body);
 			print_error("heredoc body: out of memory");
-			*error = PROMPT_ERROR_MALLOC;
+			*error = PROMPT_ERROR_CANCEL;
 			return (false);
 		}
 		if (!read_line(lines, &line, "heredoc> ", error))
 		{
-			if (*error == PROMPT_ERROR_CTRL_C)
+			if (*error == PROMPT_ERROR_CANCEL)
 				print_error("heredoc: warning: "
 					"heredoc delimited by end-of-file");
 			ft_string_free(heredoc->body);
@@ -54,20 +54,20 @@ bool	parse_heredoc_body(
 // TODO: add delimiter checking and unquoting
 
 bool	parse_heredoc(
-	t_heredoc *heredoc, t_tokenizer *tokenizer, enum e_syntax_error *error
+	t_heredoc *heredoc, t_tokenizer *tokenizer, enum e_parsing_error *error
 ) {
 	t_str	delimiter;
 
 	if (!match_word_token(tokenizer, &delimiter, NULL, error))
 	{
-		if (*error == SYNTAX_ERROR_NO_MATCH)
+		if (*error == PARSING_ERROR_SYNTAX)
 			print_error("heredoc: missing delimiter");
 		return (false);
 	}
 	if (!ft_string_from_str(&heredoc->delimiter, delimiter))
 	{
 		print_error("heredoc: out of memory");
-		*error = SYNTAX_ERROR_MALLOC;
+		*error = PARSING_ERROR_CANCEL;
 		return (false);
 	}
 	if (!parse_heredoc_body(heredoc, tokenizer->lines,
