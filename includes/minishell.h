@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/26 09:07:28 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,9 @@ bool	parse_simple_command(t_simple_command *cmd, t_tokenizer *tokenizer,
 bool	run_simple_command(t_simple_command *cmd, t_env *env,
 			t_u8 *exit_status);
 void	free_simple_command(t_simple_command cmd);
+
+bool	next_pipe(int *input, int pipe_fds[2], bool first, bool last);
+bool	apply_pipe(int *input, int pipe_fds[2]);
 
 bool	alloc_pipeline(t_vector *pipeline);
 bool	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer,

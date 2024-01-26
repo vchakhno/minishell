@@ -39,6 +39,8 @@ SRCS		:= \
 				grammar/command/raw_command.c \
 				grammar/command/simple_command.c \
 				grammar/pipes/pipeline.c \
+				grammar/pipes/pipes.c \
+				grammar/pipes/run_pipeline.c \
 				grammar/newlines.c \
 				grammar/root.c \
 				text/input.c \
