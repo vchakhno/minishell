@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 08:26:41 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:09:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "environment.h"
 
 bool	get_env_var(t_env env, t_str name, t_str *value)
 {

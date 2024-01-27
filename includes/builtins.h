@@ -1,43 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   builtins.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:00 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:23:44 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef BUILTINS_H
+# define BUILTINS_H
 
-# include "tokenizer.h"
 # include "environment.h"
-# include "grammar.h"
-# include "executable.h"
-# include <stdio.h>
-# include <stddef.h>
 # include <stdbool.h>
 # include <libft/libft.h>
-# include <sys/types.h>
 
 /* ************************************************************************** */
-/* SESSION																	  */
+/* BUILTINS																	  */
 /* ************************************************************************** */
 
-// also contains terminal settings?
+typedef bool				(*t_builtin)(
+	t_vector argv, t_env *env, t_u8 *exit_status
+);
 
-typedef struct s_session
-{
-	t_lines		lines;
-	t_env		env;
-	t_u8		exit_status;
-}	t_session;
+bool	builtin_ok(t_u8 *exit_status);
+bool	builtin_error(t_u8 *exit_status);
 
-bool	init_session(t_session *session, char **env);
-void	run_repl(t_session *session);
-void	destroy_session(t_session session);
+bool	run_builtin_echo(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_cd(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_pwd(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_export(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_unset(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_env(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_exit(t_vector argv, t_env *env, t_u8 *exit_status);
+bool	run_builtin_cat(t_vector argv, t_env *env, t_u8 *exit_status);
 
 #endif

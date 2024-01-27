@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 17:11:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:28:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "executable.h"
 #include <stdlib.h>
 #include <signal.h>
 #include <wait.h>

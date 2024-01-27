@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/21 18:25:47 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:19:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "expand.h"
 
 void	init_fields(t_fields *fields, t_vector *fields_vec)
 {

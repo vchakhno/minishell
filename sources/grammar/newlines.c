@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:00:31 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 17:10:58 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:31:40 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "grammar.h"
 
 // Can fail if readline fails
 bool	parse_linebreak(

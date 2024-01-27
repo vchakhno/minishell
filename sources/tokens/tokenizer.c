@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 02:59:47 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:54:16 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "tokenizer.h"
 
 bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines)
 {

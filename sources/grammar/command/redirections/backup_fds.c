@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/20 01:42:26 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/25 13:30:54 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:20:55 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "redirections.h"
+#include "utils.h"
 #include <unistd.h>
 
 bool	save_backup_fds(t_backup_fds *backup)

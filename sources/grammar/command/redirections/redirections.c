@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/27 23:19:21 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:21:54 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "redirections.h"
+#include "utils.h"
 #include <fcntl.h>
 #include <unistd.h>
 

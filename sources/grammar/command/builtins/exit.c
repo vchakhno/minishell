@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 16:32:33 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:24:15 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "builtins.h"
+#include "utils.h"
 
 static bool	parse_exit_status(char *str, t_u8 *exit_status)
 {

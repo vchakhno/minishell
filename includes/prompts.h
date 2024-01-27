@@ -1,25 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cat.c                                              :+:      :+:    :+:   */
+/*   prompts.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:15 by vchakhno         ###   ########.fr       */
+/*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
+/*   Updated: 2024/01/27 23:49:11 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "builtins.h"
-#include <unistd.h>
+#ifndef PROMPTS_H
+# define PROMPTS_H
 
-bool	run_builtin_cat(t_vector argv, t_env *env, t_u8 *exit_status)
-{
-	int		c;
+/* ************************************************************************** */
+/* PROMPTS																	  */
+/* ************************************************************************** */
 
-	(void) argv;
-	(void) env;
-	while (read(STDIN_FILENO, &c, 1) == 1)
-		write(STDOUT_FILENO, &c, 1);
-	return (builtin_ok(exit_status));
-}
+# define MAIN_PROMPT "\1\e[38;2;255;63;0m\2minishell\1\e[0m\2> "
+# define ERROR_PROMPT "minishell: "
+
+#endif

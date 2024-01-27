@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 15:02:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/23 01:08:37 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:26:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "utils.h"
+#include "prompts.h"
 #include <stdarg.h>
 
 void	print_error(char *error, ...)

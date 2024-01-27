@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "lines.h"
+#include "prompts.h"
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>

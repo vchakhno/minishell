@@ -6,11 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/14 14:52:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:32:09 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "grammar.h"
+#include "executable.h"
+#include "builtins.h"
 #include <stdio.h>
 
 bool	get_builtin(t_str name, t_builtin *builtin_func)

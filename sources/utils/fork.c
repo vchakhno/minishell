@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 17:12:44 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/22 17:14:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:26:40 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "utils.h"
 #include <unistd.h>
 
 bool	ft_fork(pid_t *pid)

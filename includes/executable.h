@@ -1,43 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   executable.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:00 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:35:01 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef EXECUTABLE_H
+# define EXECUTABLE_H
 
-# include "tokenizer.h"
 # include "environment.h"
-# include "grammar.h"
-# include "executable.h"
-# include <stdio.h>
-# include <stddef.h>
+# include "redirections.h"
 # include <stdbool.h>
 # include <libft/libft.h>
-# include <sys/types.h>
 
 /* ************************************************************************** */
-/* SESSION																	  */
+/* EXECUTABLE																  */
 /* ************************************************************************** */
 
-// also contains terminal settings?
-
-typedef struct s_session
+typedef struct s_executable
 {
-	t_lines		lines;
-	t_env		env;
-	t_u8		exit_status;
-}	t_session;
+	t_string	full_path;
+	t_vector	compact_argv;
+	t_vector	compact_env;
+}	t_executable;
 
-bool	init_session(t_session *session, char **env);
-void	run_repl(t_session *session);
-void	destroy_session(t_session session);
+bool	compact_argv(t_vector *compact_argv, t_vector argv);
+bool	compact_env(t_vector *compact_env, t_env env);
+
+bool	find_executable(t_env env, t_str cmd_name, t_string *full_path,
+			t_u8 *exit_status);
+bool	alloc_executable(t_executable *exec, t_vector argv, t_env env,
+			t_u8 *exit_status);
+bool	run_executable(t_executable exec, t_backup_fds backup,
+			t_u8 *exit_status);
+void	free_executable(t_executable exec);
 
 #endif

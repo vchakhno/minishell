@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "lines.h"
+#include "prompts.h"
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
@@ -34,6 +35,8 @@ bool	setup_input(int *stdin_backup)
 	signal(SIGINT, &sigint_hook);
 	return (true);
 }
+
+bool	move_fd(int from, int to);
 
 bool	restore_input(int stdin_backup)
 {

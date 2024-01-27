@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 14:04:56 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/30 04:50:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:27:19 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "executable.h"
+#include "utils.h"
 #include <unistd.h>
 
 bool	join_path(t_str path_prefix, t_str cmd_name, t_string *full_path)

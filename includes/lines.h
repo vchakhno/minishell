@@ -1,43 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   lines.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:00 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:50:02 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
+#ifndef LINES_H
+# define LINES_H
 
-# include "tokenizer.h"
-# include "environment.h"
-# include "grammar.h"
-# include "executable.h"
-# include <stdio.h>
-# include <stddef.h>
 # include <stdbool.h>
 # include <libft/libft.h>
-# include <sys/types.h>
 
 /* ************************************************************************** */
-/* SESSION																	  */
+/* LINES																	  */
 /* ************************************************************************** */
 
-// also contains terminal settings?
-
-typedef struct s_session
+typedef struct s_lines
 {
-	t_lines		lines;
-	t_env		env;
-	t_u8		exit_status;
-}	t_session;
+	t_string	text;
+	t_u32		cursor;
+}	t_lines;
 
-bool	init_session(t_session *session, char **env);
-void	run_repl(t_session *session);
-void	destroy_session(t_session session);
+enum	e_prompt_error
+{
+	PROMPT_ERROR_CANCEL,
+	PROMPT_ERROR_EXIT,
+};
+
+bool	read_input(t_string *new_lines, const char *prompt,
+			enum e_prompt_error *error);
+
+bool	alloc_lines(t_lines *lines);
+bool	append_lines(t_lines *lines, const char *prompt,
+			enum e_prompt_error *error);
+bool	read_line(t_lines *lines, t_str *line, const char *prompt,
+			enum e_prompt_error *error);
+void	register_command(t_lines lines);
+void	cut_lines(t_lines *lines);
+void	free_lines(t_lines lines);
 
 #endif

@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/29 08:03:33 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:09:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "environment.h"
 
 bool	parse_env(t_env *env, char **env_strs)
 {
