@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:16:59 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,16 @@ bool	parse_redirection(
 	);
 }
 
-bool	run_redirection(t_redirection *redir, bool *recovers)
-{
+bool	run_redirection(
+	t_redirection *redir, bool *recovers, t_env env, t_u8 exit_status
+) {
 	*recovers = true;
 	if (redir->type == REDIR_INPUT)
-		return (run_input_redir(&redir->input));
+		return (run_input_redir(&redir->input, env, exit_status));
 	if (redir->type == REDIR_OUTPUT)
-		return (run_output_redir(&redir->output));
+		return (run_output_redir(&redir->output, env, exit_status));
 	if (redir->type == REDIR_APPEND)
-		return (run_append_redir(&redir->append));
+		return (run_append_redir(&redir->append, env, exit_status));
 	if (redir->type == REDIR_HEREDOC)
 		return (run_heredoc(&redir->heredoc, recovers));
 	return (false);

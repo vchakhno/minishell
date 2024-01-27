@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 22:55:33 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,21 @@ bool	parse_input_redir(
 // TODO: add filename expand
 // All errors recover
 
-bool	run_input_redir(t_input_redir *redir)
+bool	run_input_redir(t_input_redir *redir, t_env env, t_u8 exit_status)
 {
-	t_i32	fd;
+	t_i32		fd;
+	t_string	filename;
 
-	fd = open(redir->filename.c_str, O_RDONLY, 0666);
+	if (!expand_redir(redir->filename.str, env, exit_status, &filename))
+		return (false);
+	fd = open(filename.c_str, O_RDONLY, 0666);
 	if (fd == -1 || !move_fd(fd, STDOUT_FILENO))
 	{
 		print_error("input redir: invalid file");
+		ft_string_free(filename);
 		return (false);
 	}
+	ft_string_free(filename);
 	return (true);
 }
 

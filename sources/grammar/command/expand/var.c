@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_var.c                                       :+:      :+:    :+:   */
+/*   var.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/23 01:05:19 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:14:09 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ bool	split_var(t_str var, t_fields *fields)
 {
 	while (var.len)
 	{
-		if (!expand_until(&var, " \t\n", fields))
+		if (!consume_until(&var, " \t\n", fields))
 			return (false);
 		if (!var.len)
 			break ;
@@ -57,7 +57,7 @@ bool	split_var(t_str var, t_fields *fields)
 	return (true);
 }
 
-bool	expand_text_var(
+bool	expand_split_var(
 	t_str *src, t_env env, t_u8 exit_status, t_fields *fields
 ) {
 	t_str	name;
@@ -73,7 +73,7 @@ bool	expand_text_var(
 	return (split_var(value, fields));
 }
 
-bool	expand_dquote_var(
+bool	expand_var(
 	t_str *src, t_env env, t_u8 exit_status, t_fields *fields
 ) {
 	t_str	name;
@@ -84,7 +84,7 @@ bool	expand_dquote_var(
 		return (add_field(fields, ft_str("$")));
 	if (ft_str_equal_c_str(name, "?"))
 		return (add_u8_field(fields, exit_status));
-	if (get_env_var(env, name, &value))
-		return (add_field(fields, value));
-	return (true);
+	if (!get_env_var(env, name, &value))
+		return (true);
+	return (add_field(fields, value));
 }

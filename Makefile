@@ -25,10 +25,12 @@ SRCS		:= \
 				grammar/command/executables/compact.c \
 				grammar/command/executables/executable.c \
 				grammar/command/executables/find_executable.c \
-				grammar/command/expand/expand_var.c \
-				grammar/command/expand/expand.c \
+				grammar/command/expand/args.c \
 				grammar/command/expand/fields.c \
+				grammar/command/expand/quotes.c \
+				grammar/command/expand/redir.c \
 				grammar/command/expand/utils.c \
+				grammar/command/expand/var.c \
 				grammar/command/redirections/append.c \
 				grammar/command/redirections/backup_fds.c \
 				grammar/command/redirections/heredoc.c \

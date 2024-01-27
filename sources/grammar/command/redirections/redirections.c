@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 02:59:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:19:21 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ bool	parse_redirections(
 }
 
 bool	run_redirections(
-	t_vector redirs, t_backup_fds *backup, bool *recovers
+	t_vector redirs, t_backup_fds *backup, bool *recovers, t_env env, t_u8 exit_status
 ) {
 	t_redirection	*redir;
 	t_u32			i;
@@ -45,7 +45,7 @@ bool	run_redirections(
 	while (i < redirs.size)
 	{
 		redir = &((t_redirection *)redirs.elems)[i];
-		if (!run_redirection(redir, recovers))
+		if (!run_redirection(redir, recovers, env, exit_status))
 		{
 			if (*recovers)
 				cleanup_redirections(redirs, *backup, i);

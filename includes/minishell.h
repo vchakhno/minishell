@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 17:22:53 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/27 23:31:47 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,35 @@ bool	consume_token(t_tokenizer *tokenizer, const char *prompt,
 void	free_tokenizer(t_tokenizer tokenizer);
 
 /* ************************************************************************** */
+/* ENV																		  */
+/* ************************************************************************** */
+
+typedef struct s_env_var
+{
+	t_string	string;
+	t_u32		eq_pos;
+}	t_env_var;
+
+bool	parse_env_var(t_env_var *var, t_str str);
+t_str	get_env_var_name(t_env_var var);
+t_str	get_env_var_value(t_env_var var);
+bool	set_env_var_value(t_env_var *var, t_str value);
+void	free_env_var(t_env_var var);
+
+typedef struct s_env
+{
+	t_vector	vars;
+}	t_env;
+
+bool	get_env_var(t_env env, t_str name, t_str *value);
+bool	set_env_var(t_env *env, t_str name, t_str value);
+void	remove_env_var(t_env *env, t_str name);
+
+bool	parse_env(t_env *env, char **env_strs);
+void	display_env(t_env *env);
+void	free_env(t_env env);
+
+/* ************************************************************************** */
 /* REDIRECTIONS																  */
 /* ************************************************************************** */
 
@@ -117,7 +146,7 @@ typedef struct s_output_redir
 
 bool	parse_output_redir(t_output_redir *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
-bool	run_output_redir(t_output_redir *redir);
+bool	run_output_redir(t_output_redir *redir, t_env env, t_u8 exit_status);
 void	free_output_redir(t_output_redir redir);
 
 typedef struct s_append_redir
@@ -127,7 +156,7 @@ typedef struct s_append_redir
 
 bool	parse_append_redir(t_append_redir *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
-bool	run_append_redir(t_append_redir *redir);
+bool	run_append_redir(t_append_redir *redir, t_env env, t_u8 exit_status);
 void	free_append_redir(t_append_redir redir);
 
 typedef struct s_input_redir
@@ -137,7 +166,7 @@ typedef struct s_input_redir
 
 bool	parse_input_redir(t_input_redir *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
-bool	run_input_redir(t_input_redir *redir);
+bool	run_input_redir(t_input_redir *redir, t_env env, t_u8 exit_status);
 void	free_input_redir(t_input_redir redir);
 
 typedef struct s_heredoc
@@ -172,7 +201,8 @@ typedef struct s_redirection
 	};
 }	t_redirection;
 
-bool	run_redirection(t_redirection *redir, bool *recovers);
+bool	run_redirection(t_redirection *redir, bool *recovers, t_env env,
+			t_u8 exit_status);
 bool	parse_redirection(t_redirection *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
 void	cleanup_redirection(t_redirection redir);
@@ -191,37 +221,8 @@ void	discard_backup_fds(t_backup_fds backup);
 bool	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
 bool	run_redirections(t_vector redirs, t_backup_fds *backup,
-			bool *recovers);
+			bool *recovers, t_env env, t_u8 exit_status);
 void	cleanup_redirections(t_vector redirs, t_backup_fds backup, t_u32 size);
-
-/* ************************************************************************** */
-/* ENV																		  */
-/* ************************************************************************** */
-
-typedef struct s_env_var
-{
-	t_string	string;
-	t_u32		eq_pos;
-}	t_env_var;
-
-bool	parse_env_var(t_env_var *var, t_str str);
-t_str	get_env_var_name(t_env_var var);
-t_str	get_env_var_value(t_env_var var);
-bool	set_env_var_value(t_env_var *var, t_str value);
-void	free_env_var(t_env_var var);
-
-typedef struct s_env
-{
-	t_vector	vars;
-}	t_env;
-
-bool	get_env_var(t_env env, t_str name, t_str *value);
-bool	set_env_var(t_env *env, t_str name, t_str value);
-void	remove_env_var(t_env *env, t_str name);
-
-bool	parse_env(t_env *env, char **env_strs);
-void	display_env(t_env *env);
-void	free_env(t_env env);
 
 /* ************************************************************************** */
 /* GRAMMAR																	  */
@@ -349,22 +350,35 @@ typedef struct s_fields
 	bool		open;
 }	t_fields;
 
-bool	expand_text_var(t_str *src, t_env env, t_u8 exit_status,
-			t_fields *fields);
-bool	expand_dquote_var(t_str *src, t_env env, t_u8 exit_status,
-			t_fields *fields);
-// bool	expand(t_str str, t_env env, t_vector *closed_fields);
-bool	expand_all(t_vector strings, t_env env, t_u8 exit_status,
+// args
+bool	expand_args(t_vector strings, t_env env, t_u8 exit_status,
 			t_vector *fields);
-bool	expand_until(t_str *str, char *delim, t_fields *fields);
 
-void	advance_str(t_str *str, t_u32 n);
-bool	string_append_char(t_string *string, char c);
-
+// fields
 void	init_fields(t_fields *fields, t_vector *fields_vec);
 bool	add_field(t_fields *fields, t_str field);
 bool	add_u8_field(t_fields *fields, t_u8 field);
 void	close_field(t_fields *fields);
 void	free_fields_vec(t_vector fields);
+
+// quotes
+bool	consume_until(t_str *str, char *delim, t_fields *fields);
+bool	consume_quotes(t_str *str, t_fields *fields);
+bool	expand_dquotes(t_str *str, t_env env, t_u8 exit_status,
+			t_fields *fields);
+
+// redir
+bool	expand_redir(t_str filename, t_env env, t_u8 exit_status,
+			t_string *field);
+
+// utils
+void	advance_str(t_str *str, t_u32 n);
+bool	string_append_char(t_string *string, char c);
+
+// var
+bool	expand_split_var(t_str *src, t_env env, t_u8 exit_status,
+			t_fields *fields);
+bool	expand_var(t_str *src, t_env env, t_u8 exit_status,
+			t_fields *fields);
 
 #endif
