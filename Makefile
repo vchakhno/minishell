@@ -13,6 +13,8 @@ SRCS		:= \
 				environment/env.c \
 				environment/env_vars.c \
 				environment/env_var.c \
+				grammar/and_or/and_or.c \
+				grammar/and_or/run_and_or.c \
 				grammar/command/builtins/cd.c \
 				grammar/command/builtins/echo.c \
 				grammar/command/builtins/env.c \

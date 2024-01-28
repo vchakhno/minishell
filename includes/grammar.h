@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 05:48:16 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 10:50:16 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,25 @@ t_parsing_status	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer);
 bool				run_pipeline(t_vector pipeline, t_runtime_context *context);
 void				free_pipeline(t_vector pipeline);
 
+typedef enum e_and_or_elem_kind {
+	AND_ELEM,
+	OR_ELEM,
+}	t_and_or_elem_kind;
+
+typedef struct s_and_or_elem
+{
+	t_and_or_elem_kind	kind;
+	t_vector			pipeline;
+}	t_and_or_elem;
+
+bool				alloc_and_or(t_vector *and_or);
+t_parsing_status	parse_and_or(t_vector *and_or, t_tokenizer *tokenizer);
+bool				run_and_or(t_vector and_or, t_runtime_context *context);
+void				free_and_or(t_vector and_or);
+
 typedef struct s_ast_root
 {
-	t_vector	pipes;
+	t_vector	and_or;
 }	t_ast_root;
 
 t_parsing_status	parse_linebreak(t_tokenizer *tokenizer, const char *prompt);
