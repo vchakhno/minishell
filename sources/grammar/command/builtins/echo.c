@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:28:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,15 @@ static bool	echo_check_n_option(t_str arg)
 
 bool	run_builtin_echo(t_vector argv, t_env *env, t_u8 *exit_status)
 {
+	t_u32	n_option_count;
 	t_u32	i;
-	bool	n_option;
 
 	(void) env;
-	n_option = (argv.size >= 2
-			&& echo_check_n_option(((t_string *)argv.elems)[1].str));
-	i = 1 + n_option;
+	n_option_count = 0;
+	while (1 + n_option_count < argv.size && echo_check_n_option(
+			((t_string *)argv.elems)[1 + n_option_count].str))
+		n_option_count++;
+	i = 1 + n_option_count;
 	while (i < argv.size)
 	{
 		ft_printf("{str}", ((t_string *)argv.elems)[i].str);
@@ -45,7 +47,8 @@ bool	run_builtin_echo(t_vector argv, t_env *env, t_u8 *exit_status)
 			ft_printf(" ");
 		i++;
 	}
-	if (!n_option)
+	if (!n_option_count)
 		ft_println("");
+	ft_buf_output_flush((t_buf_output *)ft_stdout());
 	return (builtin_ok(exit_status));
 }

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:57:38 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:26:30 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,5 @@ bool	run_pipeline(t_vector pipeline, t_runtime_context *context)
 	}
 	wait_pipeline(pipeline.size, pids, &context->exit_status);
 	free(pids);
-	ft_eprintln("[DEBUG] Pipeline status: {u8}", context->exit_status);
 	return (true);
 }

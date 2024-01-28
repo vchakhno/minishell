@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:18:39 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ static bool	check_args(t_u32 argc)
 {
 	if (argc == 1)
 	{
-		print_error("cd: no path argument");
+		print_error("cd: No path argument");
 		return (false);
 	}
 	if (argc > 2)
 	{
-		print_error("cd: too many arguments");
+		print_error("cd: Too many arguments");
 		return (false);
 	}
 	return (true);
@@ -36,7 +36,6 @@ static bool	change_dir(char *path)
 {
 	if (chdir(path) == -1)
 	{
-		print_error("cd: invalid path");
 		print_error("cd: {c_str}", strerror(errno));
 		return (false);
 	}
