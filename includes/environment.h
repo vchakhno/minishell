@@ -42,7 +42,7 @@ bool	set_env_var(t_env *env, t_str name, t_str value);
 void	remove_env_var(t_env *env, t_str name);
 
 bool	parse_env(t_env *env, char **env_strs);
-void	display_env(t_env *env);
+void	display_env(t_env env);
 void	free_env(t_env env);
 
 #endif

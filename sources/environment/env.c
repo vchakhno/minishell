@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:09:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:38:00 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,16 @@ bool	parse_env(t_env *env, char **env_strs)
 	return (true);
 }
 
-void	display_env(t_env *env)
+void	display_env(t_env env)
 {
 	t_env_var	var;
 	t_u32		i;
 
 	i = 0;
-	while (i < env->vars.size)
+	while (i < env.vars.size)
 	{
-		var = ((t_env_var *)env->vars.elems)[i];
-		ft_println("name: \"{str}\", value: \"{str}\"",
+		var = ((t_env_var *)env.vars.elems)[i];
+		ft_println("{str}={str}",
 			get_env_var_name(var),
 			get_env_var_value(var));
 		i++;
