@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:19:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 08:51:59 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ bool	get_last_field(t_fields *fields, t_string **field)
 
 	if (!fields->open)
 	{
-		if (!ft_string_alloc(&field_string, 0))
+		if (!ft_string_from_c_str(&field_string, ""))
 			return (false);
 		if (!ft_vector_push(fields->fields, &field_string))
 		{

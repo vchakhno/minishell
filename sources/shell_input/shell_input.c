@@ -6,12 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:58:20 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 09:11:30 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell_input.h"
 #include "grammar.h"
+#include "utils.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
@@ -32,10 +33,15 @@ bool	get_incomplete_ast(
 ) {
 	t_parsing_status	status;
 
+	if (!alloc_ast(ast))
+		return (PARSING_EXITED);
 	status = parse_ast(ast, input);
 	while (status == PARSING_CANCELED)
 	{
 		cut_lines(input);
+		free_ast(*ast);
+		if (!alloc_ast(ast))
+			return (PARSING_EXITED);
 		status = parse_ast(ast, input);
 	}
 	*valid = status == PARSING_SUCCEEDED;
@@ -53,6 +59,8 @@ bool	get_complete_ast(t_shell_input *input, t_ast_root *ast)
 	{
 		if (!get_incomplete_ast(input, ast, &complete))
 			return (false);
+		if (!complete)
+			print_error("Syntax error");
 		register_command(*input);
 		cut_lines(input);
 	}

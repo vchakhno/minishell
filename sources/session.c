@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 04:01:01 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 09:10:17 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ t_u8	run_repl(t_session *session)
 
 	while (true)
 	{
-		if (!alloc_ast(&ast))
-			break ;
 		if (!get_complete_ast(&session->shell_input, &ast)
 			|| !run_ast(ast, &session->runtime_context))
 		{
