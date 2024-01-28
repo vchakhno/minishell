@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:20:18 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:16:50 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 bool	get_builtin(t_str name, t_builtin *builtin_func)
 {
 	char *const		builtin_names[] = {
-		"echo", "cd", "pwd", "export", "unset", "env", "exit", "_cat"
+		"echo", "cd", "pwd", "export", "unset", "env", "exit"
 	};
 	const t_builtin	builtin_funcs[] = {
 		run_builtin_echo, run_builtin_cd, run_builtin_pwd, run_builtin_export,
-		run_builtin_unset, run_builtin_env, run_builtin_exit, run_builtin_cat
+		run_builtin_unset, run_builtin_env, run_builtin_exit
 	};
 	t_u32			i;
 
