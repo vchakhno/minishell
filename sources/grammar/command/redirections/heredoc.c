@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:56:19 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 06:44:15 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,17 @@
 #include <wait.h>
 #include <signal.h>
 
-// TODO: add body expansion
+// TODO: add body expansion (in run heredoc)
 
-bool	parse_heredoc_body(
-	t_heredoc *heredoc, t_shell_input *input, enum e_prompt_error *error
-) {
-	t_str	line;
+t_parsing_status	parse_heredoc_body(t_heredoc *heredoc, t_shell_input *input)
+{
+	t_parsing_status	status;
+	t_str				line;
 
 	if (!ft_string_alloc(&heredoc->body, 128))
 	{
 		print_error("heredoc body: out of memory");
-		*error = PROMPT_ERROR_CANCEL;
-		return (false);
+		return (PARSING_CANCELED);
 	}
 	line = ft_str("");
 	while (line.len - 1 != heredoc->delimiter.len
@@ -37,47 +36,47 @@ bool	parse_heredoc_body(
 		{
 			ft_string_free(heredoc->body);
 			print_error("heredoc body: out of memory");
-			*error = PROMPT_ERROR_CANCEL;
-			return (false);
+			return (PARSING_CANCELED);
 		}
-		if (!read_line(input, &line, "heredoc> ", error))
+		status = (t_parsing_status) read_line(input, &line, "heredoc> ");
+		if (status != PARSING_SUCCEEDED)
 		{
-			if (*error == PROMPT_ERROR_CANCEL)
+			if (status == PARSING_EXITED)
 				print_error("heredoc: warning: "
 					"heredoc delimited by end-of-file");
 			ft_string_free(heredoc->body);
-			return (false);
+			return (PARSING_CANCELED);
 		}
 	}
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
 // TODO: add delimiter checking and unquoting
 
-bool	parse_heredoc(
-	t_heredoc *heredoc, t_tokenizer *tokenizer, enum e_parsing_error *error
-) {
-	t_str	delimiter;
+t_parsing_status	parse_heredoc(t_heredoc *heredoc, t_tokenizer *tokenizer)
+{
+	t_parsing_status	status;
+	t_str				delimiter;
 
-	if (!match_word_token(tokenizer, &delimiter, NULL, error))
+	status = match_word_token(tokenizer, &delimiter, NULL);
+	if (status != PARSING_SUCCEEDED)
 	{
-		if (*error == PARSING_ERROR_SYNTAX)
+		if (status == PARSING_FAILED)
 			print_error("heredoc: missing delimiter");
-		return (false);
+		return (status);
 	}
 	if (!ft_string_from_str(&heredoc->delimiter, delimiter))
 	{
 		print_error("heredoc: out of memory");
-		*error = PARSING_ERROR_CANCEL;
-		return (false);
+		return (PARSING_CANCELED);
 	}
-	if (!parse_heredoc_body(heredoc, tokenizer->input,
-			(enum e_prompt_error *)error))
+	status = parse_heredoc_body(heredoc, tokenizer->input);
+	if (status != PARSING_SUCCEEDED)
 	{
 		ft_string_free(heredoc->delimiter);
-		return (false);
+		return (status);
 	}
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
 bool	run_heredoc(t_heredoc *heredoc, bool *recovers)

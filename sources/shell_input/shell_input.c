@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 02:10:36 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 06:58:20 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,20 +30,16 @@ bool	alloc_shell_input(t_shell_input *input)
 bool	get_incomplete_ast(
 	t_shell_input *input, t_ast_root *ast, bool *valid
 ) {
-	enum e_parsing_error	error;
-	bool					ok;
-	bool					cancelled;
+	t_parsing_status	status;
 
-	ok = parse_ast(ast, input, &error);
-	cancelled = (!ok && error == PARSING_ERROR_CANCEL);
-	while (cancelled)
+	status = parse_ast(ast, input);
+	while (status == PARSING_CANCELED)
 	{
 		cut_lines(input);
-		ok = parse_ast(ast, input, &error);
-		cancelled = (!ok && error == PARSING_ERROR_CANCEL);
+		status = parse_ast(ast, input);
 	}
-	*valid = (ok || error != PARSING_ERROR_SYNTAX);
-	return (ok || error == PARSING_ERROR_SYNTAX);
+	*valid = status == PARSING_SUCCEEDED;
+	return (status != PARSING_EXITED);
 }
 
 // true -> continue

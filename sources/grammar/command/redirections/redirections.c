@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:13:54 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 06:38:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,20 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-bool	parse_redirections(
-	t_vector *redirs, t_tokenizer *tokenizer, enum e_parsing_error *error
-) {
-	t_redirection	redir;
+t_parsing_status	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer)
+{
+	t_parsing_status	status;
+	t_redirection		redir;
 
-	if (!parse_redirection(&redir, tokenizer, error))
-		return (false);
+	status = parse_redirection(&redir, tokenizer);
+	if (status != PARSING_SUCCEEDED)
+		return (status);
 	if (!ft_vector_push(redirs, &redir))
 	{
 		print_error("redirection: out of memory");
-		*error = PARSING_ERROR_CANCEL;
-		return (false);
+		return (PARSING_CANCELED);
 	}
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
 bool	run_redirections(
@@ -69,4 +69,17 @@ void	cleanup_redirections(t_vector redirs, t_backup_fds backup, t_u32 size)
 		i++;
 	}
 	restore_backup_fds(backup);
+}
+
+void	free_redirections(t_vector redirs)
+{
+	t_u32	i;
+
+	i = 0;
+	while (i < redirs.size)
+	{
+		free_redirection(((t_redirection *)redirs.elems)[i]);
+		i++;
+	}
+	ft_vector_free(redirs);
 }

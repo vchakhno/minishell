@@ -12,6 +12,7 @@
 
 #include "shell_input.h"
 #include "prompts.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
@@ -36,55 +37,42 @@ bool	setup_input(int *stdin_backup)
 	return (true);
 }
 
-bool	move_fd(int from, int to);
-
 bool	restore_input(int stdin_backup)
 {
 	signal(SIGINT, SIG_IGN);
 	return (move_fd(stdin_backup, STDIN_FILENO));
 }
 
-void	handle_input_empty(bool *prev_ctrl_c, enum e_prompt_error *error)
+t_read_input_status	handle_empty_input(bool *prev_ctrl_c)
 {
 	if (g_ctrlc)
 	{
 		g_ctrlc = false;
-		*error = PROMPT_ERROR_CANCEL;
 		if (!*prev_ctrl_c)
 			ft_eprintln("");
 		*prev_ctrl_c = true;
-		return ;
+		return (READING_CANCELED);
 	}
 	*prev_ctrl_c = false;
-	*error = PROMPT_ERROR_EXIT;
+	return (READING_EXITED);
 }
 
-bool	read_input(
-	t_string *new_lines, const char *prompt, enum e_prompt_error *error
-) {
+t_read_input_status	read_input(t_string *new_lines, const char *prompt)
+{
 	static bool	prev_ctrl_c = false;
 	char		*user_input;
 	t_u32		input_len;
 	int			stdin_backup;
 
 	if (!setup_input(&stdin_backup))
-	{
-		*error = PROMPT_ERROR_CANCEL;
-		return (false);
-	}
+		return (READING_CANCELED);
 	user_input = readline(prompt);
 	if (!restore_input(stdin_backup))
-	{
-		*error = PROMPT_ERROR_CANCEL;
-		return (false);
-	}
+		return (READING_CANCELED);
 	if (!user_input)
-	{
-		handle_input_empty(&prev_ctrl_c, error);
-		return (false);
-	}
+		return (handle_empty_input(&prev_ctrl_c));
 	prev_ctrl_c = false;
 	input_len = ft_c_str_len(user_input);
 	*new_lines = (t_string){{{user_input, input_len}}, input_len + 1};
-	return (true);
+	return (READING_SUCCEEDED);
 }

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:12:23 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 06:22:55 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,42 +14,46 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-bool	match_redir_op(
-	t_tokenizer *tokenizer, enum e_redir_type *type, enum e_parsing_error *error
+t_parsing_status	match_redir_op(
+	t_tokenizer *tokenizer, enum e_redir_type *type
 ) {
-	char *const		redir_ops[] = {"<", ">", "<<", ">>"};
-	t_u32			i;
+	t_parsing_status	status;
+	char *const			redir_ops[] = {"<", ">", "<<", ">>"};
+	t_u32				i;
 
 	i = 0;
 	while (i < (t_u32) sizeof redir_ops / sizeof * redir_ops)
 	{
-		if (match_token(tokenizer, redir_ops[i], NULL, error))
+		status = match_token(tokenizer, redir_ops[i], NULL);
+		if (status == PARSING_SUCCEEDED)
 		{
 			*type = i;
-			return (true);
+			return (PARSING_SUCCEEDED);
 		}
+		if (status == PARSING_CANCELED || status == PARSING_EXITED)
+			return (status);
 		i++;
 	}
-	*error = PARSING_ERROR_SYNTAX;
-	return (false);
+	return (PARSING_FAILED);
 }
 
-bool	parse_redirection(
-	t_redirection *redir, t_tokenizer *tokenizer, enum e_parsing_error *error
+t_parsing_status	parse_redirection(
+	t_redirection *redir, t_tokenizer *tokenizer
 ) {
+	t_parsing_status	status;
 
-	if (!match_redir_op(tokenizer, &redir->type, error))
-		return (false);
-	return (
-		(redir->type == REDIR_INPUT
-			&& parse_input_redir(&redir->input, tokenizer, error))
-		|| (redir->type == REDIR_OUTPUT
-			&& parse_output_redir(&redir->output, tokenizer, error))
-		|| (redir->type == REDIR_APPEND
-			&& parse_append_redir(&redir->append, tokenizer, error))
-		|| (redir->type == REDIR_HEREDOC
-			&& parse_heredoc(&redir->heredoc, tokenizer, error))
-	);
+	status = match_redir_op(tokenizer, &redir->type);
+	if (status != PARSING_SUCCEEDED)
+		return (status);
+	if (redir->type == REDIR_INPUT)
+		return (parse_input_redir(&redir->input, tokenizer));
+	if (redir->type == REDIR_OUTPUT)
+		return (parse_output_redir(&redir->output, tokenizer));
+	if (redir->type == REDIR_APPEND)
+		return (parse_append_redir(&redir->append, tokenizer));
+	if (redir->type == REDIR_HEREDOC)
+		return (parse_heredoc(&redir->heredoc, tokenizer));
+	return (PARSING_CANCELED);
 }
 
 bool	run_redirection(

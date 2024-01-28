@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:29:39 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 06:00:59 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,33 +23,32 @@ bool	alloc_pipeline(t_vector *pipeline)
 	return (true);
 }
 
-bool	parse_pipeline(
-	t_vector *pipeline, t_tokenizer *tokenizer, enum e_parsing_error *error
-) {
+t_parsing_status	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer)
+{
+	t_parsing_status	status;
 	t_simple_command	command;
 
-	while (true)
+	status = PARSING_SUCCEEDED;
+	while (status != PARSING_FAILED)
 	{
 		if (!alloc_simple_command(&command))
-		{
-			*error = PARSING_ERROR_CANCEL;
-			return (false);
-		}
-		if (!parse_simple_command(&command, tokenizer, error))
+			return (PARSING_CANCELED);
+		status = parse_simple_command(&command, tokenizer);
+		if (status != PARSING_SUCCEEDED)
 		{
 			free_simple_command(command);
-			return (false);
+			return (status);
 		}
 		if (!ft_vector_push(pipeline, &command))
 		{
 			free_simple_command(command);
-			*error = PARSING_ERROR_CANCEL;
-			return (false);
+			return (PARSING_CANCELED);
 		}
-		if (!match_token(tokenizer, "|", "pipe>", error))
-			return (*error == PARSING_ERROR_SYNTAX);
+		status = match_token(tokenizer, "|", "pipe>");
+		if (status == PARSING_CANCELED || status == PARSING_EXITED)
+			return (status);
 	}
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
 void	free_pipeline(t_vector pipeline)

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:15:56 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:06:00 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ bool	alloc_simple_command(t_simple_command *cmd)
 {
 	if (!ft_vector_alloc(&cmd->argv, sizeof(t_string), 10))
 		return (false);
-	if (!ft_vector_alloc(&cmd->redirs, sizeof(t_redirection), 10))
+	if (!ft_vector_alloc(&cmd->redirs, sizeof(t_redirection), 2))
 	{
 		ft_vector_free(cmd->argv);
 		return (false);
@@ -26,22 +26,28 @@ bool	alloc_simple_command(t_simple_command *cmd)
 	return (true);
 }
 
-bool	parse_simple_command(
-	t_simple_command *cmd, t_tokenizer *tokenizer, enum e_parsing_error *error
+t_parsing_status	parse_simple_command(
+	t_simple_command *cmd, t_tokenizer *tokenizer
 ) {
-	while (true)
+	t_parsing_status	status;
+
+	status = PARSING_SUCCEEDED;
+	while (status != PARSING_FAILED)
 	{
-		if (parse_argument(&cmd->argv, tokenizer, error))
+		status = parse_argument(&cmd->argv, tokenizer);
+		if (status == PARSING_SUCCEEDED)
 			continue ;
-		if (*error != PARSING_ERROR_SYNTAX)
-			return (false);
-		if (parse_redirections(&cmd->redirs, tokenizer, error))
+		if (status != PARSING_FAILED)
+			return (status);
+		status = parse_redirections(&cmd->redirs, tokenizer);
+		if (status == PARSING_SUCCEEDED)
 			continue ;
-		if (*error != PARSING_ERROR_SYNTAX)
-			return (false);
-		break ;
+		if (status != PARSING_FAILED)
+			return (status);
 	}
-	return (cmd->argv.size);
+	if (!cmd->argv.size)
+		return (PARSING_FAILED);
+	return (PARSING_SUCCEEDED);
 }
 
 // In this case, executables fork (and builtins don't)
@@ -89,11 +95,5 @@ void	free_simple_command(t_simple_command cmd)
 		i++;
 	}
 	ft_vector_free(cmd.argv);
-	i = 0;
-	while (i < cmd.redirs.size)
-	{
-		free_redirection(((t_redirection *)cmd.redirs.elems)[i]);
-		i++;
-	}
-	ft_vector_free(cmd.redirs);
+	free_redirections(cmd.redirs);
 }

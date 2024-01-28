@@ -18,35 +18,40 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-bool	append_lines(
-	t_shell_input *input, const char *prompt, enum e_prompt_error *error
-) {
-	t_string	user_input;
+t_read_input_status	append_lines(t_shell_input *input, const char *prompt)
+{
+	t_read_input_status	status;
+	t_string			user_input;
 
 	if (input->cursor == 0)
 		prompt = MAIN_PROMPT;
-	if (!read_input(&user_input, prompt, error))
-		return (false);
+	status = read_input(&user_input, prompt);
+	if (status != READING_SUCCEEDED)
+		return (status);
 	if (!ft_string_reserve(&input->text, user_input.len + 1))
 	{
 		ft_eprintln("Error: Not enough memory to store user lines");
 		ft_string_free(user_input);
-		*error = PROMPT_ERROR_CANCEL;
-		return (false);
+		return (READING_CANCELED);
 	}
 	ft_string_append_str(&input->text, user_input.str);
 	ft_string_append_c_str(&input->text, "\n");
 	ft_string_free(user_input);
-	return (true);
+	return (READING_SUCCEEDED);
 }
 
-bool	read_line(
-	t_shell_input *input, t_str *line, const char *prompt, enum e_prompt_error *error
+t_read_input_status	read_line(
+	t_shell_input *input, t_str *line, const char *prompt
 ) {
-	t_u32	i;
+	t_read_input_status	status;
+	t_u32				i;
 
-	if (input->cursor == input->text.len && !append_lines(input, prompt, error))
-		return (false);
+	if (input->cursor == input->text.len)
+	{
+		status = append_lines(input, prompt);
+		if (status != READING_SUCCEEDED)
+			return (status);
+	}
 	i = 0;
 	while (input->cursor + i < input->text.len
 		&& input->text.c_str[input->cursor + i] != '\n')
@@ -54,7 +59,7 @@ bool	read_line(
 	line->c_str = &input->text.c_str[input->cursor];
 	line->len = i + 1;
 	input->cursor += i + 1;
-	return (true);
+	return (READING_SUCCEEDED);
 }
 
 void	register_command(t_shell_input input)

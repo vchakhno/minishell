@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:48:48 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:05:29 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,79 +20,83 @@ bool	alloc_tokenizer(t_tokenizer *tokenizer, t_shell_input *input)
 	return (true);
 }
 
-bool	match_token(
-	t_tokenizer *tokenizer, char *content, const char *prompt,
-	enum e_parsing_error *error
+t_parsing_status	match_token(
+	t_tokenizer *tokenizer, char *content, const char *prompt
 ) {
-	t_token	token;
+	t_read_input_status	status;
+	t_token				token;
 
-	if (!peek_token(tokenizer, &token, prompt, (enum e_prompt_error *)error))
-		return (false);
+	status = peek_token(tokenizer, &token, prompt);
+	if (status != READING_SUCCEEDED)
+		return ((t_parsing_status) status);
 	if (!ft_str_equal_c_str(
 			get_token_content(*tokenizer->input, token), content))
-	{
-		*error = PARSING_ERROR_SYNTAX;
-		return (false);
-	}
+		return (PARSING_FAILED);
 	ft_vector_remove(&tokenizer->tokens, 0, NULL);
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
-bool	match_word_token(
-	t_tokenizer *tokenizer, t_str *content, const char *prompt,
-	enum e_parsing_error *error
+t_parsing_status	match_word_token(
+	t_tokenizer *tokenizer, t_str *content, const char *prompt
 ) {
-	t_token	token;
+	t_read_input_status	status;
+	t_token				token;
 
-	if (!peek_token(tokenizer, &token, prompt, (enum e_prompt_error *)error))
-		return (false);
+	status = peek_token(tokenizer, &token, prompt);
+	if (status != READING_SUCCEEDED)
+		return ((t_parsing_status) status);
 	if (token.type != TOKEN_WORD)
-	{
-		*error = PARSING_ERROR_SYNTAX;
-		return (false);
-	}
+		return (PARSING_FAILED);
 	ft_vector_remove(&tokenizer->tokens, 0, NULL);
 	*content = get_token_content(*tokenizer->input, token);
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
-bool	peek_token(
-	t_tokenizer *tokenizer, t_token *token, const char *prompt,
-	enum e_prompt_error *error
+t_read_input_status	peek_token(
+	t_tokenizer *tokenizer, t_token *token, const char *prompt
 ) {
-	if (tokenizer->tokens.size == 0 && !tokenize_line(tokenizer, prompt, error))
-		return (false);
+	t_read_input_status	status;
+
+	if (tokenizer->tokens.size == 0)
+	{
+		status = tokenize_line(tokenizer, prompt);
+		if (status != READING_SUCCEEDED)
+			return (status);
+	}
 	*token = ((t_token *)tokenizer->tokens.elems)[0];
-	return (true);
+	return (READING_SUCCEEDED);
 }
 
-bool	consume_token(
-	t_tokenizer *tokenizer, const char *prompt,
-	enum e_prompt_error *error
-) {
-	if (tokenizer->tokens.size == 0 && !tokenize_line(tokenizer, prompt, error))
-		return (false);
+t_read_input_status	consume_token(t_tokenizer *tokenizer, const char *prompt)
+{
+	t_read_input_status	status;
+
+	if (tokenizer->tokens.size == 0)
+	{
+		status = tokenize_line(tokenizer, prompt);
+		if (status != READING_SUCCEEDED)
+			return (status);
+	}
 	ft_vector_remove(&tokenizer->tokens, 0, NULL);
-	return (true);
+	return (READING_SUCCEEDED);
 }
 
-bool	tokenize_line(
-	t_tokenizer *tokenizer, const char *prompt, enum e_prompt_error *error
-) {
-	t_token	token;
+t_read_input_status	tokenize_line(t_tokenizer *tokenizer, const char *prompt)
+{
+	t_read_input_status	status;
+	t_token				token;
 
-	while (parse_token(tokenizer->input, &token, prompt, error))
+	status = parse_token(tokenizer->input, &token, prompt);
+	while (status == READING_SUCCEEDED)
 	{
 		if (!ft_vector_push(&tokenizer->tokens, &token))
-		{
-			*error = PROMPT_ERROR_CANCEL;
-			return (false);
-		}
+			return (READING_CANCELED);
 		if (ft_str_equal_c_str(
 				get_token_content(*tokenizer->input, token), "\n"))
-			return (true);
+			return (READING_SUCCEEDED);
+		status = parse_token(tokenizer->input, &token, prompt);
 	}
-	return (false);
+	return (status);
 }
 
 void	free_tokenizer(t_tokenizer tokenizer)

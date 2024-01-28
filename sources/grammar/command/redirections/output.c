@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:12:40 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 06:26:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,25 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-bool	parse_output_redir(
-	t_output_redir *redir, t_tokenizer *tokenizer, enum e_parsing_error *error
+t_parsing_status	parse_output_redir(
+	t_output_redir *redir, t_tokenizer *tokenizer
 ) {
-	t_str	filename;
+	t_parsing_status	status;
+	t_str				filename;
 
-	if (!match_word_token(tokenizer, &filename, NULL, error))
+	status = match_word_token(tokenizer, &filename, NULL);
+	if (status != PARSING_SUCCEEDED)
 	{
-		if (*error == PARSING_ERROR_SYNTAX)
+		if (status == PARSING_FAILED)
 			print_error("output redir: missing filename");
-		return (false);
+		return (status);
 	}
 	if (!ft_string_from_str(&redir->filename, filename))
 	{
 		print_error("output redir: out of memory");
-		*error = PARSING_ERROR_CANCEL;
-		return (false);
+		return (PARSING_CANCELED);
 	}
-	return (true);
+	return (PARSING_SUCCEEDED);
 }
 
 // TODO: add filename expand

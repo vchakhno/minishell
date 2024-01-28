@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:48:40 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:04:55 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,11 @@ void	skip_blanks(t_shell_input *input)
 
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
-bool	skip_quotes(t_shell_input *input, enum e_prompt_error *error)
+t_read_input_status	skip_quotes(t_shell_input *input)
 {
-	char		quote;
-	const char	*prompt;
+	t_read_input_status	status;
+	char				quote;
+	const char			*prompt;
 
 	quote = input->text.c_str[input->cursor];
 	if (quote == '\'')
@@ -69,13 +70,16 @@ bool	skip_quotes(t_shell_input *input, enum e_prompt_error *error)
 	input->cursor++;
 	while (input->text.c_str[input->cursor] != quote)
 	{
-		if (input->cursor == input->text.len
-			&& !append_lines(input, prompt, error))
-			return (false);
+		if (input->cursor == input->text.len)
+		{
+			status = append_lines(input, prompt);
+			if (status != READING_SUCCEEDED)
+				return (status);
+		}
 		else
 			input->cursor++;
 	}
-	return (true);
+	return (READING_SUCCEEDED);
 }
 
 // false -> unterminated token
@@ -96,25 +100,31 @@ bool	skip_word(t_shell_input *input)
 
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
-bool	parse_token(
-	t_shell_input *input, t_token *token, const char *prompt,
-	enum e_prompt_error *error
+t_read_input_status	parse_token(
+	t_shell_input *input, t_token *token, const char *prompt
 ) {
-	if (input->cursor == input->text.len && !append_lines(input, prompt, error))
-		return (false);
+	t_read_input_status	status;
+
+	if (input->cursor == input->text.len)
+	{
+		status = append_lines(input, prompt);
+		if (status != READING_SUCCEEDED)
+			return (status);
+	}
 	skip_blanks(input);
 	token->start = input->cursor;
 	if (match_ops(input, token))
-		return (true);
+		return (READING_SUCCEEDED);
 	token->type = TOKEN_WORD;
 	while (!skip_word(input))
 	{
-		if (!skip_quotes(input, error))
-			return (false);
+		status = skip_quotes(input);
+		if (status != READING_SUCCEEDED)
+			return (status);
 		input->cursor++;
 	}
 	token->len = input->cursor - token->start;
-	return (true);
+	return (READING_SUCCEEDED);
 }
 
 t_str	get_token_content(t_shell_input input, t_token token)

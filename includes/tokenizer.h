@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:55:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 05:32:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ typedef struct s_token
 	t_u32				len;
 }	t_token;
 
-bool	parse_token(t_shell_input *input, t_token *token, const char *prompt,
-			enum e_prompt_error *error);
-t_str	get_token_content(t_shell_input input, t_token token);
-void	print_token(t_shell_input input, t_token token);
+t_read_input_status		parse_token(t_shell_input *input, t_token *token,
+							const char *prompt);
+t_str					get_token_content(t_shell_input input, t_token token);
+void					print_token(t_shell_input input, t_token token);
 
 /* ************************************************************************** */
 /* TOKENIZER																  */
@@ -52,24 +52,26 @@ typedef struct s_tokenizer
 	t_shell_input	*input;
 }	t_tokenizer;
 
-enum	e_parsing_error
+typedef enum e_parsing_status
 {
-	PARSING_ERROR_CANCEL,
-	PARSING_ERROR_EXIT,
-	PARSING_ERROR_SYNTAX,
-};
+	PARSING_SUCCEEDED,
+	PARSING_CANCELED,
+	PARSING_EXITED,
+	PARSING_FAILED,
+}	t_parsing_status;
 
-bool	alloc_tokenizer(t_tokenizer *tokenizer, t_shell_input *input);
-bool	match_token(t_tokenizer *tokenizer, char *content, const char *prompt,
-			enum e_parsing_error *error);
-bool	match_word_token(t_tokenizer *tokenizer, t_str *content,
-			const char *prompt, enum e_parsing_error *error);
-bool	peek_token(t_tokenizer *tokenizer, t_token *token, const char *prompt,
-			enum e_prompt_error *error);
-bool	tokenize_line(t_tokenizer *tokenizer, const char *prompt,
-			enum e_prompt_error *error);
-bool	consume_token(t_tokenizer *tokenizer, const char *prompt,
-			enum e_prompt_error *error);
-void	free_tokenizer(t_tokenizer tokenizer);
+bool					alloc_tokenizer(t_tokenizer *tokenizer,
+							t_shell_input *input);
+t_parsing_status		match_token(t_tokenizer *tokenizer, char *content,
+							const char *prompt);
+t_parsing_status		match_word_token(t_tokenizer *tokenizer, t_str *content,
+							const char *prompt);
+t_read_input_status		peek_token(t_tokenizer *tokenizer, t_token *token,
+							const char *prompt);
+t_read_input_status		tokenize_line(t_tokenizer *tokenizer,
+							const char *prompt);
+t_read_input_status		consume_token(t_tokenizer *tokenizer,
+							const char *prompt);
+void					free_tokenizer(t_tokenizer tokenizer);
 
 #endif
