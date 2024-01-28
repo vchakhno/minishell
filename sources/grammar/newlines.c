@@ -6,13 +6,14 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/24 18:00:31 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:48:01 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 09:38:38 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "grammar.h"
 
 // Can fail if readline fails
+// Zero or more lines
 t_parsing_status	parse_linebreak(t_tokenizer *tokenizer, const char *prompt)
 {
 	t_parsing_status	status;
@@ -29,6 +30,7 @@ t_parsing_status	parse_linebreak(t_tokenizer *tokenizer, const char *prompt)
 	return (PARSING_SUCCEEDED);
 }
 
+// One or more lines
 t_parsing_status	parse_newline_list(
 	t_tokenizer *tokenizer, const char *prompt
 ) {

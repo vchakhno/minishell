@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:06:32 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 09:35:13 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_parsing_status	parse_argument(t_vector *argv, t_tokenizer *tokenizer)
 	t_token				token;
 	t_string			arg;
 
-	status = (t_parsing_status) peek_token(tokenizer, &token, "cmd> ");
+	status = (t_parsing_status) peek_token(tokenizer, &token, NULL);
 	if (status != PARSING_SUCCEEDED)
 		return (status);
 	if (token.type != TOKEN_WORD)

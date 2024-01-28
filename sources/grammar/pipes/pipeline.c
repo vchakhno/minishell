@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:00:59 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 10:04:00 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,29 +23,44 @@ bool	alloc_pipeline(t_vector *pipeline)
 	return (true);
 }
 
+t_parsing_status	parse_pipeline_elem(
+	t_vector *pipeline, t_tokenizer *tokenizer
+) {
+	t_simple_command	command;
+	t_parsing_status	status;
+
+	if (!alloc_simple_command(&command))
+		return (PARSING_CANCELED);
+	status = parse_simple_command(&command, tokenizer);
+	if (status != PARSING_SUCCEEDED)
+	{
+		free_simple_command(command);
+		return (status);
+	}
+	if (!ft_vector_push(pipeline, &command))
+	{
+		free_simple_command(command);
+		return (PARSING_CANCELED);
+	}
+	return (PARSING_SUCCEEDED);
+}
+
 t_parsing_status	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer)
 {
 	t_parsing_status	status;
-	t_simple_command	command;
 
-	status = PARSING_SUCCEEDED;
-	while (status != PARSING_FAILED)
+	while (true)
 	{
-		if (!alloc_simple_command(&command))
-			return (PARSING_CANCELED);
-		status = parse_simple_command(&command, tokenizer);
+		status = parse_pipeline_elem(pipeline, tokenizer);
 		if (status != PARSING_SUCCEEDED)
-		{
-			free_simple_command(command);
 			return (status);
-		}
-		if (!ft_vector_push(pipeline, &command))
-		{
-			free_simple_command(command);
-			return (PARSING_CANCELED);
-		}
-		status = match_token(tokenizer, "|", "pipe>");
-		if (status == PARSING_CANCELED || status == PARSING_EXITED)
+		status = match_token(tokenizer, "|", NULL);
+		if (status == PARSING_FAILED)
+			return (PARSING_SUCCEEDED);
+		if (status != PARSING_SUCCEEDED)
+			return (status);
+		status = parse_linebreak(tokenizer, "pipe> ");
+		if (status != PARSING_SUCCEEDED)
 			return (status);
 	}
 	return (PARSING_SUCCEEDED);
