@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 02:16:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 03:25:19 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ typedef struct s_session
 	t_runtime_context	runtime_context;
 }	t_session;
 
-bool	init_session(t_session *session, char **env);
+bool	setup_session(t_session *session, char **env);
 t_u8	run_repl(t_session *session);
-void	destroy_session(t_session session);
+void	quit_session(t_session session);
 
 bool	get_incomplete_ast(t_shell_input *input, t_ast_root *ast,
 			bool *complete);

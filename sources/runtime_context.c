@@ -1,27 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   runtime_context.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/24 07:35:13 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 03:25:30 by vchakhno         ###   ########.fr       */
+/*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
+/*   Updated: 2024/01/28 04:01:29 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "session.h"
-#include <stdlib.h>
+#include "runtime_context.h"
+#include "grammar.h"
 
-int	main(int argc, char **argv, char **env)
+bool	alloc_runtime_context(t_runtime_context *context, char **env)
 {
-	t_session	session;
-	t_u8		exit_status;
+	if (!parse_env(&context->env, env))
+		return (false);
+	context->exit_status = 0;
+	return (true);
+}
 
-	(void) argc, (void) argv;
-	if (!setup_session(&session, env))
-		return (EXIT_FAILURE);
-	exit_status = run_repl(&session);
-	quit_session(session);
-	return (exit_status);
+void	free_runtime_context(t_runtime_context context)
+{
+	free_env(context.env);
 }

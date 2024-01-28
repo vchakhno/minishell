@@ -48,14 +48,15 @@ SRCS		:= \
 				grammar/root.c \
 				shell_input/input.c \
 				shell_input/lines.c \
+				shell_input/shell_input.c \
 				tokens/token.c \
 				tokens/tokenizer.c \
 				utils/fork.c \
 				utils/move_fd.c \
 				utils/print_error.c \
 				main.c \
-				session.c \
-				shell_input.c
+				runtime_context.c \
+				session.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes
