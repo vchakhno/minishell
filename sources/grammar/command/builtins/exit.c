@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:24:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:44:36 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static bool	parse_exit_arg(t_str arg, t_u8 *exit_status)
 {
 	if (arg.len == 0)
 	{
-		print_error("exit: the argument is empty");
+		print_error("exit: The argument is empty");
 		return (false);
 	}
 	if (!ft_str_is_digit(arg))
@@ -61,7 +61,7 @@ bool	run_builtin_exit(t_vector argv, t_env *env, t_u8 *exit_status)
 	(void) env;
 	if (argv.size > 2)
 	{
-		print_error("exit: too many arguments");
+		print_error("exit: Too many arguments, expected one");
 		return (builtin_error(exit_status));
 	}
 	if (argv.size == 1)

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:18:39 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 07:44:48 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static bool	check_args(t_u32 argc)
 	}
 	if (argc > 2)
 	{
-		print_error("cd: Too many arguments");
+		print_error("cd: Too many arguments, expected one");
 		return (false);
 	}
 	return (true);
