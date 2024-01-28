@@ -18,14 +18,6 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-bool	alloc_lines(t_shell_input *input)
-{
-	if (!ft_string_alloc(&input->text, 30))
-		return (false);
-	input->cursor = 0;
-	return (true);
-}
-
 bool	append_lines(
 	t_shell_input *input, const char *prompt, enum e_prompt_error *error
 ) {
@@ -75,9 +67,4 @@ void	cut_lines(t_shell_input *input)
 {
 	ft_string_remove_slice(&input->text, 0, input->cursor);
 	input->cursor = 0;
-}
-
-void	free_lines(t_shell_input input)
-{
-	ft_string_free(input.text);
 }

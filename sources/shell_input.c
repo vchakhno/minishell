@@ -1,36 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   session.c                                          :+:      :+:    :+:   */
+/*   shell_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 02:16:00 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 02:10:36 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "session.h"
+#include "shell_input.h"
 #include "grammar.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
 
-bool	init_session(t_session *session, char **env)
+bool	alloc_shell_input(t_shell_input *input)
 {
-	if (!parse_env(&session->runtime_context.env, env))
+	if (!ft_string_alloc(&input->text, 30))
 		return (false);
-	if (!alloc_shell_input(&session->shell_input))
-	{
-		free_env(session->runtime_context.env);
-		return (false);
-	}
-	session->runtime_context.exit_status = 0;
+	input->cursor = 0;
+	rl_outstream = stderr;
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
 	return (true);
 }
 
-bool	parse_cancellable_ast(
-	t_ast_root *ast, t_shell_input *input, bool *valid
+bool	get_incomplete_ast(
+	t_shell_input *input, t_ast_root *ast, bool *valid
 ) {
 	enum e_parsing_error	error;
 	bool					ok;
@@ -50,14 +48,14 @@ bool	parse_cancellable_ast(
 
 // true -> continue
 // false -> exit
-bool	parse_validated_ast(t_ast_root *ast, t_shell_input *input)
+bool	get_complete_ast(t_shell_input *input, t_ast_root *ast)
 {
-	bool	valid;
+	bool	complete;
 
-	valid = false;
-	while (!valid)
+	complete = false;
+	while (!complete)
 	{
-		if (!parse_cancellable_ast(ast, input, &valid))
+		if (!get_incomplete_ast(input, ast, &complete))
 			return (false);
 		register_command(*input);
 		cut_lines(input);
@@ -65,28 +63,8 @@ bool	parse_validated_ast(t_ast_root *ast, t_shell_input *input)
 	return (true);
 }
 
-t_u8	run_repl(t_session *session)
+void	free_shell_input(t_shell_input input)
 {
-	t_ast_root	ast;
-
-	while (true)
-	{
-		if (!alloc_ast(&ast))
-			break ;
-		if (!get_complete_ast(&session->shell_input, &ast)
-			|| !run_ast(ast, &session->runtime_context))
-		{
-			free_ast(ast);
-			break ;
-		}
-		free_ast(ast);
-	}
-	return (session->runtime_context.exit_status);
-}
-
-void	destroy_session(t_session session)
-{
-	free_shell_input(session.shell_input);
-	free_env(session.runtime_context.env);
+	ft_string_free(input.text);
 	clear_history();
 }

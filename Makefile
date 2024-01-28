@@ -54,7 +54,8 @@ SRCS		:= \
 				utils/move_fd.c \
 				utils/print_error.c \
 				main.c \
-				session.c
+				session.c \
+				shell_input.c
 SRCS		:= $(addprefix $(SRC_DIR)/,$(SRCS))
 
 INCS		:=	includes

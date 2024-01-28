@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:54:19 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 02:16:25 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "shell_input.h"
 # include "runtime_context.h"
+# include "grammar.h"
 # include <stdbool.h>
 # include <libft/libft.h>
 
@@ -27,5 +28,9 @@ typedef struct s_session
 bool	init_session(t_session *session, char **env);
 t_u8	run_repl(t_session *session);
 void	destroy_session(t_session session);
+
+bool	get_incomplete_ast(t_shell_input *input, t_ast_root *ast,
+			bool *complete);
+bool	get_complete_ast(t_shell_input *input, t_ast_root *ast);
 
 #endif

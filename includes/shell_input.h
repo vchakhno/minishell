@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:53:40 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 02:05:58 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,13 @@ enum	e_prompt_error
 bool	read_input(t_string *new_lines, const char *prompt,
 			enum e_prompt_error *error);
 
-bool	alloc_lines(t_shell_input *input);
+bool	alloc_shell_input(t_shell_input *input);
 bool	append_lines(t_shell_input *input, const char *prompt,
 			enum e_prompt_error *error);
 bool	read_line(t_shell_input *input, t_str *line, const char *prompt,
 			enum e_prompt_error *error);
 void	register_command(t_shell_input input);
 void	cut_lines(t_shell_input *input);
-void	free_lines(t_shell_input input);
+void	free_shell_input(t_shell_input input);
 
 #endif
