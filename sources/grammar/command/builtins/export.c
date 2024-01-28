@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 08:04:45 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 08:11:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ bool	run_builtin_export(t_vector argv, t_env *env, t_u8 *exit_status)
 	{
 		print_error("export: Export without arguments is undefined "
 			"according to POSIX");
-		return (builtin_ok(exit_status));
+		return (builtin_error(exit_status));
 	}
 	i = 1;
 	while (i < argv.size)

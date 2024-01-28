@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:10:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 08:14:50 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ typedef bool				(*t_builtin)(
 bool	builtin_ok(t_u8 *exit_status);
 bool	builtin_error(t_u8 *exit_status);
 
+bool	check_var_name(t_str name);
 bool	run_builtin_echo(t_vector argv, t_env *env, t_u8 *exit_status);
 bool	run_builtin_cd(t_vector argv, t_env *env, t_u8 *exit_status);
 bool	run_builtin_pwd(t_vector argv, t_env *env, t_u8 *exit_status);

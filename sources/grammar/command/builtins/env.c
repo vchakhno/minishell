@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:37:26 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 08:13:08 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 bool	run_builtin_env(t_vector argv, t_env *env, t_u8 *exit_status)
 {
-	(void) argv;
 	if (argv.size != 1)
 	{
 		print_error("env: No arguments expected");
