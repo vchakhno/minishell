@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:32:09 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:20:18 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@ bool	get_builtin(t_str name, t_builtin *builtin_func)
 // false -> exit (for builtin exit and executable child failure)
 
 bool	run_raw_command(
-	t_vector argv, t_env *env, t_backup_fds backup, t_u8 *exit_status
+	t_vector argv, t_runtime_context *context, t_backup_fds backup
 ) {
 	t_executable	exec;
 	t_builtin		builtin_func;
 
 	if (get_builtin(((t_string *)argv.elems)[0].str, &builtin_func))
-		return (builtin_func(argv, env, exit_status));
-	if (!alloc_executable(&exec, argv, *env, exit_status))
+		return (builtin_func(argv, &context->env, &context->exit_status));
+	if (!alloc_executable(&exec, argv, context->env, &context->exit_status))
 		return (true);
-	if (!run_executable(exec, backup, exit_status))
+	if (!run_executable(exec, backup, &context->exit_status))
 	{
 		free_executable(exec);
 		return (false);

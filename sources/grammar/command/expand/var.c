@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:19:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:10:28 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ bool	split_var(t_str var, t_fields *fields)
 }
 
 bool	expand_split_var(
-	t_str *src, t_env env, t_u8 exit_status, t_fields *fields
+	t_str *src, t_runtime_context context, t_fields *fields
 ) {
 	t_str	name;
 	t_str	value;
@@ -67,14 +67,14 @@ bool	expand_split_var(
 	if (name.len == 0)
 		return (add_field(fields, ft_str("$")));
 	if (ft_str_equal_c_str(name, "?"))
-		return (add_u8_field(fields, exit_status));
-	if (!get_env_var(env, name, &value))
+		return (add_u8_field(fields, context.exit_status));
+	if (!get_env_var(context.env, name, &value))
 		return (true);
 	return (split_var(value, fields));
 }
 
 bool	expand_var(
-	t_str *src, t_env env, t_u8 exit_status, t_fields *fields
+	t_str *src, t_runtime_context context, t_fields *fields
 ) {
 	t_str	name;
 	t_str	value;
@@ -83,8 +83,8 @@ bool	expand_var(
 	if (name.len == 0)
 		return (add_field(fields, ft_str("$")));
 	if (ft_str_equal_c_str(name, "?"))
-		return (add_u8_field(fields, exit_status));
-	if (!get_env_var(env, name, &value))
+		return (add_u8_field(fields, context.exit_status));
+	if (!get_env_var(context.env, name, &value))
 		return (true);
 	return (add_field(fields, value));
 }

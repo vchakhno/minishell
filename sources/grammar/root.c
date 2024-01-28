@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 03:07:47 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:57:44 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "grammar.h"
 
 bool	alloc_ast(t_ast_root *ast)
 {
@@ -18,11 +18,11 @@ bool	alloc_ast(t_ast_root *ast)
 }
 
 bool	parse_ast(
-	t_ast_root *ast, t_lines *lines, enum e_parsing_error *error)
+	t_ast_root *ast, t_shell_input *input, enum e_parsing_error *error)
 {
 	t_tokenizer	tokenizer;
 
-	if (!alloc_tokenizer(&tokenizer, lines))
+	if (!alloc_tokenizer(&tokenizer, input))
 		return (false);
 	if (!parse_pipeline(&ast->pipes, &tokenizer, error))
 	{
@@ -33,9 +33,9 @@ bool	parse_ast(
 	return (true);
 }
 
-bool	run_ast(t_ast_root ast, t_session *session)
+bool	run_ast(t_ast_root ast, t_runtime_context *context)
 {
-	return (run_pipeline(ast.pipes, session));
+	return (run_pipeline(ast.pipes, context));
 }
 
 void	free_ast(t_ast_root ast)

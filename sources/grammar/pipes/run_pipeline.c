@@ -6,11 +6,11 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:27:00 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:57:38 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "grammar.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <signal.h>
@@ -45,7 +45,7 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 // returns recovers
 
 bool	start_pipeline(
-	t_vector pipeline, pid_t *pids, t_session *session
+	t_vector pipeline, pid_t *pids, t_runtime_context *context
 ) {
 	t_u32	i;
 	int		input;
@@ -58,17 +58,16 @@ bool	start_pipeline(
 			|| !ft_fork(&pids[i]))
 		{
 			cleanup_pipeline(i, pids);
-			session->exit_status = 1;
+			context->exit_status = 1;
 			return (true);
 		}
 		if (pids[i] == 0)
 		{
 			if (!apply_pipe(&input, pipe_fds))
-				session->exit_status = 1;
+				context->exit_status = 1;
 			else
 				run_simple_command(
-					&((t_simple_command *)pipeline.elems)[i],
-					&session->env, &session->exit_status);
+					&((t_simple_command *)pipeline.elems)[i], context);
 			return (false);
 		}
 		i++;
@@ -77,7 +76,7 @@ bool	start_pipeline(
 	return (true);
 }
 
-void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
+void	wait_pipeline(t_u32 size, pid_t *pids, t_u8 *exit_status)
 {
 	t_u32	i;
 	int		wstatus;
@@ -89,32 +88,32 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_session *session)
 		i++;
 	}
 	if (WIFEXITED(wstatus))
-		session->exit_status = WEXITSTATUS(wstatus);
+		*exit_status = WEXITSTATUS(wstatus);
 	else if (WIFSIGNALED(wstatus))
-		session->exit_status = 128 + WTERMSIG(wstatus);
+		*exit_status = 128 + WTERMSIG(wstatus);
 }
 
 // returns recovers
 
-bool	run_pipeline(t_vector pipeline, t_session *session)
+bool	run_pipeline(t_vector pipeline, t_runtime_context *context)
 {
 	pid_t	*pids;
 
 	if (pipeline.size == 1)
 		return (run_simple_command(&((t_simple_command *)pipeline.elems)[0],
-			&session->env, &session->exit_status));
+			context));
 	if (!ft_mem_malloc(&pids, pipeline.size * sizeof(pid_t)))
 	{
-		session->exit_status = 1;
+		context->exit_status = 1;
 		return (true);
 	}
-	if (!start_pipeline(pipeline, pids, session))
+	if (!start_pipeline(pipeline, pids, context))
 	{
 		free(pids);
 		return (false);
 	}
-	wait_pipeline(pipeline.size, pids, session);
+	wait_pipeline(pipeline.size, pids, &context->exit_status);
 	free(pids);
-	ft_eprintln("[DEBUG] Pipeline status: {u8}", session->exit_status);
+	ft_eprintln("[DEBUG] Pipeline status: {u8}", context->exit_status);
 	return (true);
 }

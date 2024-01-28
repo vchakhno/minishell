@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:19:51 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:09:11 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	consume_until(t_str *str, char *delim, t_fields *fields)
 }
 
 bool	expand_dquotes(
-	t_str *str, t_env env, t_u8 exit_status, t_fields *fields
+	t_str *str, t_runtime_context context, t_fields *fields
 ) {
 	advance_str(str, 1);
 	while (str->len && *str->c_str != '"')
@@ -35,7 +35,7 @@ bool	expand_dquotes(
 			return (false);
 		if (*str->c_str == '"')
 			break ;
-		if (!expand_var(str, env, exit_status, fields))
+		if (!expand_var(str, context, fields))
 			return (false);
 	}
 	advance_str(str, 1);

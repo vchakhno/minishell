@@ -6,14 +6,14 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/27 23:53:40 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:55:42 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef TOKENIZER_H
 # define TOKENIZER_H
 
-# include "lines.h"
+# include "shell_input.h"
 # include <stdio.h>
 # include <stddef.h>
 # include <stdbool.h>
@@ -37,10 +37,10 @@ typedef struct s_token
 	t_u32				len;
 }	t_token;
 
-bool	parse_token(t_lines *lines, t_token *token, const char *prompt,
+bool	parse_token(t_shell_input *input, t_token *token, const char *prompt,
 			enum e_prompt_error *error);
-t_str	get_token_content(t_lines lines, t_token token);
-void	print_token(t_lines lines, t_token token);
+t_str	get_token_content(t_shell_input input, t_token token);
+void	print_token(t_shell_input input, t_token token);
 
 /* ************************************************************************** */
 /* TOKENIZER																  */
@@ -48,8 +48,8 @@ void	print_token(t_lines lines, t_token token);
 
 typedef struct s_tokenizer
 {
-	t_vector	tokens;
-	t_lines		*lines;
+	t_vector		tokens;
+	t_shell_input	*input;
 }	t_tokenizer;
 
 enum	e_parsing_error
@@ -59,7 +59,7 @@ enum	e_parsing_error
 	PARSING_ERROR_SYNTAX,
 };
 
-bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines);
+bool	alloc_tokenizer(t_tokenizer *tokenizer, t_shell_input *input);
 bool	match_token(t_tokenizer *tokenizer, char *content, const char *prompt,
 			enum e_parsing_error *error);
 bool	match_word_token(t_tokenizer *tokenizer, t_str *content,

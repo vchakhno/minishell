@@ -6,13 +6,13 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/27 23:54:12 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:48:40 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 
-bool	check_ops(t_lines lines, t_u32 *len)
+bool	check_ops(t_shell_input input, t_u32 *len)
 {
 	char *const	ops[] = {
 		"<<", "<", ">>", ">", "&&", "||", "|", "(", ")", "\n"
@@ -20,8 +20,8 @@ bool	check_ops(t_lines lines, t_u32 *len)
 	t_str		lines_str;
 	t_u32		i;
 
-	lines_str.c_str = lines.text.c_str + lines.cursor;
-	lines_str.len = lines.text.len - lines.cursor;
+	lines_str.c_str = input.text.c_str + input.cursor;
+	lines_str.len = input.text.len - input.cursor;
 	i = 0;
 	while (i < (int) sizeof ops / sizeof * ops)
 	{
@@ -36,60 +36,60 @@ bool	check_ops(t_lines lines, t_u32 *len)
 	return (false);
 }
 
-bool	match_ops(t_lines *lines, t_token *token)
+bool	match_ops(t_shell_input *input, t_token *token)
 {
-	if (check_ops(*lines, &token->len))
+	if (check_ops(*input, &token->len))
 	{
 		token->type = TOKEN_OP;
-		lines->cursor += token->len;
+		input->cursor += token->len;
 		return (true);
 	}
 	return (false);
 }
 
-void	skip_blanks(t_lines *lines)
+void	skip_blanks(t_shell_input *input)
 {
-	while (lines->cursor < lines->text.len
-		&& lines->text.c_str[lines->cursor] == ' ')
-		lines->cursor++;
+	while (input->cursor < input->text.len
+		&& input->text.c_str[input->cursor] == ' ')
+		input->cursor++;
 }
 
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
-bool	skip_quotes(t_lines *lines, enum e_prompt_error *error)
+bool	skip_quotes(t_shell_input *input, enum e_prompt_error *error)
 {
 	char		quote;
 	const char	*prompt;
 
-	quote = lines->text.c_str[lines->cursor];
+	quote = input->text.c_str[input->cursor];
 	if (quote == '\'')
 		prompt = "quote> ";
 	else
 		prompt = "dquote> ";
-	lines->cursor++;
-	while (lines->text.c_str[lines->cursor] != quote)
+	input->cursor++;
+	while (input->text.c_str[input->cursor] != quote)
 	{
-		if (lines->cursor == lines->text.len
-			&& !append_lines(lines, prompt, error))
+		if (input->cursor == input->text.len
+			&& !append_lines(input, prompt, error))
 			return (false);
 		else
-			lines->cursor++;
+			input->cursor++;
 	}
 	return (true);
 }
 
 // false -> unterminated token
 
-bool	skip_word(t_lines *lines)
+bool	skip_word(t_shell_input *input)
 {
-	while (lines->cursor < lines->text.len
-		&& !check_ops(*lines, NULL)
-		&& lines->text.c_str[lines->cursor] != ' ')
+	while (input->cursor < input->text.len
+		&& !check_ops(*input, NULL)
+		&& input->text.c_str[input->cursor] != ' ')
 	{
-		if (lines->text.c_str[lines->cursor] == '\"'
-			|| lines->text.c_str[lines->cursor] == '\'')
+		if (input->text.c_str[input->cursor] == '\"'
+			|| input->text.c_str[input->cursor] == '\'')
 			return (false);
-		lines->cursor++;
+		input->cursor++;
 	}
 	return (true);
 }
@@ -97,34 +97,33 @@ bool	skip_word(t_lines *lines)
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
 bool	parse_token(
-	t_lines *lines, t_token *token, const char *prompt,
+	t_shell_input *input, t_token *token, const char *prompt,
 	enum e_prompt_error *error
 ) {
-
-	if (lines->cursor == lines->text.len && !append_lines(lines, prompt, error))
+	if (input->cursor == input->text.len && !append_lines(input, prompt, error))
 		return (false);
-	skip_blanks(lines);
-	token->start = lines->cursor;
-	if (match_ops(lines, token))
+	skip_blanks(input);
+	token->start = input->cursor;
+	if (match_ops(input, token))
 		return (true);
 	token->type = TOKEN_WORD;
-	while (!skip_word(lines))
+	while (!skip_word(input))
 	{
-		if (!skip_quotes(lines, error))
+		if (!skip_quotes(input, error))
 			return (false);
-		lines->cursor++;
+		input->cursor++;
 	}
-	token->len = lines->cursor - token->start;
+	token->len = input->cursor - token->start;
 	return (true);
 }
 
-t_str	get_token_content(t_lines lines, t_token token)
+t_str	get_token_content(t_shell_input input, t_token token)
 {
-	return (ft_str_get_slice(lines.text.str, token.start, token.len));
+	return (ft_str_get_slice(input.text.str, token.start, token.len));
 }
 
-void	print_token(t_lines lines, t_token token)
+void	print_token(t_shell_input input, t_token token)
 {
 	ft_println("({c_str}, \"{str}\")",
-		(char *[]){"OP", "WORD"}[token.type], get_token_content(lines, token));
+		(char *[]){"OP", "WORD"}[token.type], get_token_content(input, token));
 }

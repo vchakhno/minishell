@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:21:11 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:56:19 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 // TODO: add body expansion
 
 bool	parse_heredoc_body(
-	t_heredoc *heredoc, t_lines *lines, enum e_prompt_error *error
+	t_heredoc *heredoc, t_shell_input *input, enum e_prompt_error *error
 ) {
 	t_str	line;
 
@@ -40,7 +40,7 @@ bool	parse_heredoc_body(
 			*error = PROMPT_ERROR_CANCEL;
 			return (false);
 		}
-		if (!read_line(lines, &line, "heredoc> ", error))
+		if (!read_line(input, &line, "heredoc> ", error))
 		{
 			if (*error == PROMPT_ERROR_CANCEL)
 				print_error("heredoc: warning: "
@@ -71,7 +71,7 @@ bool	parse_heredoc(
 		*error = PARSING_ERROR_CANCEL;
 		return (false);
 	}
-	if (!parse_heredoc_body(heredoc, tokenizer->lines,
+	if (!parse_heredoc_body(heredoc, tokenizer->input,
 			(enum e_prompt_error *)error))
 	{
 		ft_string_free(heredoc->delimiter);

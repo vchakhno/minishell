@@ -46,8 +46,8 @@ SRCS		:= \
 				grammar/pipes/run_pipeline.c \
 				grammar/newlines.c \
 				grammar/root.c \
-				text/input.c \
-				text/lines.c \
+				shell_input/input.c \
+				shell_input/lines.c \
 				tokens/token.c \
 				tokens/tokenizer.c \
 				utils/fork.c \

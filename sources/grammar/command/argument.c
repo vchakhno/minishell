@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:31:10 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 00:56:27 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	parse_argument(
 		return (false);
 	}
 	consume_token(tokenizer, NULL, NULL);
-	if (!ft_string_from_str(&arg, get_token_content(*tokenizer->lines, token)))
+	if (!ft_string_from_str(&arg, get_token_content(*tokenizer->input, token)))
 	{
 		*error = PARSING_ERROR_CANCEL;
 		return (false);

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:31:03 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:15:56 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,25 +49,24 @@ bool	parse_simple_command(
 // /!\ There will be multiple returns if the command contains heredocs,
 // or execve fails
 
-bool	run_simple_command(t_simple_command *cmd, t_env *env, t_u8 *exit_status)
+bool	run_simple_command(t_simple_command *cmd, t_runtime_context *context)
 {
 	t_vector		fields;
 	t_backup_fds	backup;
 	bool			redir_recovers;
 
-	if (!expand_args(cmd->argv, *env, *exit_status, &fields))
+	if (!expand_args(cmd->argv, *context, &fields))
 	{
-		*exit_status = 1;
+		context->exit_status = 1;
 		return (true);
 	}
-	if (!run_redirections(cmd->redirs, &backup, &redir_recovers,
-			*env, *exit_status))
+	if (!run_redirections(cmd->redirs, &backup, &redir_recovers, *context))
 	{
-		*exit_status = 1;
+		context->exit_status = 1;
 		free_fields_vec(fields);
 		return (redir_recovers);
 	}
-	if (!run_raw_command(fields, env, backup, exit_status))
+	if (!run_raw_command(fields, context, backup))
 	{
 		free_fields_vec(fields);
 		return (false);
@@ -75,7 +74,7 @@ bool	run_simple_command(t_simple_command *cmd, t_env *env, t_u8 *exit_status)
 	cleanup_redirections(cmd->redirs, backup, cmd->redirs.size);
 	free_fields_vec(fields);
 	ft_eprintln("[DEBUG] `{str}` status: {u8}",
-		((t_string *)cmd->argv.elems)[0].str, *exit_status);
+		((t_string *)cmd->argv.elems)[0].str, context->exit_status);
 	return (true);
 }
 

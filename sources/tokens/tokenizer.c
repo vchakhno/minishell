@@ -6,17 +6,17 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/27 23:54:16 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:48:48 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 
-bool	alloc_tokenizer(t_tokenizer *tokenizer, t_lines *lines)
+bool	alloc_tokenizer(t_tokenizer *tokenizer, t_shell_input *input)
 {
 	if (!ft_vector_alloc(&tokenizer->tokens, sizeof(t_token), 30))
 		return (false);
-	tokenizer->lines = lines;
+	tokenizer->input = input;
 	return (true);
 }
 
@@ -29,7 +29,7 @@ bool	match_token(
 	if (!peek_token(tokenizer, &token, prompt, (enum e_prompt_error *)error))
 		return (false);
 	if (!ft_str_equal_c_str(
-			get_token_content(*tokenizer->lines, token), content))
+			get_token_content(*tokenizer->input, token), content))
 	{
 		*error = PARSING_ERROR_SYNTAX;
 		return (false);
@@ -52,7 +52,7 @@ bool	match_word_token(
 		return (false);
 	}
 	ft_vector_remove(&tokenizer->tokens, 0, NULL);
-	*content = get_token_content(*tokenizer->lines, token);
+	*content = get_token_content(*tokenizer->input, token);
 	return (true);
 }
 
@@ -81,7 +81,7 @@ bool	tokenize_line(
 ) {
 	t_token	token;
 
-	while (parse_token(tokenizer->lines, &token, prompt, error))
+	while (parse_token(tokenizer->input, &token, prompt, error))
 	{
 		if (!ft_vector_push(&tokenizer->tokens, &token))
 		{
@@ -89,7 +89,7 @@ bool	tokenize_line(
 			return (false);
 		}
 		if (ft_str_equal_c_str(
-				get_token_content(*tokenizer->lines, token), "\n"))
+				get_token_content(*tokenizer->input, token), "\n"))
 			return (true);
 	}
 	return (false);

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lines.h"
+#include "shell_input.h"
 #include "prompts.h"
 #include <stdlib.h>
 #include <signal.h>

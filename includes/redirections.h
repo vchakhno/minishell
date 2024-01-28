@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:10:40 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:13:40 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define REDIRECTIONS_H
 
 # include "tokenizer.h"
-# include "environment.h"
+# include "runtime_context.h"
 # include <stdbool.h>
 # include <libft/libft.h>
 
@@ -29,7 +29,7 @@ typedef struct s_output_redir
 
 bool	parse_output_redir(t_output_redir *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
-bool	run_output_redir(t_output_redir *redir, t_env env, t_u8 exit_status);
+bool	run_output_redir(t_output_redir *redir, t_runtime_context context);
 void	free_output_redir(t_output_redir redir);
 
 typedef struct s_append_redir
@@ -39,7 +39,7 @@ typedef struct s_append_redir
 
 bool	parse_append_redir(t_append_redir *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
-bool	run_append_redir(t_append_redir *redir, t_env env, t_u8 exit_status);
+bool	run_append_redir(t_append_redir *redir, t_runtime_context context);
 void	free_append_redir(t_append_redir redir);
 
 typedef struct s_input_redir
@@ -49,7 +49,7 @@ typedef struct s_input_redir
 
 bool	parse_input_redir(t_input_redir *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
-bool	run_input_redir(t_input_redir *redir, t_env env, t_u8 exit_status);
+bool	run_input_redir(t_input_redir *redir, t_runtime_context context);
 void	free_input_redir(t_input_redir redir);
 
 typedef struct s_heredoc
@@ -84,8 +84,8 @@ typedef struct s_redirection
 	};
 }	t_redirection;
 
-bool	run_redirection(t_redirection *redir, bool *recovers, t_env env,
-			t_u8 exit_status);
+bool	run_redirection(t_redirection *redir, bool *recovers,
+			t_runtime_context context);
 bool	parse_redirection(t_redirection *redir, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
 void	cleanup_redirection(t_redirection redir);
@@ -104,7 +104,7 @@ void	discard_backup_fds(t_backup_fds backup);
 bool	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer,
 			enum e_parsing_error *error);
 bool	run_redirections(t_vector redirs, t_backup_fds *backup,
-			bool *recovers, t_env env, t_u8 exit_status);
+			bool *recovers, t_runtime_context context);
 void	cleanup_redirections(t_vector redirs, t_backup_fds backup, t_u32 size);
 
 #endif

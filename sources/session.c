@@ -6,59 +6,45 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/26 03:22:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 01:57:58 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <minishell.h>
+#include "session.h"
+#include "grammar.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
 
 bool	init_session(t_session *session, char **env)
 {
-	if (!parse_env(&session->env, env))
+	if (!parse_env(&session->runtime_context.env, env))
 		return (false);
-	if (!alloc_lines(&session->lines))
+	if (!alloc_lines(&session->shell_input))
 	{
-		free_env(session->env);
+		free_env(session->runtime_context.env);
 		return (false);
 	}
-	session->exit_status = 0;
+	session->runtime_context.exit_status = 0;
 	rl_outstream = stderr;
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
 	return (true);
 }
 
-// true -> continue
-// false -> exit
-// bool	parse_cancellable_ast(t_ast_root *ast, t_lines *lines, bool *valid)
-// {
-// 	bool	cancelled;
-
-// 	if (!parse_ast(ast, lines, valid, &cancelled))
-// 		return (false);
-// 	while (cancelled)
-// 	{
-// 		if (!parse_ast(ast, lines, valid, &cancelled))
-// 			return (false);
-// 	}
-// 	return (true);
-// }
-
-bool	parse_cancellable_ast(t_ast_root *ast, t_lines *lines, bool *valid)
-{
+bool	parse_cancellable_ast(
+	t_ast_root *ast, t_shell_input *input, bool *valid
+) {
 	enum e_parsing_error	error;
 	bool					ok;
 	bool					cancelled;
 
-	ok = parse_ast(ast, lines, &error);
+	ok = parse_ast(ast, input, &error);
 	cancelled = (!ok && error == PARSING_ERROR_CANCEL);
 	while (cancelled)
 	{
-		cut_lines(lines);
-		ok = parse_ast(ast, lines, &error);
+		cut_lines(input);
+		ok = parse_ast(ast, input, &error);
 		cancelled = (!ok && error == PARSING_ERROR_CANCEL);
 	}
 	*valid = (ok || error != PARSING_ERROR_SYNTAX);
@@ -67,22 +53,22 @@ bool	parse_cancellable_ast(t_ast_root *ast, t_lines *lines, bool *valid)
 
 // true -> continue
 // false -> exit
-bool	parse_validated_ast(t_ast_root *ast, t_lines *lines)
+bool	parse_validated_ast(t_ast_root *ast, t_shell_input *input)
 {
 	bool	valid;
 
 	valid = false;
 	while (!valid)
 	{
-		if (!parse_cancellable_ast(ast, lines, &valid))
+		if (!parse_cancellable_ast(ast, input, &valid))
 			return (false);
-		register_command(*lines);
-		cut_lines(lines);
+		register_command(*input);
+		cut_lines(input);
 	}
 	return (true);
 }
 
-void	run_repl(t_session *session)
+t_u8	run_repl(t_session *session)
 {
 	t_ast_root	ast;
 
@@ -90,19 +76,20 @@ void	run_repl(t_session *session)
 	{
 		if (!alloc_ast(&ast))
 			break ;
-		if (!parse_validated_ast(&ast, &session->lines)
-			|| !run_ast(ast, session))
+		if (!parse_validated_ast(&ast, &session->shell_input)
+			|| !run_ast(ast, &session->runtime_context))
 		{
 			free_ast(ast);
 			break ;
 		}
 		free_ast(ast);
 	}
+	return (session->runtime_context.exit_status);
 }
 
 void	destroy_session(t_session session)
 {
-	free_lines(session.lines);
-	free_env(session.env);
+	free_lines(session.shell_input);
+	free_env(session.runtime_context.env);
 	clear_history();
 }
