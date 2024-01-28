@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 05:51:46 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 08:29:32 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "grammar.h"
+#include "prompts.h"
 
 bool	alloc_ast(t_ast_root *ast)
 {
@@ -24,6 +25,17 @@ t_parsing_status	parse_ast(t_ast_root *ast, t_shell_input *input)
 
 	if (!alloc_tokenizer(&tokenizer, input))
 		return (false);
+	status = match_token(&tokenizer, "\n", MAIN_PROMPT);
+	if (status == PARSING_SUCCEEDED)
+	{
+		free_tokenizer(tokenizer);
+		return (PARSING_CANCELED);
+	}
+	if (status == PARSING_CANCELED || status == PARSING_EXITED)
+	{
+		free_tokenizer(tokenizer);
+		return (status);
+	}
 	status = parse_pipeline(&ast->pipes, &tokenizer);
 	free_tokenizer(tokenizer);
 	return (status);
