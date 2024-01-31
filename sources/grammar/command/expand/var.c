@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 08:06:06 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/31 09:40:26 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_str	consume_var_name(t_str *src)
 		return (ft_str(""));
 	i = 1;
 	while (i < src->len
-		&& (ft_char_is_alnum(src->c_str[i]) || src->c_str[i] != '_'))
+		&& (ft_char_is_alnum(src->c_str[i]) || src->c_str[i] == '_'))
 		i++;
 	advance_str(src, i);
 	return ((t_str){src->c_str - i, i});
