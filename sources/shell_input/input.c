@@ -43,7 +43,7 @@ bool	restore_input(int stdin_backup)
 	return (move_fd(stdin_backup, STDIN_FILENO));
 }
 
-t_read_input_status	handle_empty_input(bool *prev_ctrl_c)
+t_read_input_status	handle_empty_input(bool *prev_ctrl_c, t_u8 *exit_status)
 {
 	if (g_ctrlc)
 	{
@@ -51,6 +51,7 @@ t_read_input_status	handle_empty_input(bool *prev_ctrl_c)
 		if (!*prev_ctrl_c)
 			ft_eprintln("");
 		*prev_ctrl_c = true;
+		*exit_status = 130;
 		return (READING_CANCELED);
 	}
 	*prev_ctrl_c = false;
@@ -72,7 +73,7 @@ t_read_input_status	read_input(
 	if (!restore_input(stdin_backup))
 		return (READING_CANCELED);
 	if (!user_input)
-		return (handle_empty_input(&prev_ctrl_c));
+		return (handle_empty_input(&prev_ctrl_c, exit_status));
 	prev_ctrl_c = false;
 	input_len = ft_c_str_len(user_input);
 	*new_lines = (t_string){{{user_input, input_len}}, input_len + 1};
