@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:43:52 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:38:33 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 #include <unistd.h>
 
 t_parsing_status	parse_append_redir(
-	t_append_redir *redir, t_tokenizer *tokenizer
+	t_append_redir *redir, t_tokenizer *tokenizer, t_u8 *exit_status
 ) {
 	t_parsing_status	status;
 	t_str				filename;
 
-	status = match_word_token(tokenizer, &filename, NULL);
+	status = match_word_token(tokenizer, &filename, NULL, exit_status);
 	if (status != PARSING_SUCCEEDED)
 	{
 		if (status == PARSING_FAILED)

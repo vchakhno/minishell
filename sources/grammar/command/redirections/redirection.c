@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/31 18:39:37 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:33:37 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <unistd.h>
 
 t_parsing_status	match_redir_op(
-	t_tokenizer *tokenizer, enum e_redir_type *type
+	t_tokenizer *tokenizer, enum e_redir_type *type, t_u8 *exit_status
 ) {
 	t_parsing_status	status;
 	char *const			redir_ops[] = {"<", ">", "<<", ">>"};
@@ -24,7 +24,7 @@ t_parsing_status	match_redir_op(
 	i = 0;
 	while (i < (t_u32) sizeof redir_ops / sizeof * redir_ops)
 	{
-		status = match_token(tokenizer, redir_ops[i], NULL);
+		status = match_token(tokenizer, redir_ops[i], NULL, exit_status);
 		if (status == PARSING_SUCCEEDED)
 		{
 			*type = i;
@@ -38,16 +38,16 @@ t_parsing_status	match_redir_op(
 }
 
 t_parsing_status	parse_redirection(
-	t_redirection *redir, t_tokenizer *tokenizer
+	t_redirection *redir, t_tokenizer *tokenizer, t_u8 *exit_status
 ) {
 	if (redir->type == REDIR_INPUT)
-		return (parse_input_redir(&redir->input, tokenizer));
+		return (parse_input_redir(&redir->input, tokenizer, exit_status));
 	if (redir->type == REDIR_OUTPUT)
-		return (parse_output_redir(&redir->output, tokenizer));
+		return (parse_output_redir(&redir->output, tokenizer, exit_status));
 	if (redir->type == REDIR_APPEND)
-		return (parse_append_redir(&redir->append, tokenizer));
+		return (parse_append_redir(&redir->append, tokenizer, exit_status));
 	if (redir->type == REDIR_HEREDOC)
-		return (parse_heredoc(&redir->heredoc, tokenizer));
+		return (parse_heredoc(&redir->heredoc, tokenizer, exit_status));
 	return (PARSING_CANCELED);
 }
 

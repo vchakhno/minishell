@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 11:47:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:24:30 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,15 @@ bool	alloc_and_or(t_and_or *and_or)
 }
 
 t_parsing_status	parse_and_or_elem(
-	t_and_or *and_or, t_tokenizer *tokenizer, t_and_or_elem_kind kind
+	t_and_or *and_or, t_tokenizer *tokenizer, t_and_or_elem_kind kind,
+	t_u8 *exit_status
 ) {
 	t_and_or_elem		elem;
 	t_parsing_status	status;
 
 	if (!alloc_pipeline(&elem.pipeline))
 		return (PARSING_CANCELED);
-	status = parse_pipeline(&elem.pipeline, tokenizer);
+	status = parse_pipeline(&elem.pipeline, tokenizer, exit_status);
 	if (status != PARSING_SUCCEEDED)
 	{
 		free_pipeline(elem.pipeline);
@@ -47,38 +48,40 @@ t_parsing_status	parse_and_or_elem(
 }
 
 t_parsing_status	parse_and_or_separator(
-	t_and_or_elem_kind *kind, t_tokenizer *tokenizer
+	t_and_or_elem_kind *kind, t_tokenizer *tokenizer, t_u8 *exit_status
 ) {
 	t_parsing_status	status;
 
-	status = match_token(tokenizer, "&&", NULL);
+	status = match_token(tokenizer, "&&", NULL, exit_status);
 	if (status == PARSING_SUCCEEDED)
 		*kind = AND_ELEM;
 	if (status != PARSING_FAILED)
 		return (status);
-	status = match_token(tokenizer, "||", NULL);
+	status = match_token(tokenizer, "||", NULL, exit_status);
 	if (status == PARSING_SUCCEEDED)
 		*kind = OR_ELEM;
 	return (status);
 }
 
-t_parsing_status	parse_and_or(t_and_or *and_or, t_tokenizer *tokenizer)
-{
+t_parsing_status	parse_and_or(
+	t_and_or *and_or, t_tokenizer *tokenizer, t_u8 *exit_status
+) {
 	t_parsing_status	status;
 	t_and_or_elem_kind	kind;
 
 	kind = AND_ELEM;
 	while (true)
 	{
-		status = parse_and_or_elem(and_or, tokenizer, kind);
+		status = parse_and_or_elem(and_or, tokenizer, kind, exit_status);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
-		status = parse_and_or_separator(&kind, tokenizer);
+		status = parse_and_or_separator(&kind, tokenizer, exit_status);
 		if (status == PARSING_FAILED)
 			return (PARSING_SUCCEEDED);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
-		status = parse_linebreak(tokenizer, &"and> \0or> "[6 * kind]);
+		status = parse_linebreak(tokenizer, &"and> \0or> "[6 * kind],
+				exit_status);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
 	}

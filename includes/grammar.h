@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/31 09:36:41 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:26:48 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ typedef struct s_simple_command
 	t_vector	redirs;
 }	t_simple_command;
 
-t_parsing_status	parse_argument(t_vector *argv, t_tokenizer *tokenizer);
-
+t_parsing_status	parse_argument(t_vector *argv, t_tokenizer *tokenizer,
+						t_u8 *exit_status);
 bool				alloc_simple_command(t_simple_command *cmd);
 t_parsing_status	parse_simple_command(t_simple_command *cmd,
-						t_tokenizer *tokenizer);
+						t_tokenizer *tokenizer, t_u8 *exit_status);
 bool				run_simple_command(t_simple_command *cmd,
 						t_runtime_context *context);
 void				free_simple_command(t_simple_command cmd);
@@ -65,7 +65,7 @@ typedef struct s_pipeline_elem
 
 bool				alloc_pipeline(t_pipeline *pipeline);
 t_parsing_status	parse_pipeline(t_pipeline *pipeline,
-						t_tokenizer *tokenizer);
+						t_tokenizer *tokenizer, t_u8 *exit_status);
 bool				run_pipeline(t_pipeline pipeline,
 						t_runtime_context *context);
 void				free_pipeline(t_pipeline pipeline);
@@ -79,7 +79,8 @@ typedef struct s_and_or_elem
 
 
 bool				alloc_and_or(t_and_or *and_or);
-t_parsing_status	parse_and_or(t_and_or *and_or, t_tokenizer *tokenizer);
+t_parsing_status	parse_and_or(t_and_or *and_or, t_tokenizer *tokenizer,
+						t_u8 *exit_status);
 bool				run_and_or(t_and_or and_or, t_runtime_context *context);
 void				free_and_or(t_and_or and_or);
 
@@ -88,12 +89,14 @@ typedef struct s_ast_root
 	t_vector	and_or;
 }	t_ast_root;
 
-t_parsing_status	parse_linebreak(t_tokenizer *tokenizer, const char *prompt);
+t_parsing_status	parse_linebreak(t_tokenizer *tokenizer, const char *prompt,
+						t_u8 *exit_status);
 t_parsing_status	parse_newline_list(t_tokenizer *tokenizer,
-						const char *prompt);
+						const char *prompt, t_u8 *exit_status);
 
 bool				alloc_ast(t_ast_root *ast);
-t_parsing_status	parse_ast(t_ast_root *ast, t_shell_input *input);
+t_parsing_status	parse_ast(t_ast_root *ast, t_shell_input *input,
+						t_u8 *exit_status);
 bool				run_ast(t_ast_root ast, t_runtime_context *context);
 void				free_ast(t_ast_root ast);
 

@@ -57,13 +57,15 @@ t_read_input_status	handle_empty_input(bool *prev_ctrl_c)
 	return (READING_EXITED);
 }
 
-t_read_input_status	read_input(t_string *new_lines, const char *prompt)
-{
+t_read_input_status	read_input(
+	t_string *new_lines, const char *prompt, t_u8 *exit_status
+) {
 	static bool	prev_ctrl_c = false;
 	char		*user_input;
 	t_u32		input_len;
 	int			stdin_backup;
 
+	(void) exit_status;
 	if (!setup_input(&stdin_backup))
 		return (READING_CANCELED);
 	user_input = readline(prompt);

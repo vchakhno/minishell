@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 11:48:45 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:26:22 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@ bool	alloc_pipeline(t_pipeline *pipeline)
 }
 
 t_parsing_status	parse_pipeline_elem(
-	t_pipeline *pipeline, t_tokenizer *tokenizer
+	t_pipeline *pipeline, t_tokenizer *tokenizer, t_u8 *exit_status
 ) {
 	t_simple_command	command;
 	t_parsing_status	status;
 
 	if (!alloc_simple_command(&command))
 		return (PARSING_CANCELED);
-	status = parse_simple_command(&command, tokenizer);
+	status = parse_simple_command(&command, tokenizer, exit_status);
 	if (status != PARSING_SUCCEEDED)
 	{
 		free_simple_command(command);
@@ -45,21 +45,22 @@ t_parsing_status	parse_pipeline_elem(
 	return (PARSING_SUCCEEDED);
 }
 
-t_parsing_status	parse_pipeline(t_pipeline *pipeline, t_tokenizer *tokenizer)
-{
+t_parsing_status	parse_pipeline(
+	t_pipeline *pipeline, t_tokenizer *tokenizer, t_u8 *exit_status
+) {
 	t_parsing_status	status;
 
 	while (true)
 	{
-		status = parse_pipeline_elem(pipeline, tokenizer);
+		status = parse_pipeline_elem(pipeline, tokenizer, exit_status);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
-		status = match_token(tokenizer, "|", NULL);
+		status = match_token(tokenizer, "|", NULL, exit_status);
 		if (status == PARSING_FAILED)
 			return (PARSING_SUCCEEDED);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
-		status = parse_linebreak(tokenizer, "pipe> ");
+		status = parse_linebreak(tokenizer, "pipe> ", exit_status);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
 	}

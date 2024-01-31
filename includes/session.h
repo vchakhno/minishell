@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 05:47:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:05:02 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ t_u8	run_repl(t_session *session);
 void	quit_session(t_session session);
 
 bool	get_incomplete_ast(t_shell_input *input, t_ast_root *ast,
-			bool *complete);
-bool	get_complete_ast(t_shell_input *input, t_ast_root *ast);
+			bool *complete, t_u8 *exit_status);
+bool	get_complete_ast(t_shell_input *input, t_ast_root *ast,
+			t_u8 *exit_status);
 
 #endif

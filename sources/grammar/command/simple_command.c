@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/31 18:35:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:31:50 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ bool	alloc_simple_command(t_simple_command *cmd)
 }
 
 t_parsing_status	parse_simple_command(
-	t_simple_command *cmd, t_tokenizer *tokenizer
+	t_simple_command *cmd, t_tokenizer *tokenizer, t_u8 *exit_status
 ) {
 	t_parsing_status	status;
 	enum e_redir_type	type;
@@ -35,17 +35,17 @@ t_parsing_status	parse_simple_command(
 	status = PARSING_SUCCEEDED;
 	while (status != PARSING_FAILED)
 	{
-		status = parse_argument(&cmd->argv, tokenizer);
+		status = parse_argument(&cmd->argv, tokenizer, exit_status);
 		if (status == PARSING_SUCCEEDED)
 			continue ;
 		if (status != PARSING_FAILED)
 			return (status);
-		status = match_redir_op(tokenizer, &type);
+		status = match_redir_op(tokenizer, &type, exit_status);
 		if (status == PARSING_FAILED)
 			continue ;
 		if (status != PARSING_SUCCEEDED)
 			return (status);
-		status = parse_redirections(&cmd->redirs, tokenizer, type);
+		status = parse_redirections(&cmd->redirs, tokenizer, type, exit_status);
 		if (status != PARSING_SUCCEEDED)
 			return (status);
 	}

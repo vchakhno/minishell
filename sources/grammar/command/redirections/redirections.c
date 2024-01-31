@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/31 18:33:54 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:39:21 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,14 @@
 #include <unistd.h>
 
 t_parsing_status	parse_redirections(
-	t_vector *redirs, t_tokenizer *tokenizer, enum e_redir_type type
+	t_vector *redirs, t_tokenizer *tokenizer, enum e_redir_type type,
+	t_u8 *exit_status
 ) {
 	t_parsing_status	status;
 	t_redirection		redir;
 
 	redir.type = type;
-	status = parse_redirection(&redir, tokenizer);
+	status = parse_redirection(&redir, tokenizer, exit_status);
 	if (status != PARSING_SUCCEEDED)
 		return (status);
 	if (!ft_vector_push(redirs, &redir))

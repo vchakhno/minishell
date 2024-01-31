@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:04:55 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:46:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	skip_blanks(t_shell_input *input)
 
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
-t_read_input_status	skip_quotes(t_shell_input *input)
+t_read_input_status	skip_quotes(t_shell_input *input, t_u8 *exit_status)
 {
 	t_read_input_status	status;
 	char				quote;
@@ -72,7 +72,7 @@ t_read_input_status	skip_quotes(t_shell_input *input)
 	{
 		if (input->cursor == input->text.len)
 		{
-			status = append_lines(input, prompt);
+			status = append_lines(input, prompt, exit_status);
 			if (status != READING_SUCCEEDED)
 				return (status);
 		}
@@ -101,13 +101,13 @@ bool	skip_word(t_shell_input *input)
 // false -> any error (CTRL+C, CTRL+D, malloc)
 
 t_read_input_status	parse_token(
-	t_shell_input *input, t_token *token, const char *prompt
+	t_shell_input *input, t_token *token, const char *prompt, t_u8 *exit_status
 ) {
 	t_read_input_status	status;
 
 	if (input->cursor == input->text.len)
 	{
-		status = append_lines(input, prompt);
+		status = append_lines(input, prompt, exit_status);
 		if (status != READING_SUCCEEDED)
 			return (status);
 	}
@@ -118,7 +118,7 @@ t_read_input_status	parse_token(
 	token->type = TOKEN_WORD;
 	while (!skip_word(input))
 	{
-		status = skip_quotes(input);
+		status = skip_quotes(input, exit_status);
 		if (status != READING_SUCCEEDED)
 			return (status);
 		input->cursor++;

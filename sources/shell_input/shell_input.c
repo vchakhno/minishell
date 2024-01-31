@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 09:11:30 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:19:29 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,20 @@ bool	alloc_shell_input(t_shell_input *input)
 }
 
 bool	get_incomplete_ast(
-	t_shell_input *input, t_ast_root *ast, bool *valid
+	t_shell_input *input, t_ast_root *ast, bool *valid, t_u8 *exit_status
 ) {
 	t_parsing_status	status;
 
 	if (!alloc_ast(ast))
 		return (PARSING_EXITED);
-	status = parse_ast(ast, input);
+	status = parse_ast(ast, input, exit_status);
 	while (status == PARSING_CANCELED)
 	{
 		cut_lines(input);
 		free_ast(*ast);
 		if (!alloc_ast(ast))
 			return (PARSING_EXITED);
-		status = parse_ast(ast, input);
+		status = parse_ast(ast, input, exit_status);
 	}
 	*valid = status == PARSING_SUCCEEDED;
 	return (status != PARSING_EXITED);
@@ -50,14 +50,15 @@ bool	get_incomplete_ast(
 
 // true -> continue
 // false -> exit
-bool	get_complete_ast(t_shell_input *input, t_ast_root *ast)
-{
+bool	get_complete_ast(
+	t_shell_input *input, t_ast_root *ast, t_u8 *exit_status
+) {
 	bool	complete;
 
 	complete = false;
 	while (!complete)
 	{
-		if (!get_incomplete_ast(input, ast, &complete))
+		if (!get_incomplete_ast(input, ast, &complete, exit_status))
 			return (false);
 		if (!complete)
 			print_error("Syntax error");

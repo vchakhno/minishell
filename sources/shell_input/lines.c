@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lines.c                                       :+:      :+:    :+:   */
+/*   lines.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:55:05 by vchakhno          #+#    #+#             */
-/*   Updated: 2023/12/01 01:13:57 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 00:50:12 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,15 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-t_read_input_status	append_lines(t_shell_input *input, const char *prompt)
-{
+t_read_input_status	append_lines(
+	t_shell_input *input, const char *prompt, t_u8 *exit_status
+) {
 	t_read_input_status	status;
 	t_string			user_input;
 
 	if (input->cursor == 0)
 		prompt = MAIN_PROMPT;
-	status = read_input(&user_input, prompt);
+	status = read_input(&user_input, prompt, exit_status);
 	if (status != READING_SUCCEEDED)
 		return (status);
 	if (!ft_string_reserve(&input->text, user_input.len + 1))
@@ -41,14 +42,14 @@ t_read_input_status	append_lines(t_shell_input *input, const char *prompt)
 }
 
 t_read_input_status	read_line(
-	t_shell_input *input, t_str *line, const char *prompt
+	t_shell_input *input, t_str *line, const char *prompt, t_u8 *exit_status
 ) {
 	t_read_input_status	status;
 	t_u32				i;
 
 	if (input->cursor == input->text.len)
 	{
-		status = append_lines(input, prompt);
+		status = append_lines(input, prompt, exit_status);
 		if (status != READING_SUCCEEDED)
 			return (status);
 	}
