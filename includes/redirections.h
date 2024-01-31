@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:38:39 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:36:57 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,9 @@ enum e_redir_type
 	REDIR_APPEND,
 };
 
+t_parsing_status	match_redir_op(t_tokenizer *tokenizer,
+						enum e_redir_type *type);
+
 typedef struct s_redirection
 {
 	enum e_redir_type	type;
@@ -100,7 +103,7 @@ bool				restore_backup_fds(t_backup_fds backup);
 void				discard_backup_fds(t_backup_fds backup);
 
 t_parsing_status	parse_redirections(t_vector *redirs,
-						t_tokenizer *tokenizer);
+						t_tokenizer *tokenizer, enum e_redir_type type);
 bool				run_redirections(t_vector redirs, t_backup_fds *backup,
 						bool *recovers, t_runtime_context context);
 void				cleanup_redirections(t_vector redirs, t_backup_fds backup,

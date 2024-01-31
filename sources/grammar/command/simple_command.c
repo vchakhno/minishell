@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:26:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:35:15 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ t_parsing_status	parse_simple_command(
 	t_simple_command *cmd, t_tokenizer *tokenizer
 ) {
 	t_parsing_status	status;
+	enum e_redir_type	type;
 
 	status = PARSING_SUCCEEDED;
 	while (status != PARSING_FAILED)
@@ -39,10 +40,13 @@ t_parsing_status	parse_simple_command(
 			continue ;
 		if (status != PARSING_FAILED)
 			return (status);
-		status = parse_redirections(&cmd->redirs, tokenizer);
-		if (status == PARSING_SUCCEEDED)
+		status = match_redir_op(tokenizer, &type);
+		if (status == PARSING_FAILED)
 			continue ;
-		if (status != PARSING_FAILED)
+		if (status != PARSING_SUCCEEDED)
+			return (status);
+		status = parse_redirections(&cmd->redirs, tokenizer, type);
+		if (status != PARSING_SUCCEEDED)
 			return (status);
 	}
 	if (!cmd->argv.size)

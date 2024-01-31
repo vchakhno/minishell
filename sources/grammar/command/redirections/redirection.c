@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:22:55 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:39:37 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,6 @@ t_parsing_status	match_redir_op(
 t_parsing_status	parse_redirection(
 	t_redirection *redir, t_tokenizer *tokenizer
 ) {
-	t_parsing_status	status;
-
-	status = match_redir_op(tokenizer, &redir->type);
-	if (status != PARSING_SUCCEEDED)
-		return (status);
 	if (redir->type == REDIR_INPUT)
 		return (parse_input_redir(&redir->input, tokenizer));
 	if (redir->type == REDIR_OUTPUT)
