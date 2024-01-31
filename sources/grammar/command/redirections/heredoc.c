@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 06:44:15 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/31 10:28:39 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,14 @@ t_parsing_status	parse_heredoc_body(t_heredoc *heredoc, t_shell_input *input)
 			return (PARSING_CANCELED);
 		}
 		status = (t_parsing_status) read_line(input, &line, "heredoc> ");
+		if (status == PARSING_EXITED)
+		{
+			print_error("heredoc: warning: "
+				"heredoc delimited by end-of-file");
+			break ;
+		}
 		if (status != PARSING_SUCCEEDED)
 		{
-			if (status == PARSING_EXITED)
-				print_error("heredoc: warning: "
-					"heredoc delimited by end-of-file");
 			ft_string_free(heredoc->body);
 			return (PARSING_CANCELED);
 		}
