@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 10:04:00 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 11:48:45 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <wait.h>
 
-bool	alloc_pipeline(t_vector *pipeline)
+bool	alloc_pipeline(t_pipeline *pipeline)
 {
 	if (!ft_vector_alloc(pipeline, sizeof(t_simple_command), 8))
 		return (false);
@@ -24,7 +24,7 @@ bool	alloc_pipeline(t_vector *pipeline)
 }
 
 t_parsing_status	parse_pipeline_elem(
-	t_vector *pipeline, t_tokenizer *tokenizer
+	t_pipeline *pipeline, t_tokenizer *tokenizer
 ) {
 	t_simple_command	command;
 	t_parsing_status	status;
@@ -45,7 +45,7 @@ t_parsing_status	parse_pipeline_elem(
 	return (PARSING_SUCCEEDED);
 }
 
-t_parsing_status	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer)
+t_parsing_status	parse_pipeline(t_pipeline *pipeline, t_tokenizer *tokenizer)
 {
 	t_parsing_status	status;
 
@@ -66,7 +66,7 @@ t_parsing_status	parse_pipeline(t_vector *pipeline, t_tokenizer *tokenizer)
 	return (PARSING_SUCCEEDED);
 }
 
-void	free_pipeline(t_vector pipeline)
+void	free_pipeline(t_pipeline pipeline)
 {
 	t_u32	i;
 

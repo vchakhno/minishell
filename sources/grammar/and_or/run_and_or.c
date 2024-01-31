@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 10:46:37 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 11:48:08 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <wait.h>
 
-bool	run_and_or(t_vector and_or, t_runtime_context *context)
+bool	run_and_or(t_and_or and_or, t_runtime_context *context)
 {
 	t_and_or_elem	elem;
 	t_u32			i;

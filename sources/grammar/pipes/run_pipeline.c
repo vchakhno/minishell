@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:26:30 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 11:48:25 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 // returns recovers
 
 bool	start_pipeline(
-	t_vector pipeline, pid_t *pids, t_runtime_context *context
+	t_pipeline pipeline, pid_t *pids, t_runtime_context *context
 ) {
 	t_u32	i;
 	int		input;
@@ -95,7 +95,7 @@ void	wait_pipeline(t_u32 size, pid_t *pids, t_u8 *exit_status)
 
 // returns recovers
 
-bool	run_pipeline(t_vector pipeline, t_runtime_context *context)
+bool	run_pipeline(t_pipeline pipeline, t_runtime_context *context)
 {
 	pid_t	*pids;
 

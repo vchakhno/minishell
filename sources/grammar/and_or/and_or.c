@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 10:52:17 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/28 11:47:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <wait.h>
 
-bool	alloc_and_or(t_vector *and_or)
+bool	alloc_and_or(t_and_or *and_or)
 {
 	if (!ft_vector_alloc(and_or, sizeof(t_and_or_elem), 8))
 		return (false);
@@ -24,7 +24,7 @@ bool	alloc_and_or(t_vector *and_or)
 }
 
 t_parsing_status	parse_and_or_elem(
-	t_vector *and_or, t_tokenizer *tokenizer, t_and_or_elem_kind kind
+	t_and_or *and_or, t_tokenizer *tokenizer, t_and_or_elem_kind kind
 ) {
 	t_and_or_elem		elem;
 	t_parsing_status	status;
@@ -62,7 +62,7 @@ t_parsing_status	parse_and_or_separator(
 	return (status);
 }
 
-t_parsing_status	parse_and_or(t_vector *and_or, t_tokenizer *tokenizer)
+t_parsing_status	parse_and_or(t_and_or *and_or, t_tokenizer *tokenizer)
 {
 	t_parsing_status	status;
 	t_and_or_elem_kind	kind;
@@ -85,7 +85,7 @@ t_parsing_status	parse_and_or(t_vector *and_or, t_tokenizer *tokenizer)
 	return (PARSING_SUCCEEDED);
 }
 
-void	free_and_or(t_vector and_or)
+void	free_and_or(t_and_or and_or)
 {
 	t_u32	i;
 
