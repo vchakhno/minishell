@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 08:13:01 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:09:05 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/01/31 12:10:53 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	remove_env_var(t_env *env, t_str name)
 		var = &((t_env_var *)env->vars.elems)[i];
 		if (ft_str_equal_str(get_env_var_name(*var), name))
 		{
+			free_env_var(*var);
 			ft_vector_remove(&env->vars, i, NULL);
 			return ;
 		}
