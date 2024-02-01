@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:48:18 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:48:24 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 14:11:49 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 void	skip_blanks(t_shell_input *input)
 {
 	while (input->cursor < input->text.len
-		&& input->text.c_str[input->cursor] == ' ')
+		&& (input->text.c_str[input->cursor] == ' '
+			|| input->text.c_str[input->cursor] == '\t'))
 		input->cursor++;
 }
 
@@ -53,7 +54,8 @@ bool	skip_word(t_shell_input *input)
 {
 	while (input->cursor < input->text.len
 		&& !check_ops(*input, NULL)
-		&& input->text.c_str[input->cursor] != ' ')
+		&& input->text.c_str[input->cursor] != ' '
+		&& input->text.c_str[input->cursor] != '\t')
 	{
 		if (input->text.c_str[input->cursor] == '\"'
 			|| input->text.c_str[input->cursor] == '\'')
