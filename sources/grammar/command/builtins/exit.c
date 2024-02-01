@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 04:14:07 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 11:53:14 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,6 @@ bool	run_builtin_exit(t_vector argv, t_env *env, t_u8 *exit_status)
 		if (!parse_exit_arg(((t_string *)argv.elems)[1].str, exit_status))
 			return (builtin_error(exit_status));
 	}
+	ft_eprintln("exit");
 	return (false);
 }
