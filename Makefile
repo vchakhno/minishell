@@ -88,7 +88,7 @@ INCS		+= $(addprefix $(LIB_DIR)/,$(LIB_INCS))
 # **************************************************************************** #
 
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror -g -gdwarf-4
+CFLAGS		:= -Wall -Wextra -Werror #-g -gdwarf-4
 CPPFLAGS	:= $(addprefix -I,$(INCS)) -MMD -MP
 LDFLAGS		:= $(addprefix -L,$(dir $(LIB_TARGETS)))
 LDLIBS		:= $(addprefix -l,$(LIBS))
