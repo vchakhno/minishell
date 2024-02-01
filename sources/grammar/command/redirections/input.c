@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 03:59:26 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 12:18:18 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ bool	run_input_redir(t_input_redir *redir, t_runtime_context context)
 		return (false);
 	}
 	fd = open(filename.c_str, O_RDONLY, 0666);
-	if (fd == -1 || !move_fd(fd, STDOUT_FILENO))
+	if (fd == -1 || !move_fd(fd, STDIN_FILENO))
 	{
 		print_error("input redir: invalid file");
 		ft_string_free(filename);
