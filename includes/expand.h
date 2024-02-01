@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:09:30 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:05:07 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@
 # include "runtime_context.h"
 # include <stdbool.h>
 # include <libft/libft.h>
-
-/* ************************************************************************** */
-/* EXPAND																	  */
-/* ************************************************************************** */
 
 typedef struct s_fields
 {
@@ -45,7 +41,7 @@ bool	expand_dquotes(t_str *str, t_runtime_context context, t_fields *fields);
 
 // redir
 bool	expand_redir(t_str filename, t_runtime_context context,
-			t_string *field);
+			t_string *field, bool *exists);
 
 // utils
 void	advance_str(t_str *str, t_u32 n);

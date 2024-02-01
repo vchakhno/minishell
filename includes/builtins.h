@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 08:14:50 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:05:18 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,6 @@
 # include "environment.h"
 # include <stdbool.h>
 # include <libft/libft.h>
-
-/* ************************************************************************** */
-/* BUILTINS																	  */
-/* ************************************************************************** */
 
 typedef bool				(*t_builtin)(
 	t_vector argv, t_env *env, t_u8 *exit_status
