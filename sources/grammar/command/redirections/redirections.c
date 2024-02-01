@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:39:21 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:24:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ bool	run_redirections(
 	while (i < redirs.size)
 	{
 		redir = &((t_redirection *)redirs.elems)[i];
-		if (!run_redirection(redir, recovers, context))
+		if (!run_redirection(redir, *backup, recovers, context))
 		{
 			if (*recovers)
 				cleanup_redirections(redirs, *backup, i);

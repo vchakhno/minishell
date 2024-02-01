@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 11:41:47 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:39:49 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:28:21 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@
 #include <wait.h>
 #include <signal.h>
 
-bool	start_heredoc(int pipe_fds[2], t_heredoc *heredoc, bool *recovers)
-{
+bool	start_heredoc(
+	int pipe_fds[2], t_heredoc *heredoc, t_backup_fds backup, bool *recovers
+) {
+	discard_backup_fds(backup);
 	close(pipe_fds[0]);
 	if (!move_fd(pipe_fds[1], STDOUT_FILENO))
 		print_error("heredoc: out of file descriptors");
@@ -27,7 +29,7 @@ bool	start_heredoc(int pipe_fds[2], t_heredoc *heredoc, bool *recovers)
 	return (false);
 }
 
-bool	run_heredoc(t_heredoc *heredoc, bool *recovers)
+bool	run_heredoc(t_heredoc *heredoc, t_backup_fds backup, bool *recovers)
 {
 	int	pipe_fds[2];
 
@@ -44,7 +46,7 @@ bool	run_heredoc(t_heredoc *heredoc, bool *recovers)
 		return (false);
 	}
 	if (heredoc->pid == 0)
-		return (start_heredoc(pipe_fds, heredoc, recovers));
+		return (start_heredoc(pipe_fds, heredoc, backup, recovers));
 	close(pipe_fds[1]);
 	if (!move_fd(pipe_fds[0], STDIN_FILENO))
 	{

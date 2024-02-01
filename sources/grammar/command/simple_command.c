@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:21:30 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:18:44 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ bool	run_simple_command(t_simple_command cmd, t_runtime_context *context)
 	t_vector		fields;
 	t_backup_fds	backup;
 	bool			redir_recovers;
+	bool			cmd_recovers;
 
 	if (!expand_args(cmd.argv, *context, &fields))
 	{
@@ -76,14 +77,10 @@ bool	run_simple_command(t_simple_command cmd, t_runtime_context *context)
 		free_fields_vec(fields);
 		return (redir_recovers);
 	}
-	if (!run_raw_command(fields, context, backup))
-	{
-		free_fields_vec(fields);
-		return (false);
-	}
+	cmd_recovers = run_raw_command(fields, context, backup);
 	cleanup_redirections(cmd.redirs, backup, cmd.redirs.size);
 	free_fields_vec(fields);
-	return (true);
+	return (cmd_recovers);
 }
 
 void	free_simple_command(t_simple_command cmd)

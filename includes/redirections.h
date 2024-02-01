@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:18:50 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:29:05 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,16 @@
 # include "runtime_context.h"
 # include <stdbool.h>
 # include <libft/libft.h>
+
+typedef struct s_backup_fds
+{
+	t_i32	stdin;
+	t_i32	stdout;
+}	t_backup_fds;
+
+bool				save_backup_fds(t_backup_fds *backup);
+bool				restore_backup_fds(t_backup_fds backup);
+void				discard_backup_fds(t_backup_fds backup);
 
 typedef struct s_output_redir
 {
@@ -60,7 +70,8 @@ typedef struct s_heredoc
 
 t_parsing_status	parse_heredoc(t_heredoc *heredoc, t_tokenizer *tokenizer,
 						t_u8 *exit_status);
-bool				run_heredoc(t_heredoc *heredoc, bool *recovers);
+bool				run_heredoc(t_heredoc *heredoc, t_backup_fds backup,
+						bool *recovers);
 void				cleanup_heredoc(t_heredoc heredoc);
 void				free_heredoc(t_heredoc heredoc);
 
@@ -86,22 +97,12 @@ typedef struct s_redirection
 	};
 }	t_redirection;
 
-bool				run_redirection(t_redirection *redir, bool *recovers,
-						t_runtime_context context);
+bool				run_redirection(t_redirection *redir, t_backup_fds backup,
+						bool *recovers, t_runtime_context context);
 t_parsing_status	parse_redirection(t_redirection *redir,
 						t_tokenizer *tokenizer, t_u8 *exit_status);
 void				cleanup_redirection(t_redirection redir);
 void				free_redirection(t_redirection redir);
-
-typedef struct s_backup_fds
-{
-	t_i32	stdin;
-	t_i32	stdout;
-}	t_backup_fds;
-
-bool				save_backup_fds(t_backup_fds *backup);
-bool				restore_backup_fds(t_backup_fds backup);
-void				discard_backup_fds(t_backup_fds backup);
 
 t_parsing_status	parse_redirections(t_vector *redirs, t_tokenizer *tokenizer,
 						enum e_redir_type type, t_u8 *exit_status);

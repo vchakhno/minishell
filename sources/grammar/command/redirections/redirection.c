@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:33:37 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:24:32 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ t_parsing_status	parse_redirection(
 }
 
 bool	run_redirection(
-	t_redirection *redir, bool *recovers, t_runtime_context context
+	t_redirection *redir, t_backup_fds backup, bool *recovers,
+	t_runtime_context context
 ) {
 	*recovers = true;
 	if (redir->type == REDIR_INPUT)
@@ -62,7 +63,7 @@ bool	run_redirection(
 	if (redir->type == REDIR_APPEND)
 		return (run_append_redir(&redir->append, context));
 	if (redir->type == REDIR_HEREDOC)
-		return (run_heredoc(&redir->heredoc, recovers));
+		return (run_heredoc(&redir->heredoc, backup, recovers));
 	return (false);
 }
 
