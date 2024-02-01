@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   alloc.c                                            :+:      :+:    :+:   */
+/*   shell_input.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:41:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:13:51 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,10 @@ bool	get_complete_ast(
 	while (!complete)
 	{
 		if (!get_incomplete_ast(input, ast, &complete, exit_status))
+		{
+			ft_eprintln("exit");
 			return (false);
+		}
 		if (!complete)
 			print_error("Syntax error");
 		register_command(*input);
