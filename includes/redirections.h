@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:31:28 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 01:18:50 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,5 @@ bool				run_redirections(t_vector redirs, t_backup_fds *backup,
 void				cleanup_redirections(t_vector redirs, t_backup_fds backup,
 						t_u32 size);
 void				free_redirections(t_vector redirs);
-
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 11:48:25 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 01:23:39 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,17 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 		waitpid(pids[i], NULL, 0);
 		i++;
 	}
+}
+
+bool	start_pipeline_child(
+	int *input, int pipe_fds[2],
+	t_simple_command command, t_runtime_context *context
+) {
+	if (!apply_pipe(input, pipe_fds))
+		context->exit_status = 1;
+	else
+		run_simple_command(command, context);
+	return (false);
 }
 
 // if a next_pipe fails at some point, kill the previous processes
@@ -62,14 +73,8 @@ bool	start_pipeline(
 			return (true);
 		}
 		if (pids[i] == 0)
-		{
-			if (!apply_pipe(&input, pipe_fds))
-				context->exit_status = 1;
-			else
-				run_simple_command(
-					&((t_simple_command *)pipeline.elems)[i], context);
-			return (false);
-		}
+			return (start_pipeline_child(input, pipe_fds,
+					((t_simple_command *)pipeline.elems)[i], context));
 		i++;
 	}
 	close(input);

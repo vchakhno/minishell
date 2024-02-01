@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:26:48 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 01:21:16 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_parsing_status	parse_argument(t_vector *argv, t_tokenizer *tokenizer,
 bool				alloc_simple_command(t_simple_command *cmd);
 t_parsing_status	parse_simple_command(t_simple_command *cmd,
 						t_tokenizer *tokenizer, t_u8 *exit_status);
-bool				run_simple_command(t_simple_command *cmd,
+bool				run_simple_command(t_simple_command cmd,
 						t_runtime_context *context);
 void				free_simple_command(t_simple_command cmd);
 
@@ -70,13 +70,11 @@ bool				run_pipeline(t_pipeline pipeline,
 						t_runtime_context *context);
 void				free_pipeline(t_pipeline pipeline);
 
-
 typedef struct s_and_or_elem
 {
 	t_and_or_elem_kind	kind;
 	t_pipeline			pipeline;
 }	t_and_or_elem;
-
 
 bool				alloc_and_or(t_and_or *and_or);
 t_parsing_status	parse_and_or(t_and_or *and_or, t_tokenizer *tokenizer,

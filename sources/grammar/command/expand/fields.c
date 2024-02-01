@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 08:51:59 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 01:42:34 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,17 +62,4 @@ bool	add_u8_field(t_fields *fields, t_u8 field)
 void	close_field(t_fields *fields)
 {
 	fields->open = false;
-}
-
-void	free_fields_vec(t_vector fields)
-{
-	t_u32	i;
-
-	i = 0;
-	while (i < fields.size)
-	{
-		ft_string_free(((t_string *)fields.elems)[i]);
-		i++;
-	}
-	ft_vector_free(fields);
 }

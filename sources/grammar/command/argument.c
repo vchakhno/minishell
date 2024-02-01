@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:46:35 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 01:24:01 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ t_parsing_status	parse_argument(
 	t_token				token;
 	t_string			arg;
 
-	status = (t_parsing_status) peek_token(tokenizer, &token, NULL, exit_status);
+	status = (t_parsing_status) peek_token(tokenizer, &token, NULL,
+			exit_status);
 	if (status != PARSING_SUCCEEDED)
 		return (status);
 	if (token.type != TOKEN_WORD)

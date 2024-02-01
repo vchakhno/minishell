@@ -35,6 +35,7 @@ SRCS		:= \
 				grammar/command/redirections/append.c \
 				grammar/command/redirections/backup_fds.c \
 				grammar/command/redirections/heredoc.c \
+				grammar/command/redirections/run_heredoc.c \
 				grammar/command/redirections/input.c \
 				grammar/command/redirections/output.c \
 				grammar/command/redirections/redirection.c \
@@ -50,6 +51,9 @@ SRCS		:= \
 				shell_input/input.c \
 				shell_input/lines.c \
 				shell_input/shell_input.c \
+				tokens/alloc.c \
+				tokens/ops.c \
+				tokens/token_manip.c \
 				tokens/token.c \
 				tokens/tokenizer.c \
 				utils/fork.c \
