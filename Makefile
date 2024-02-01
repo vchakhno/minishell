@@ -76,7 +76,7 @@ DEPS		:= $(OBJS:.o=.d)
 # 	LIBRARIES																   #
 # **************************************************************************** #
 
-LIB_DIR		?= $(dir $(abspath $(firstword $(MAKEFILE_LIST))))lib
+LIB_DIR		:= lib
 LIBS		:= ft readline
 LIB_TARGETS	:= libft/libft.a
 LIB_TARGETS	:= $(addprefix $(LIB_DIR)/,$(LIB_TARGETS))
@@ -131,12 +131,6 @@ re: fclean all
 # **************************************************************************** #
 # 	DEPENDENCIES :3															   #
 # **************************************************************************** #
-
-$(LIB_DIR):
-	@mkdir -p $(LIB_DIR)
-
-$(LIB_DIR)/libft/: | $(LIB_DIR)
-	git clone git@github.com:vchakhno/libft.git $(LIB_DIR)/libft
 
 .SECONDEXPANSION:
 $(LIB_TARGETS): $(LIB_DIR)/%.a: | $(LIB_DIR)/$$(dir %.a)
