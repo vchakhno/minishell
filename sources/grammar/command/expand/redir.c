@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 08:45:57 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 01:10:14 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:55:09 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,10 @@ bool	expand_redir_to_fields(
 	return (true);
 }
 
+// true -> OK (but might not exist)
+// false -> malloc error
 bool	expand_redir(
-	t_str filename, t_runtime_context context, t_string *field
+	t_str filename, t_runtime_context context, t_string *field, bool *exists
 ) {
 	t_vector	fields_vec;
 	t_fields	fields;
@@ -48,6 +50,9 @@ bool	expand_redir(
 		free_fields_vec(fields_vec);
 		return (false);
 	}
+	*exists = fields_vec.size;
+	if (!fields_vec.size)
+		return (true);
 	ft_vector_remove(&fields_vec, 0, field);
 	free_fields_vec(fields_vec);
 	return (true);

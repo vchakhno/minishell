@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 11:01:02 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:38:33 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:58:58 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,22 @@ t_parsing_status	parse_append_redir(
 	return (PARSING_SUCCEEDED);
 }
 
-// TODO: add filename expand
-// All errors recover
-
 bool	run_append_redir(t_append_redir *redir, t_runtime_context context)
 {
+	bool		exists;
 	t_i32		fd;
 	t_string	filename;
 
-	if (!expand_redir(redir->filename.str, context, &filename))
+	if (!expand_redir(redir->filename.str, context, &filename, &exists))
+	{
+		print_error("append redir: out of memory");
 		return (false);
+	}
+	if (!exists)
+	{
+		print_error("append redir: ambiguous redirect");
+		return (false);
+	}
 	fd = open(filename.c_str, O_WRONLY | O_CREAT | O_APPEND, 0666);
 	if (fd == -1 || !move_fd(fd, STDOUT_FILENO))
 	{
