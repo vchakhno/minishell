@@ -6,11 +6,12 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/22 22:21:20 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:28:43 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:09:13 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtins.h"
+#include "utils.h"
 #include <unistd.h>
 
 static bool	echo_check_n_option(t_str arg)
@@ -49,6 +50,6 @@ bool	run_builtin_echo(t_vector argv, t_env *env, t_u8 *exit_status)
 	}
 	if (!n_option_count)
 		ft_println("");
-	ft_buf_output_flush((t_buf_output *)ft_stdout());
+	clear_stdout();
 	return (builtin_ok(exit_status));
 }

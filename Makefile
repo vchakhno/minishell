@@ -59,6 +59,7 @@ SRCS		:= \
 				utils/fork.c \
 				utils/move_fd.c \
 				utils/print_error.c \
+				utils/clear_stdout.c \
 				main.c \
 				runtime_context.c \
 				session.c
