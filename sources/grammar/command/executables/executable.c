@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 00:28:22 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 12:14:38 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ bool	run_executable(
 	{
 		discard_backup_fds(backup);
 		start_executable(exec);
+		*status = 126;
 		return (false);
 	}
 	waitpid(pid, &wstatus, 0);
