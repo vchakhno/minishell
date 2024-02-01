@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 03:48:42 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 08:54:37 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,12 @@ void	cleanup_pipeline(t_u32 size, pid_t *pids)
 
 bool	start_pipeline_child(
 	int *input, int pipe_fds[2],
-	t_simple_command command, t_runtime_context *context
+	t_pipeline_elem elem, t_runtime_context *context
 ) {
 	if (!apply_pipe(input, pipe_fds))
 		context->exit_status = 1;
 	else
-		run_simple_command(command, context);
+		run_pipeline_elem(elem, context);
 	return (false);
 }
 
@@ -74,7 +74,7 @@ bool	start_pipeline(
 		}
 		if (pids[i] == 0)
 			return (start_pipeline_child(&input, pipe_fds,
-					((t_simple_command *)pipeline.elems)[i], context));
+					((t_pipeline_elem *)pipeline.elems)[i], context));
 		i++;
 	}
 	close(input);
@@ -105,7 +105,7 @@ bool	run_pipeline(t_pipeline pipeline, t_runtime_context *context)
 	pid_t	*pids;
 
 	if (pipeline.size == 1)
-		return (run_simple_command(((t_simple_command *)pipeline.elems)[0],
+		return (run_pipeline_elem(((t_pipeline_elem *)pipeline.elems)[0],
 			context));
 	if (!ft_mem_malloc(&pids, pipeline.size * sizeof(pid_t)))
 	{

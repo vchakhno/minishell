@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:21:16 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 08:52:41 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,12 @@ typedef struct s_pipeline_elem
 		t_and_or			parens;
 	};
 }	t_pipeline_elem;
+
+t_parsing_status	parse_pipeline_elem(t_pipeline *pipeline,
+						t_tokenizer *tokenizer, t_u8 *exit_status);
+bool				run_pipeline_elem(t_pipeline_elem elem,
+						t_runtime_context *context);
+void				free_pipeline_elem(t_pipeline_elem elem);
 
 bool				alloc_pipeline(t_pipeline *pipeline);
 t_parsing_status	parse_pipeline(t_pipeline *pipeline,

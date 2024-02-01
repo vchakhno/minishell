@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:26:22 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 08:49:42 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,31 +18,9 @@
 
 bool	alloc_pipeline(t_pipeline *pipeline)
 {
-	if (!ft_vector_alloc(pipeline, sizeof(t_simple_command), 8))
+	if (!ft_vector_alloc(pipeline, sizeof(t_pipeline_elem), 8))
 		return (false);
 	return (true);
-}
-
-t_parsing_status	parse_pipeline_elem(
-	t_pipeline *pipeline, t_tokenizer *tokenizer, t_u8 *exit_status
-) {
-	t_simple_command	command;
-	t_parsing_status	status;
-
-	if (!alloc_simple_command(&command))
-		return (PARSING_CANCELED);
-	status = parse_simple_command(&command, tokenizer, exit_status);
-	if (status != PARSING_SUCCEEDED)
-	{
-		free_simple_command(command);
-		return (status);
-	}
-	if (!ft_vector_push(pipeline, &command))
-	{
-		free_simple_command(command);
-		return (PARSING_CANCELED);
-	}
-	return (PARSING_SUCCEEDED);
 }
 
 t_parsing_status	parse_pipeline(
@@ -74,7 +52,7 @@ void	free_pipeline(t_pipeline pipeline)
 	i = 0;
 	while (i < pipeline.size)
 	{
-		free_simple_command(((t_simple_command *)pipeline.elems)[i]);
+		free_pipeline_elem(((t_pipeline_elem *)pipeline.elems)[i]);
 		i++;
 	}
 	ft_vector_free(pipeline);
