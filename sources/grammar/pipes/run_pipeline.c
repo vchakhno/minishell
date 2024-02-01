@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/11 01:51:40 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:23:39 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:48:42 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ bool	start_pipeline(
 			return (true);
 		}
 		if (pids[i] == 0)
-			return (start_pipeline_child(input, pipe_fds,
+			return (start_pipeline_child(&input, pipe_fds,
 					((t_simple_command *)pipeline.elems)[i], context));
 		i++;
 	}
@@ -105,7 +105,7 @@ bool	run_pipeline(t_pipeline pipeline, t_runtime_context *context)
 	pid_t	*pids;
 
 	if (pipeline.size == 1)
-		return (run_simple_command(&((t_simple_command *)pipeline.elems)[0],
+		return (run_simple_command(((t_simple_command *)pipeline.elems)[0],
 			context));
 	if (!ft_mem_malloc(&pids, pipeline.size * sizeof(pid_t)))
 	{

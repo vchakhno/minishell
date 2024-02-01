@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/01 00:38:29 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 01:41:14 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:51:54 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ bool	setup_session(t_session *session, char **env)
 {
 	if (!alloc_shell_input(&session->shell_input))
 		return (false);
-	if (!parse_env(&session->env, env))
+	if (!alloc_runtime_context(&session->runtime_context, env))
 	{
 		free_shell_input(session->shell_input);
 		return (false);
@@ -27,11 +27,11 @@ bool	setup_session(t_session *session, char **env)
 t_u8	run_repl(t_session *session)
 {
 	t_ast_root	ast;
-	t_u8		exit_status;
 
 	while (true)
 	{
-		if (!get_complete_ast(&session->shell_input, &ast, &exit_status)
+		if (!get_complete_ast(&session->shell_input, &ast,
+				&session->runtime_context.exit_status)
 			|| !run_ast(ast, &session->runtime_context))
 		{
 			free_ast(ast);
@@ -39,11 +39,11 @@ t_u8	run_repl(t_session *session)
 		}
 		free_ast(ast);
 	}
-	return (exit_status);
+	return (session->runtime_context.exit_status);
 }
 
 void	quit_session(t_session session)
 {
-	free_env(session.env);
+	free_runtime_context(session.runtime_context);
 	free_shell_input(session.shell_input);
 }

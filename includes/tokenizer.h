@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/24 07:33:30 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/02/01 00:16:20 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:50:21 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@
 # include <stdbool.h>
 # include <libft/libft.h>
 # include <sys/types.h>
-
-/* ************************************************************************** */
-/* TOKENS																	  */
-/* ************************************************************************** */
 
 enum	e_token_type
 {
@@ -42,9 +38,8 @@ t_read_input_status		parse_token(t_shell_input *input, t_token *token,
 t_str					get_token_content(t_shell_input input, t_token token);
 void					print_token(t_shell_input input, t_token token);
 
-/* ************************************************************************** */
-/* TOKENIZER																  */
-/* ************************************************************************** */
+bool					check_ops(t_shell_input input, t_u32 *len);
+bool					match_ops(t_shell_input *input, t_token *token);
 
 typedef struct s_tokenizer
 {

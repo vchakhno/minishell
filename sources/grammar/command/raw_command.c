@@ -6,7 +6,7 @@
 /*   By: vchakhno <vchakhno@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/18 19:23:46 by vchakhno          #+#    #+#             */
-/*   Updated: 2024/01/28 07:16:50 by vchakhno         ###   ########.fr       */
+/*   Updated: 2024/02/01 03:47:43 by vchakhno         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ bool	run_raw_command(
 	t_executable	exec;
 	t_builtin		builtin_func;
 
+	if (!argv.size)
+		return (true);
 	if (get_builtin(((t_string *)argv.elems)[0].str, &builtin_func))
 		return (builtin_func(argv, &context->env, &context->exit_status));
 	if (!alloc_executable(&exec, argv, context->env, &context->exit_status))
